@@ -1,4 +1,4 @@
-package org.jahia.modules.npmplugins;
+package org.jahia.modules.npmplugins.npmhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
@@ -71,8 +71,8 @@ public class NpmProtocolConnection extends URLConnection {
                     manifest.put("Jahia-Module-Type", "npm");
                     manifest.put("Jahia-Javascript-Name", name);
                 }
-                if (path.startsWith("dx-views/")) {
-                    path = path.substring(9);
+                if (path.startsWith("jahia-views/")) {
+                    path = path.substring("jahia-views/".length());
                     if (file.isFile()) {
                         extensions.add(StringUtils.substringAfterLast(file.getName(), "."));
                     }
