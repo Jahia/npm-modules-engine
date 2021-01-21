@@ -66,12 +66,13 @@ public class JSScriptEngine implements ScriptEngine {
                     StringBuilder buf = new StringBuilder();
                     Consumer<Object> javaThen = (value) -> buf.append(value.toString());
                     jsPromise.invokeMember("then", javaThen);
+                    jsPromise.invokeMember("catch", javaThen);
                     return buf.toString();
                 });
             } else {
                 return object.toString();
             }
-        }else {
+        } else {
             return "null";
         }
     }

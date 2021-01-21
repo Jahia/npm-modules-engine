@@ -70,6 +70,7 @@ public class NpmProtocolConnection extends URLConnection {
                     manifest.put("Jahia-Required-Version", "8.0.0.0");
                     manifest.put("Jahia-Module-Type", "npm");
                     manifest.put("Jahia-Javascript-Name", name);
+                    manifest.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
                 }
                 if (path.startsWith("jahia-views/")) {
                     path = path.substring("jahia-views/".length());

@@ -1,6 +1,7 @@
 package org.jahia.modules.npmplugins.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.graalvm.polyglot.Value;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.modules.npmplugins.jsengine.JSGlobalVariable;
 import org.jahia.modules.npmplugins.jsengine.Promise;
@@ -8,6 +9,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.*;
@@ -495,19 +497,25 @@ public class GQLHelper implements JSGlobalVariable {
             return (onResolve, onReject) -> {
                 // convert JSON string to Map
                 try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    Map<String, String> params = new HashMap<>();
-                    params.put("query", (String) parameters.get("query"));
-                    params.put("operationName", (String) parameters.get("operationName"));
-                    params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
-                    StringWriter out = new StringWriter();
-
-                    servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
-                    onResolve.execute(context.getContext().eval("js", "JSON.parse('" + out.toString().replace("'", "\\'") + "')"));
+                    Value js = executeQuerySync(parameters);
+                    onResolve.execute(js);
                 } catch (Exception e) {
                     onReject.execute(e.getMessage());
                 }
             };
+        }
+
+        private Value executeQuerySync(Map parameters) throws ServletException, IOException {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> params = new HashMap<>();
+            params.put("query", (String) parameters.get("query"));
+            params.put("operationName", (String) parameters.get("operationName"));
+            params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            StringWriter out = new StringWriter();
+
+            servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
+            Value js = context.getContext().eval("js", "JSON.parse('" + out.toString().replace("'", "\\'") + "')");
+            return js;
         }
     }
 }
