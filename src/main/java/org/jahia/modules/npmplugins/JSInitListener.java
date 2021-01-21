@@ -55,9 +55,6 @@ public class JSInitListener implements BundleListener {
                     Value register = engine.executeJs(bundle.getResource((String) m.get("main")));
                     Value unregister = register.getMember("default").execute();
                     unregisters.put(bundle.getSymbolicName(), unregister);
-
-                    Value res = engine.executeJs("serverExtender.registry.find({type:'action'})");
-                    System.out.println(res);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,6 +1,5 @@
 package org.jahia.modules.npmplugins.views;
 
-import org.apache.tika.io.IOUtils;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.script.*;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.function.Consumer;
 
 /**
  * Script engine for jahia views, using rendering function
@@ -44,6 +44,11 @@ public class JSScriptEngine implements ScriptEngine {
             return result;
         } catch (Exception e) {
             logger.error("Cannot execute JS", e);
+            try {
+                context.getWriter().write(e.getMessage());
+            } catch (IOException ioException) {
+                //
+            }
             return e.getMessage();
         }
     }
@@ -52,11 +57,21 @@ public class JSScriptEngine implements ScriptEngine {
         BundleView view = (BundleView) ((Script) bindings.get("script")).getView();
         Value object = graalVMEngine.executeJs(view.getBundle().getResource(view.getResource()));
 
-        if (object != null && object.getMetaObject().getMetaSimpleName().equals("Function")) {
-            return object.execute(ProxyObject.fromMap(bindings)).asString();
-        } else if (object != null) {
-            return object.toString();
-        } else {
+        if (object != null) {
+            if (object.getMetaObject().getMetaSimpleName().equals("Function")) {
+                return graalVMEngine.getContextProvider().doWithinLock(() -> object.execute(ProxyObject.fromMap(bindings)).asString());
+            } else if (object.getMetaObject().getMetaSimpleName().equals("AsyncFunction")) {
+                return graalVMEngine.getContextProvider().doWithinLock(() -> {
+                    Value jsPromise = object.execute(ProxyObject.fromMap(bindings));
+                    StringBuilder buf = new StringBuilder();
+                    Consumer<Object> javaThen = (value) -> buf.append(value.toString());
+                    jsPromise.invokeMember("then", javaThen);
+                    return buf.toString();
+                });
+            } else {
+                return object.toString();
+            }
+        }else {
             return "null";
         }
     }
@@ -98,7 +113,7 @@ public class JSScriptEngine implements ScriptEngine {
 
     @Override
     public void setBindings(Bindings bindings, int scope) {
-        throw new UnsupportedOperationException();
+        //
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.jahia.modules.npmplugins.npmhandler;
 
-import org.osgi.service.component.annotations.Component;
 import org.apache.felix.fileinstall.ArtifactListener;
 import org.apache.felix.fileinstall.ArtifactUrlTransformer;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.File;
 import java.net.URL;
