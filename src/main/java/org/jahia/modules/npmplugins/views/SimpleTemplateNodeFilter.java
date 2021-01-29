@@ -8,10 +8,12 @@ import org.jahia.services.render.filter.RenderFilter;
 import org.jahia.services.render.scripting.Script;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
 
 @Component(service = RenderFilter.class)
 public class SimpleTemplateNodeFilter extends AbstractFilter {
+
+    public static final String TEMPLATE_NAME = "j:templateName";
+
     @Activate
     public void activate() {
         setPriority(20.5f);
@@ -23,11 +25,11 @@ public class SimpleTemplateNodeFilter extends AbstractFilter {
     public String prepare(RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
         Script script = (Script) renderContext.getRequest().getAttribute("script");
 
-        if (resource.getNode().hasProperty("j:templateName")) {
+        if (resource.getNode().hasProperty(TEMPLATE_NAME)) {
             String oldTemplate = resource.getTemplate();
             try {
-                if ("default".equals(resource.getTemplate()) && resource.getNode().hasProperty("j:templateName")) {
-                    resource.setTemplate(resource.getNode().getProperty("j:templateName").getString());
+                if ("default".equals(resource.getTemplate()) && resource.getNode().hasProperty(TEMPLATE_NAME)) {
+                    resource.setTemplate(resource.getNode().getProperty(TEMPLATE_NAME).getString());
                 }
                 script = service.resolveScript(resource, renderContext);
                 renderContext.getRequest().setAttribute("script", script);

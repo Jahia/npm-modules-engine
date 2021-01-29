@@ -61,7 +61,7 @@ public class RenderHelper implements JSGlobalVariable {
             this.context = context;
         }
 
-        public Promise render(Map parameters) {
+        public Promise render(Map<String, Object> parameters) {
             return (onResolve, onReject) -> {
                 try {
                     String render = renderSync(parameters);
@@ -72,7 +72,7 @@ public class RenderHelper implements JSGlobalVariable {
             };
         }
 
-        private String renderSync(Map parameters) throws RepositoryException, RenderException {
+        public String renderSync(Map<String, Object> parameters) throws RepositoryException, RenderException {
             RenderContext renderContext = (RenderContext) parameters.get("renderContext");
             String path = (String) parameters.get("path");
             String template = (String) parameters.get("template");
@@ -81,15 +81,14 @@ public class RenderHelper implements JSGlobalVariable {
 
             JCRNodeWrapper node = jcrSessionFactory.getCurrentUserSession(renderContext.getWorkspace(), renderContext.getMainResource().getLocale()).getNode(path);
             Resource resource = new Resource(node, templateType != null ? templateType : "html", template, contextConfiguration != null ? contextConfiguration : "module");
-            String render = renderService.render(resource, renderContext);
-            return render;
+            return renderService.render(resource, renderContext);
         }
 
-        public Promise renderModule(Map attr, RenderContext renderContext) {
+        public Promise renderModule(Map<String, Object> attr, RenderContext renderContext) {
             return (onResolve, onReject) -> {
                 try {
-                    MockPageContext context = renderModuleSync(attr, renderContext);
-                    onResolve.execute(context.getTargetWriter().getBuffer().toString());
+                    MockPageContext pageContext = renderModuleSync(attr, renderContext);
+                    onResolve.execute(pageContext.getTargetWriter().getBuffer().toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                     onReject.execute(e.getMessage());
@@ -98,13 +97,13 @@ public class RenderHelper implements JSGlobalVariable {
         }
 
         @NotNull
-        private MockPageContext renderModuleSync(Map attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        public MockPageContext renderModuleSync(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
             ModuleTag moduleTag = new ModuleTag();
             BeanUtils.populate(moduleTag, attr);
-            MockPageContext context = new MockPageContext(renderContext);
-            moduleTag.setPageContext(context);
+            MockPageContext pageContext = new MockPageContext(renderContext);
+            moduleTag.setPageContext(pageContext);
             moduleTag.doEndTag();
-            return context;
+            return pageContext;
         }
 
         public Promise renderComponent(Map<String, ?> definition, RenderContext renderContext) {
@@ -119,8 +118,8 @@ public class RenderHelper implements JSGlobalVariable {
             };
         }
 
-        private String renderComponentSync(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
-            String res = jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, jcrSessionFactory.getCurrentLocale(), session -> {
+        public String renderComponentSync(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
+            return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, jcrSessionFactory.getCurrentLocale(), session -> {
                 String path = (String) definition.get("path");
 
                 if (path == null) {
@@ -160,7 +159,6 @@ public class RenderHelper implements JSGlobalVariable {
                     throw new RepositoryException(e);
                 }
             });
-            return res;
         }
 
         public String renderSimpleComponentSync(String name, String type, RenderContext renderContext) throws RepositoryException {

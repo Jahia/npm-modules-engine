@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,18 +52,17 @@ public class JSInitListener implements BundleListener {
                 if (url != null) {
                     String content = IOUtils.toString(url);
                     ObjectMapper mapper = new ObjectMapper();
-                    Map<?,?> m = mapper.readValue(content, Map.class);
-                    Value register = engine.executeJs(bundle.getResource((String) m.get("main")));
-                    Value unregister = register.getMember("default").execute();
+                    Map<?,?> json = mapper.readValue(content, Map.class);
+                    Value register = engine.executeJs(bundle.getResource((String) json.get("main")),
+                            Collections.singletonMap("bundleContext", bundle.getBundleContext()));
+                    Value unregister = register.getMember("default").execute(bundle.getBundleContext());
                     unregisters.put(bundle.getSymbolicName(), unregister);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (event.getType() == BundleEvent.STOPPED) {
-            if (unregisters.containsKey(event.getBundle().getSymbolicName())) {
-                unregisters.remove(event.getBundle().getSymbolicName()).execute();
-            }
+        } else if (event.getType() == BundleEvent.STOPPED && unregisters.containsKey(event.getBundle().getSymbolicName())) {
+            unregisters.remove(event.getBundle().getSymbolicName()).execute();
         }
     }
 }

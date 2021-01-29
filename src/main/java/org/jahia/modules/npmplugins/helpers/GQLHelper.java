@@ -505,7 +505,7 @@ public class GQLHelper implements JSGlobalVariable {
             };
         }
 
-        private Value executeQuerySync(Map parameters) throws ServletException, IOException {
+        public Value executeQuerySync(Map parameters) throws ServletException, IOException {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, String> params = new HashMap<>();
             params.put("query", (String) parameters.get("query"));
