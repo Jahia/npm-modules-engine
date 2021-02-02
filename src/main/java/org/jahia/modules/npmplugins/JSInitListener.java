@@ -3,29 +3,30 @@ package org.jahia.modules.npmplugins;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.graalvm.polyglot.Value;
+import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
+import org.jahia.modules.npmplugins.registrars.Registrar;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Listener to execute scripts at activate/desactivate time
  */
 @Component(immediate = true)
 public class JSInitListener implements BundleListener {
-
+    private static final Logger logger = LoggerFactory.getLogger(JSInitListener.class);
     private GraalVMEngine engine;
+    private Collection<Registrar> registrars = new ArrayList<>();
+    private RegistryHelper registryHelper;
+    private Set<Bundle> bundles = new HashSet<>();
     private Map<String, Value> unregisters = new HashMap<>();
 
     @Reference
@@ -33,36 +34,109 @@ public class JSInitListener implements BundleListener {
         this.engine = engine;
     }
 
+    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
+    public void addRegistrar(Registrar registrar) {
+        registrars.add(registrar);
+    }
+
+    public void removeRegistrar(Registrar registrar) {
+        registrars.remove(registrar);
+    }
+
+    @Reference
+    public void setRegistryHelper(RegistryHelper registryHelper) {
+        this.registryHelper = registryHelper;
+    }
+
     @Activate
     public void activate(BundleContext context) {
+        for (Bundle bundle : context.getBundles()) {
+            if (bundle.getState() == Bundle.ACTIVE) {
+                enableBundle(bundle);
+            }
+        }
         context.addBundleListener(this);
     }
 
     @Deactivate
     public void deactivate(BundleContext context) {
         context.removeBundleListener(this);
+
+        for (Bundle bundle : context.getBundles()) {
+            if (bundle.getState() == Bundle.ACTIVE) {
+                disableBundle(bundle);
+            }
+        }
     }
+
 
     @Override
     public void bundleChanged(BundleEvent event) {
-        if (event.getType() == BundleEvent.STARTED) {
-            try {
-                Bundle bundle = event.getBundle();
-                URL url = bundle.getResource("package.json");
-                if (url != null) {
-                    String content = IOUtils.toString(url);
-                    ObjectMapper mapper = new ObjectMapper();
-                    Map<?,?> json = mapper.readValue(content, Map.class);
-                    Value register = engine.executeJs(bundle.getResource((String) json.get("main")),
-                            Collections.singletonMap("bundleContext", bundle.getBundleContext()));
-                    Value unregister = register.getMember("default").execute(bundle.getBundleContext());
-                    unregisters.put(bundle.getSymbolicName(), unregister);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            Bundle bundle = event.getBundle();
+            if (event.getType() == BundleEvent.STARTED) {
+                enableBundle(bundle);
+            } else if (event.getType() == BundleEvent.STOPPED) {
+                disableBundle(bundle);
             }
-        } else if (event.getType() == BundleEvent.STOPPED && unregisters.containsKey(event.getBundle().getSymbolicName())) {
-            unregisters.remove(event.getBundle().getSymbolicName()).execute();
+        } catch (Exception e) {
+            logger.error("Cannot handle event", e);
+        }
+    }
+
+    private void enableBundle(Bundle bundle) {
+        try {
+            URL url = bundle.getResource("package.json");
+            if (url != null) {
+                String content = IOUtils.toString(url);
+                ObjectMapper mapper = new ObjectMapper();
+                Map<?,?> json = mapper.readValue(content, Map.class);
+                Map<?,?> jahia = (Map<?, ?>) json.get("jahia");
+                if (jahia != null && jahia.containsKey("server")) {
+                    bundles.add(bundle);
+                    String script = (String) jahia.get("server");
+                    Value register = engine.executeJs(bundle.getResource(script),
+                            Collections.singletonMap("bundleContext", bundle.getBundleContext()));
+                    registryHelper.setCurrentRegisteringBundle(bundle);
+                    try {
+                        Value unregister = register.getMember("default").execute(bundle.getBundleContext());
+                        unregisters.put(bundle.getSymbolicName(), unregister);
+                    } finally {
+                        registryHelper.setCurrentRegisteringBundle(null);
+                    }
+
+                    for (Registrar registrar : registrars) {
+                        registrar.register(registryHelper, bundle);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Cannot enable bundle {}", bundle.getSymbolicName(), e);
+        }
+    }
+
+    private void disableBundle(Bundle bundle) {
+        try {
+            if (bundles.contains(bundle)) {
+                Map<String, Object> filter = new HashMap<>();
+                filter.put("bundle", bundle);
+
+                for (Registrar registrar : registrars) {
+                    registrar.unregister(registryHelper, bundle);
+                }
+
+                List<Map<String, Object>> toRemoveObjects = registryHelper.getRegistry().find(filter);
+                for (Map<String, Object> toRemoveObject : toRemoveObjects) {
+                    registryHelper.getRegistry().remove((String) toRemoveObject.get("type"), (String) toRemoveObject.get("key"));
+                }
+
+                if (unregisters.containsKey(bundle.getSymbolicName())) {
+                    unregisters.remove(bundle.getSymbolicName()).execute();
+                }
+                bundles.remove(bundle);
+            }
+        } catch (Exception e) {
+            logger.error("Cannot disable bundle {}", bundle.getSymbolicName(), e);
         }
     }
 }

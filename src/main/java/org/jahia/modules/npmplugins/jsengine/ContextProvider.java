@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ContextProvider {
 
+    private boolean isActive = true;
     private final Context context;
     private final ReentrantLock lock;
 
@@ -18,6 +19,15 @@ public class ContextProvider {
 
     public Context getContext() {
         return context;
+    }
+
+    public void close() {
+        context.close();
+        isActive = false;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     public Lock getLock() {

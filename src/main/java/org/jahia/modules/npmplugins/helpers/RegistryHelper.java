@@ -2,6 +2,7 @@ package org.jahia.modules.npmplugins.helpers;
 
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.modules.npmplugins.jsengine.JSGlobalVariable;
+import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.*;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 @Component(service = {JSGlobalVariable.class, RegistryHelper.class}, immediate = true)
 public class RegistryHelper implements JSGlobalVariable {
 
+    private ThreadLocal<Bundle> currentRegisteringBundle = new ThreadLocal<>();
     private Registry registry = new Registry();
 
     @Override
@@ -24,6 +26,10 @@ public class RegistryHelper implements JSGlobalVariable {
 
     public Registry getRegistry() {
         return registry;
+    }
+
+    public void setCurrentRegisteringBundle(Bundle bundle) {
+        this.currentRegisteringBundle.set(bundle);
     }
 
     public class Registry {
@@ -87,7 +93,9 @@ public class RegistryHelper implements JSGlobalVariable {
 
             object.put("key", key);
             object.put("type", type);
-
+            if (!object.containsKey("bundle")) {
+                object.put("bundle", currentRegisteringBundle.get());
+            }
             registryMap.put(type + "-" + key, object);
         }
 

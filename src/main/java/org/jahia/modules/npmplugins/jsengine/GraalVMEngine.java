@@ -1,5 +1,6 @@
 package org.jahia.modules.npmplugins.jsengine;
 
+import org.apache.commons.lang.StringUtils;
 import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.osgi.framework.BundleContext;
@@ -18,11 +19,10 @@ import java.util.*;
 public class GraalVMEngine {
     public static final String JS = "js";
 
-    private final Engine sharedEngine = Engine.newBuilder().option("inspect", "9229").build();
+    private Engine sharedEngine;
 
     private ThreadLocal<ContextProvider> jsContext;
-    private ContextProvider jsContextProvider;
-    private Set<Context> all;
+    private Set<ContextProvider> all;
 
     private List<JSGlobalVariable> globals = new ArrayList<>();
 
@@ -36,9 +36,20 @@ public class GraalVMEngine {
     }
 
     @Activate
-    public void activate(BundleContext bundleContext) {
+    public void activate(BundleContext bundleContext, Map<String, ?> props) {
         all = new HashSet<>();
 
+        Engine.Builder builder = Engine.newBuilder();
+        boolean experimental = props.containsKey("experimental") && Boolean.parseBoolean(props.get("experimental").toString());
+        builder.allowExperimentalOptions(experimental);
+        for (Map.Entry<String, ?> entry : props.entrySet()) {
+            if (entry.getKey().startsWith("polyglot.")) {
+                String opt = StringUtils.substringAfter(entry.getKey(),"polyglot.");
+                builder.option(opt, entry.getValue().toString());
+            }
+        }
+
+        sharedEngine = builder.build();
         jsContext = ThreadLocal.withInitial(this::createContextProvider);
     }
 
@@ -50,9 +61,9 @@ public class GraalVMEngine {
                 .allowIO(true)
                 .engine(sharedEngine).build();
 
-        all.add(context);
 
         ContextProvider contextProvider = new ContextProvider(context);
+        all.add(contextProvider);
 
         Map<String, Object> helpers = new HashMap<>();
         for (JSGlobalVariable global : globals) {
@@ -65,9 +76,10 @@ public class GraalVMEngine {
 
     @Deactivate
     public void deactivate() {
-        for (Context context : all) {
+        for (ContextProvider context : all) {
             context.close();
         }
+        sharedEngine.close();
     }
 
     /**
@@ -114,6 +126,9 @@ public class GraalVMEngine {
     }
 
     public ContextProvider getContextProvider() {
+        if (!jsContext.get().isActive()) {
+            jsContext.set(createContextProvider());
+        }
         return jsContext.get();
     }
 }
