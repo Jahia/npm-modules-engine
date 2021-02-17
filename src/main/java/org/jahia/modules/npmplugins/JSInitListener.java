@@ -3,9 +3,13 @@ package org.jahia.modules.npmplugins;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.graalvm.polyglot.Value;
+import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
 import org.jahia.modules.npmplugins.registrars.Registrar;
+import org.jahia.osgi.BundleUtils;
+import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRTemplate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -13,7 +17,11 @@ import org.osgi.framework.BundleListener;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import pl.touk.throwing.ThrowingSupplier;
 
+import javax.jcr.RepositoryException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -74,7 +82,9 @@ public class JSInitListener implements BundleListener {
     public void bundleChanged(BundleEvent event) {
         try {
             Bundle bundle = event.getBundle();
-            if (event.getType() == BundleEvent.STARTED) {
+            if (event.getType() == BundleEvent.RESOLVED) {
+                copySources(bundle);
+            } else if (event.getType() == BundleEvent.STARTED) {
                 enableBundle(bundle);
             } else if (event.getType() == BundleEvent.STOPPED) {
                 disableBundle(bundle);
@@ -82,6 +92,58 @@ public class JSInitListener implements BundleListener {
         } catch (Exception e) {
             logger.error("Cannot handle event", e);
         }
+    }
+
+    private void copySources(Bundle bundle) throws RepositoryException {
+        URL url = bundle.getResource("package.json");
+        if (url != null) {
+            JCRTemplate.getInstance().doExecuteWithSystemSession(session -> {
+                JahiaTemplatesPackage pkg = BundleUtils.getModule(bundle);
+                JCRNodeWrapper n = session.getNode("/modules/" + pkg.getIdWithVersion());
+                if (n.hasNode("sources")) {
+                    n.getNode("sources").remove();
+                }
+                JCRNodeWrapper sources = n.addNode("sources", "jnt:moduleVersionFolder");
+                try {
+                    importResources(pkg, "/", sources);
+                } catch (IOException e) {
+                    throw new RepositoryException(e);
+                }
+                session.save();
+                return null;
+            });
+        }
+    }
+
+    private void importResources(JahiaTemplatesPackage pkg, String path, JCRNodeWrapper node) throws IOException, RepositoryException {
+        Resource[] r = pkg.getResources(path);
+        for (Resource resource : r) {
+            if (resource.contentLength() > 0) {
+                node.uploadFile(resource.getFilename(), resource.getInputStream(), "text/plain");
+            } else {
+                importResources(pkg, resource.getURL().getPath(), node.addNode(resource.getFilename(), "jnt:folder"));
+            }
+        }
+    }
+
+    private String getSourceFile(Bundle bundle, String path) throws RepositoryException {
+        return JCRTemplate.getInstance().doExecuteWithSystemSession(session -> {
+            JahiaTemplatesPackage pkg = BundleUtils.getModule(bundle);
+            String sourcePath = "/modules/" + pkg.getIdWithVersion() + "/sources";
+            if (!session.itemExists(sourcePath)) {
+                return null;
+            }
+            JCRNodeWrapper sources = session.getNode(sourcePath);
+            if (sources.hasNode(path)) {
+                try {
+                    return IOUtils.toString(sources.getNode(path).getFileContent().downloadFile());
+                } catch (IOException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+            return null;
+        });
+
     }
 
     private void enableBundle(Bundle bundle) {
@@ -95,8 +157,10 @@ public class JSInitListener implements BundleListener {
                 if (jahia != null && jahia.containsKey("server")) {
                     bundles.add(bundle);
                     String script = (String) jahia.get("server");
-                    Value register = engine.executeJs(bundle.getResource(script),
-                            Collections.singletonMap("bundleContext", bundle.getBundleContext()));
+                    String source = Optional
+                            .ofNullable(getSourceFile(bundle, script))
+                            .orElseGet(ThrowingSupplier.unchecked(() -> IOUtils.toString(bundle.getResource(script))));
+                    Value register = engine.executeJs(source);
                     registryHelper.setCurrentRegisteringBundle(bundle);
                     try {
                         Value unregister = register.getMember("default").execute(bundle.getBundleContext());
