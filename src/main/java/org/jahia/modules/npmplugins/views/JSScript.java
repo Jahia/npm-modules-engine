@@ -20,7 +20,7 @@ public class JSScript implements Script {
     public String execute(Resource resource, RenderContext renderContext) throws RenderException {
         Object object = jsView.getRender().apply(new Object[]{resource, renderContext});
         Value value = Value.asValue(object);
-        if (value.getMetaObject().getMetaSimpleName().equals("Promise")) {
+        if (value.getMetaObject() != null && value.getMetaObject().getMetaSimpleName().equals("Promise")) {
             StringBuilder buf = new StringBuilder();
             Consumer<Object> javaThen = v -> buf.append(v.toString());
             value.invokeMember("then", javaThen);
