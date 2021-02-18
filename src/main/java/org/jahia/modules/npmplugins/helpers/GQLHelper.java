@@ -510,7 +510,9 @@ public class GQLHelper implements JSGlobalVariable {
             Map<String, String> params = new HashMap<>();
             params.put("query", (String) parameters.get("query"));
             params.put("operationName", (String) parameters.get("operationName"));
-            params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            if (parameters.containsKey("variables")) {
+                params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            }
             StringWriter out = new StringWriter();
 
             servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
