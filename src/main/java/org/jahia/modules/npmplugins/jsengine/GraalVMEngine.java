@@ -1,5 +1,6 @@
 package org.jahia.modules.npmplugins.jsengine;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -21,8 +22,10 @@ public class GraalVMEngine {
 
     private Engine sharedEngine;
 
-    private ThreadLocal<ContextProvider> jsContext;
+    private ContextProvider jsContext;
     private Set<ContextProvider> all;
+
+    private BundleContext bundleContext;
 
     private List<JSGlobalVariable> globals = new ArrayList<>();
 
@@ -37,6 +40,8 @@ public class GraalVMEngine {
 
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
+        this.bundleContext = bundleContext;
+
         all = new HashSet<>();
 
         Engine.Builder builder = Engine.newBuilder();
@@ -50,7 +55,7 @@ public class GraalVMEngine {
         }
 
         sharedEngine = builder.build();
-        jsContext = ThreadLocal.withInitial(this::createContextProvider);
+        jsContext = createContextProvider();
     }
 
     private ContextProvider createContextProvider() {
@@ -71,14 +76,20 @@ public class GraalVMEngine {
         }
         context.getBindings(JS).putMember("jahiaHelpers", ProxyObject.fromMap(helpers));
 
+        // Initialize context with available JS
+        try {
+            context.eval(JS, IOUtils.toString(bundleContext.getBundle().getResource("META-INF/js/main.js")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return contextProvider;
     }
 
     @Deactivate
     public void deactivate() {
-        for (ContextProvider context : all) {
-            context.close();
-        }
+//        for (ContextProvider context : all) {
+        jsContext.close();
+//        }
         sharedEngine.close();
     }
 
@@ -126,9 +137,9 @@ public class GraalVMEngine {
     }
 
     public ContextProvider getContextProvider() {
-        if (!jsContext.get().isActive()) {
-            jsContext.set(createContextProvider());
+        if (!jsContext.isActive()) {
+            jsContext = createContextProvider();
         }
-        return jsContext.get();
+        return jsContext;
     }
 }

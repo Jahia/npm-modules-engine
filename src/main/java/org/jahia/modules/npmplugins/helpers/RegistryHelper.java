@@ -1,5 +1,7 @@
 package org.jahia.modules.npmplugins.helpers;
 
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.modules.npmplugins.jsengine.JSGlobalVariable;
 import org.osgi.framework.Bundle;
@@ -93,9 +95,7 @@ public class RegistryHelper implements JSGlobalVariable {
 
             object.put("key", key);
             object.put("type", type);
-            if (!object.containsKey("bundle")) {
-                object.put("bundle", currentRegisteringBundle.get());
-            }
+            object.put("bundle", currentRegisteringBundle.get());
             registryMap.put(type + "-" + key, object);
         }
 
@@ -104,11 +104,11 @@ public class RegistryHelper implements JSGlobalVariable {
         }
 
         public Map<String, Object> composeServices(Map<String, Object>... arguments) {
-            return Arrays.stream(arguments).reduce((result, element) -> {
+            return Arrays.stream(arguments).reduce(new HashMap<>(), (result, element) -> {
                 Map<String, Object> m = new HashMap<>(result);
                 m.putAll(element);
                 return m;
-            }).orElse(new HashMap<>());
+            });
         }
     }
 
@@ -119,12 +119,12 @@ public class RegistryHelper implements JSGlobalVariable {
             this.context = context;
         }
 
-        public Map<String, Object> get(String type, String key) {
-            return registry.get(type, key);
+        public Object get(String type, String key) {
+            return ProxyObject.fromMap(registry.get(type, key));
         }
 
-        public List<Map<String, Object>> find(Map<String, Object> filter) {
-            return registry.find(filter);
+        public List<Object> find(Map<String, Object> filter) {
+            return registry.find(filter).stream().map(ProxyObject::fromMap).collect(Collectors.toList());
         }
 
         public void add(String type, String key, Map<String, Object>... arguments) {

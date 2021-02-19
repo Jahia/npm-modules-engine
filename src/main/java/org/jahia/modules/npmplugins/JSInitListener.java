@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
+import org.jahia.modules.npmplugins.helpers.OSGiHelper;
 import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
 import org.jahia.modules.npmplugins.registrars.Registrar;
@@ -126,26 +127,6 @@ public class JSInitListener implements BundleListener {
         }
     }
 
-    private String getSourceFile(Bundle bundle, String path) throws RepositoryException {
-        return JCRTemplate.getInstance().doExecuteWithSystemSession(session -> {
-            JahiaTemplatesPackage pkg = BundleUtils.getModule(bundle);
-            String sourcePath = "/modules/" + pkg.getIdWithVersion() + "/sources";
-            if (!session.itemExists(sourcePath)) {
-                return null;
-            }
-            JCRNodeWrapper sources = session.getNode(sourcePath);
-            if (sources.hasNode(path)) {
-                try {
-                    return IOUtils.toString(sources.getNode(path).getFileContent().downloadFile());
-                } catch (IOException e) {
-                    throw new RepositoryException(e);
-                }
-            }
-            return null;
-        });
-
-    }
-
     private void enableBundle(Bundle bundle) {
         try {
             URL url = bundle.getResource("package.json");
@@ -157,9 +138,7 @@ public class JSInitListener implements BundleListener {
                 if (jahia != null && jahia.containsKey("server")) {
                     bundles.add(bundle);
                     String script = (String) jahia.get("server");
-                    String source = Optional
-                            .ofNullable(getSourceFile(bundle, script))
-                            .orElseGet(ThrowingSupplier.unchecked(() -> IOUtils.toString(bundle.getResource(script))));
+                    String source = OSGiHelper.loadResource(bundle, script);
                     Value register = engine.executeJs(source);
                     registryHelper.setCurrentRegisteringBundle(bundle);
                     try {

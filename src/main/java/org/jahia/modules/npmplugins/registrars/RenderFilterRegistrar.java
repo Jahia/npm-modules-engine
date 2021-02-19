@@ -46,7 +46,7 @@ public class RenderFilterRegistrar implements Registrar {
 
         List<Map<String, Object>> renderFilters = registry.getRegistry().find(filter);
         for (Map<String, Object> renderFilter : renderFilters) {
-            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(Value.asValue(renderFilter));
+            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter);
             renderFilterImpl.setRenderService(renderService);
             renderFilterImpl.setPriority(0);
 
@@ -65,41 +65,42 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     public static class RenderFilterBridge extends AbstractFilter {
-        private Value value;
+        // todo: Store type/key and reuse new context to call operations
+        private Map<String,Object> value;
 
-        public RenderFilterBridge(Value value) {
+        public RenderFilterBridge(Map<String,Object> value) {
             this.value = value;
-            if (value.hasMember("priority")) {
-                setPriority(value.getMember("priority").asInt());
+            if (value.containsKey("priority")) {
+                setPriority(Integer.parseInt(value.get("priority").toString()));
             }
-            if (value.hasMember("description")) {
-                setDescription(value.getMember("description").asString());
+            if (value.containsKey("description")) {
+                setDescription(value.get("description").toString());
             }
-            if (value.hasMember("applyOnConfigurations")) {
-                this.setApplyOnConfigurations(value.getMember("applyOnConfigurations").asString());
+            if (value.containsKey("applyOnConfigurations")) {
+                this.setApplyOnConfigurations(value.get("applyOnConfigurations").toString());
             }
-            if (value.hasMember("applyOnModes")) {
-                this.setApplyOnModes(value.getMember("applyOnModes").asString());
+            if (value.containsKey("applyOnModes")) {
+                this.setApplyOnModes(value.get("applyOnModes").toString());
             }
-            if (value.hasMember("applyOnNodeTypes")) {
-                this.setApplyOnNodeTypes(value.getMember("applyOnNodeTypes").asString());
+            if (value.containsKey("applyOnNodeTypes")) {
+                this.setApplyOnNodeTypes(value.get("applyOnNodeTypes").toString());
             }
-            if (value.hasMember("applyOnTemplates")) {
-                this.setApplyOnTemplates(value.getMember("applyOnTemplates").asString());
+            if (value.containsKey("applyOnTemplates")) {
+                this.setApplyOnTemplates(value.get("applyOnTemplates").toString());
             }
-            if (value.hasMember("applyOnTemplateTypes")) {
-                this.setApplyOnTemplateTypes(value.getMember("applyOnTemplateTypes").asString());
+            if (value.containsKey("applyOnTemplateTypes")) {
+                this.setApplyOnTemplateTypes(value.get("applyOnTemplateTypes").toString());
             }
         }
 
         @Override
         public String execute(String s, RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return value.getMember("execute").execute(s, renderContext, resource, renderChain).asString();
+            return Value.asValue(value.get("execute")).execute(s, renderContext, resource, renderChain).asString();
         }
 
         @Override
         public String prepare(RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return value.getMember("prepare").execute(renderContext, resource, renderChain).asString();
+            return Value.asValue(value.get("prepare")).execute(renderContext, resource, renderChain).asString();
         }
     }
 }

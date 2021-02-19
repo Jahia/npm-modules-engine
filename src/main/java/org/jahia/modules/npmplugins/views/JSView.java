@@ -80,8 +80,8 @@ public class JSView implements View, Comparable<View> {
         return jsValue.get("key").toString();
     }
 
-    public Function<Object[], Object> getRender() {
-        return (Function<Object[], Object>) jsValue.get("render");
+    public Map<String, Object> getJsValue() {
+        return jsValue;
     }
 
     @Override

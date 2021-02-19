@@ -3,6 +3,7 @@ package org.jahia.modules.npmplugins.views;
 import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
+import org.jahia.services.content.nodetypes.NodeTypeRegistry;
 import org.jahia.services.render.*;
 import org.jahia.services.render.scripting.Script;
 import org.jahia.services.render.scripting.ScriptResolver;
@@ -12,6 +13,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,11 +57,38 @@ public class JSScriptResolver implements ScriptResolver {
     }
 
     private JSView resolveView(Resource resource, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
-        return (JSView) getViewsSet(resource.getNode().getPrimaryNodeType(), renderContext.getSite(), resource.getTemplateType()).stream()
+        ExtendedNodeType nt = resource.getNode().getPrimaryNodeType();
+        List<ExtendedNodeType> nodeTypeList = getNodeTypeList(nt);
+        for (ExtendedNodeType type : resource.getNode().getMixinNodeTypes()) {
+            nodeTypeList.addAll(0, type.getSupertypeSet());
+            nodeTypeList.add(0, type);
+        }
+
+        if (resource.getResourceNodeType() != null) {
+            nodeTypeList.addAll(0, getNodeTypeList(resource.getResourceNodeType()));
+        }
+
+        return resolveView(resource, nodeTypeList, renderContext);
+    }
+
+    private List<ExtendedNodeType> getNodeTypeList(ExtendedNodeType nt) throws NoSuchNodeTypeException {
+        List<ExtendedNodeType> nodeTypeList = new LinkedList<ExtendedNodeType>();
+        nodeTypeList.add(nt);
+        nodeTypeList.addAll(nt.getSupertypeSet());
+        ExtendedNodeType base = NodeTypeRegistry.getInstance().getNodeType("nt:base");
+        if (nodeTypeList.remove(base)) {
+            nodeTypeList.add(base);
+        }
+        return nodeTypeList;
+    }
+
+    private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
+        return (JSView) nodeTypeList.stream().flatMap(t -> getViewsSet(t, renderContext.getSite(), resource.getTemplateType()).stream())
                 .filter(v -> v.getKey().equals(resource.getTemplate()))
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getTemplate()));
     }
+
 
     @Override
     public boolean hasView(ExtendedNodeType nt, String viewName, JCRSiteNode site,  String templateType) {

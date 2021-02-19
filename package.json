@@ -4,7 +4,11 @@
   "main": "index.js",
   "repository": "git@github.com:Jahia/npm-plugins.git",
   "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode=development"
+  },
   "dependencies": {
-    "@jahia/ui-extender": "^1.0.1"
+    "@jahia/ui-extender": "^1.0.1",
+    "handlebars": "^4.7.7"
   }
 }

@@ -1,6 +1,7 @@
 package org.jahia.modules.npmplugins.views;
 
 import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.Resource;
@@ -18,7 +19,8 @@ public class JSScript implements Script {
 
     @Override
     public String execute(Resource resource, RenderContext renderContext) throws RenderException {
-        Object object = jsView.getRender().apply(new Object[]{resource, renderContext});
+        ProxyObject proxy = ProxyObject.fromMap(jsView.getJsValue());
+        Object object = Value.asValue(jsView.getJsValue().get("render")).execute(resource, renderContext, proxy);
         Value value = Value.asValue(object);
         if (value.getMetaObject() != null && value.getMetaObject().getMetaSimpleName().equals("Promise")) {
             StringBuilder buf = new StringBuilder();
