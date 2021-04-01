@@ -1,0 +1,6 @@
+{
+  "name": "@jahia/server-helpers",
+  "version": "1.0.0",
+  "description": "Server helpers typings",
+  "typings": "src/index.d.ts"
+}
