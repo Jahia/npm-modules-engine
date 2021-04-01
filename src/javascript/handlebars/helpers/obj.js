@@ -1,3 +1,3 @@
-export default function(opts) {
+export default function (opts) {
     return opts.hash;
-};
+}

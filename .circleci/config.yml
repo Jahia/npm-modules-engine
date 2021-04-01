@@ -16,16 +16,16 @@ parameters:
     default: "tests/"
   TESTS_IMAGE:
     type: string
-    default: "jahia/sandbox"
+    default: "jahia/npm-plugins"
   MODULE_ID:
     type: string
-    default: "sandbox"
+    default: "npm-plugins"
   TESTRAIL_PROJECTNAME:
     type: string
-    default: "Sandbox Module"
+    default: "NPM plugins Module"
   GITHUB_SLUG:
     type: string
-    default: "jahia/sandbox"
+    default: "jahia/npm-plugins"
   PRIMARY_RELEASE_BRANCH:
     type: string
     default: "main" # main or master ? set the branch for the main release
@@ -819,7 +819,7 @@ workflows:
                 - << pipeline.parameters.PRIMARY_RELEASE_BRANCH >>
 
   # The on-release workflow was created to handle the full release lifecycle after creating a release using GitHub
-  # https://github.com/Jahia/sandbox/releases
+  # https://github.com/Jahia/npm-plugins/releases
   # The release is first created using the "pre-release" tag and a pipeline is triggered from a GitHub action
   # This pipeline perform the following action:
   # - Delete the tag created by GitHub (unnecessary)
@@ -855,7 +855,7 @@ workflows:
           context: QA_ENVIRONMENT
 
   # The on-signature-update workflow was created to handle the signage of modules in case it needs to be done manually.
-  # https://github.com/Jahia/sandbox#manually-updating-signature-via-command-line
+  # https://github.com/Jahia/npm-plugins#manually-updating-signature-via-command-line
   # The pipeline performs the following action:
   # - Check the commit message that it contains [ci sign], [sign ci] or [jahia update signature]
   # - Downloads the keymaker cli (version 2.0)

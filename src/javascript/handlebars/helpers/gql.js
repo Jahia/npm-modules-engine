@@ -1,7 +1,7 @@
-import {gqlHelper} from '@jahia/server-helpers'
+import {gqlHelper} from '@jahia/server-helpers';
 
-export default function(options) {
-    const query = options.fn(this)
+export default function (options) {
+    const query = options.fn(this);
     const {varName, ...rest} = options.hash;
     let {data} = gqlHelper.executeQuerySync({
         query,
