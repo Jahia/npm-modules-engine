@@ -13,6 +13,11 @@ module.exports = (env, argv) => {
         externals: {
             '@jahia/server-helpers': 'jahiaHelpers'
         },
+        resolve: {
+            alias: {
+                'handlebars': 'handlebars/dist/cjs/handlebars.js'
+            }
+        },
         devtool: "inline-source-map"
     };
 
