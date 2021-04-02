@@ -1,3 +1,3 @@
-import initHandlebars from './handlebars/init'
+import initHandlebars from './handlebars/init';
 
-initHandlebars()
+initHandlebars();
