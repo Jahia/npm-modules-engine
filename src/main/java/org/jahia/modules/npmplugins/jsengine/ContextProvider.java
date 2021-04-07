@@ -1,24 +1,38 @@
 package org.jahia.modules.npmplugins.jsengine;
 
 import org.graalvm.polyglot.Context;
-import pl.touk.throwing.ThrowingSupplier;
+import org.jahia.modules.npmplugins.helpers.Registry;
+import org.jahia.modules.npmplugins.helpers.RegistryHelper;
+import org.osgi.framework.Bundle;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
 
 public class ContextProvider {
 
     private boolean isActive = true;
     private final Context context;
-    private final ReentrantLock lock;
+
+    private Collection<Bundle> registeredBundles = new ArrayList<>();
+    private Map<String, Object> helpers = new HashMap<>();
 
     public ContextProvider(Context cx) {
         this.context = cx;
-        this.lock = new ReentrantLock();
     }
 
     public Context getContext() {
         return context;
+    }
+
+    public Collection<Bundle> getRegisteredBundles() {
+        return registeredBundles;
+    }
+
+    public Map<String, Object> getHelpers() {
+        return helpers;
+    }
+
+    public Registry getRegistry() {
+        return ((RegistryHelper) getHelpers().get("registry")).getRegistry();
     }
 
     public void close() {
@@ -28,20 +42,6 @@ public class ContextProvider {
 
     public boolean isActive() {
         return isActive;
-    }
-
-    public Lock getLock() {
-        return lock;
-    }
-
-    public <T,E extends Exception> T doWithinLock(ThrowingSupplier<T,E> f) throws E {
-        lock.lock();
-
-        try {
-            return f.get();
-        } finally {
-            lock.unlock();
-        }
     }
 
 }

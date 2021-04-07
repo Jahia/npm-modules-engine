@@ -1,7 +1,9 @@
 package org.jahia.modules.npmplugins.registrars;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npmplugins.helpers.RegistryHelper;
+import org.jahia.modules.npmplugins.helpers.Registry;
+import org.jahia.modules.npmplugins.jsengine.ContextProvider;
+import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
@@ -36,17 +38,17 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     @Override
-    public void register(RegistryHelper registry, Bundle bundle) {
+    public void register(Registry registry, Bundle bundle, GraalVMEngine engine) {
         Map<String, Object> filter = new HashMap<>();
         filter.put("type", "render-filter");
-        filter.put("bundle", bundle);
+        filter.put("bundle", Value.asValue(bundle));
 
         Set<ServiceRegistration<RenderFilter>> set = new HashSet<>();
         registrations.put(bundle, set);
 
-        List<Map<String, Object>> renderFilters = registry.getRegistry().find(filter);
+        List<Map<String, Object>> renderFilters = registry.find(filter);
         for (Map<String, Object> renderFilter : renderFilters) {
-            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter);
+            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter, engine);
             renderFilterImpl.setRenderService(renderService);
             renderFilterImpl.setPriority(0);
 
@@ -55,8 +57,8 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     @Override
-    public void unregister(RegistryHelper registry, Bundle bundle) {
-        Collection<ServiceRegistration<RenderFilter>> set = registrations.get(bundle);
+    public void unregister(Registry registry, Bundle bundle) {
+        Collection<ServiceRegistration<RenderFilter>> set = registrations.remove(bundle);
         if (set != null) {
             for (ServiceRegistration<RenderFilter> registration : set) {
                 registration.unregister();
@@ -65,11 +67,12 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     public static class RenderFilterBridge extends AbstractFilter {
-        // todo: Store type/key and reuse new context to call operations
-        private Map<String,Object> value;
+        private GraalVMEngine engine;
+        private String key;
 
-        public RenderFilterBridge(Map<String,Object> value) {
-            this.value = value;
+        public RenderFilterBridge(Map<String,Object> value,GraalVMEngine engine) {
+            this.engine = engine;
+            this.key = (String) value.get("key");
             if (value.containsKey("priority")) {
                 setPriority(Integer.parseInt(value.get("priority").toString()));
             }
@@ -95,12 +98,20 @@ public class RenderFilterRegistrar implements Registrar {
 
         @Override
         public String execute(String s, RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return Value.asValue(value.get("execute")).execute(s, renderContext, resource, renderChain).asString();
+            return engine.doWithContext(contextProvider -> {
+                return Value.asValue(getJsFilter(contextProvider).get("execute")).execute(s, renderContext, resource, renderChain).asString();
+            });
         }
 
         @Override
         public String prepare(RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return Value.asValue(value.get("prepare")).execute(renderContext, resource, renderChain).asString();
+            return engine.doWithContext(contextProvider -> {
+                return Value.asValue(getJsFilter(contextProvider).get("prepare")).execute(renderContext, resource, renderChain).asString();
+            });
+        }
+
+        private Map<String, Object> getJsFilter(ContextProvider contextProvider) {
+            return contextProvider.getRegistry().get("render-filter", key);
         }
     }
 }

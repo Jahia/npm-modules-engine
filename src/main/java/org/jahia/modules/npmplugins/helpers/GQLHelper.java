@@ -3,11 +3,9 @@ package org.jahia.modules.npmplugins.helpers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.graalvm.polyglot.Value;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
-import org.jahia.modules.npmplugins.jsengine.JSGlobalVariable;
 import org.jahia.modules.npmplugins.jsengine.Promise;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
+import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -20,23 +18,45 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Component(service = JSGlobalVariable.class, immediate = true)
-public class GQLHelper implements JSGlobalVariable {
+public class GQLHelper {
+    private ContextProvider context;
     private HttpServlet servlet;
 
-    @Reference(service = HttpServlet.class, target = "(jmx.objectname=graphql.servlet:type=graphql)")
+    public GQLHelper(ContextProvider context) {
+        this.context = context;
+    }
+
+    public Promise executeQuery(Map parameters) {
+        return (onResolve, onReject) -> {
+            // convert JSON string to Map
+            try {
+                Value js = executeQuerySync(parameters);
+                onResolve.execute(js);
+            } catch (Exception e) {
+                onReject.execute(e.getMessage());
+            }
+        };
+    }
+
+    public Value executeQuerySync(Map parameters) throws ServletException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> params = new HashMap<>();
+        params.put("query", (String) parameters.get("query"));
+        params.put("operationName", (String) parameters.get("operationName"));
+        if (parameters.containsKey("variables")) {
+            params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+        }
+        StringWriter out = new StringWriter();
+
+        servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
+        Value js = context.getContext().eval("js", "JSON.parse('" + out.toString().replace("'", "\\'") + "')");
+        return js;
+    }
+
+    @Inject
+    @OSGiService(service = HttpServlet.class, filter = "(jmx.objectname=graphql.servlet:type=graphql)")
     public void setServlet(HttpServlet servlet) {
         this.servlet = (HttpServlet) servlet;
-    }
-
-    @Override
-    public String getName() {
-        return "gqlHelper";
-    }
-
-    @Override
-    public Object getInstance(ContextProvider context) {
-        return new Instance(context);
     }
 
     private static class HttpServletRequestMock implements HttpServletRequest {
@@ -486,38 +506,4 @@ public class GQLHelper implements JSGlobalVariable {
         }
     }
 
-    public class Instance {
-        private ContextProvider context;
-
-        public Instance(ContextProvider context) {
-            this.context = context;
-        }
-
-        public Promise executeQuery(Map parameters) {
-            return (onResolve, onReject) -> {
-                // convert JSON string to Map
-                try {
-                    Value js = executeQuerySync(parameters);
-                    onResolve.execute(js);
-                } catch (Exception e) {
-                    onReject.execute(e.getMessage());
-                }
-            };
-        }
-
-        public Value executeQuerySync(Map parameters) throws ServletException, IOException {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> params = new HashMap<>();
-            params.put("query", (String) parameters.get("query"));
-            params.put("operationName", (String) parameters.get("operationName"));
-            if (parameters.containsKey("variables")) {
-                params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
-            }
-            StringWriter out = new StringWriter();
-
-            servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
-            Value js = context.getContext().eval("js", "JSON.parse('" + out.toString().replace("'", "\\'") + "')");
-            return js;
-        }
-    }
 }

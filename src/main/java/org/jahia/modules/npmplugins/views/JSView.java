@@ -1,5 +1,6 @@
 package org.jahia.modules.npmplugins.views;
 
+import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.render.View;
@@ -10,19 +11,20 @@ import java.util.Properties;
 import java.util.function.Function;
 
 public class JSView implements View, Comparable<View> {
-    private final Map<String, Object> jsValue;
+    private final String registryKey;
     private final String key;
     private final JahiaTemplatesPackage module;
     private final Properties properties;
     private final Properties defaultProperties;
+    private String displayName;
 
     public JSView(Map<String, Object> jsValue) {
-        this.key = jsValue.get("templateName") != null ? jsValue.get("templateName").toString() : "default";
+        registryKey = jsValue.get("key").toString();
+        key = jsValue.get("templateName") != null ? jsValue.get("templateName").toString() : "default";
+        displayName = jsValue.containsKey("displayName") ? jsValue.get("displayName").toString() : getKey();
 
-        Bundle bundle = (Bundle) jsValue.get("bundle");
-        this.module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
-
-        this.jsValue = jsValue;
+        Bundle bundle = ((Value)jsValue.get("bundle")).asHostObject();
+        module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
 
         properties = new Properties();
         if (jsValue.containsKey("properties")) {
@@ -48,7 +50,7 @@ public class JSView implements View, Comparable<View> {
 
     @Override
     public String getDisplayName() {
-        return jsValue.containsKey("displayName") ? jsValue.get("displayName").toString() : getKey();
+        return displayName;
     }
 
     @Override
@@ -77,11 +79,7 @@ public class JSView implements View, Comparable<View> {
     }
 
     public String getRegistryKey() {
-        return jsValue.get("key").toString();
-    }
-
-    public Map<String, Object> getJsValue() {
-        return jsValue;
+        return registryKey;
     }
 
     @Override

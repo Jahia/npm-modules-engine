@@ -1,6 +1,8 @@
 package org.jahia.modules.npmplugins.views;
 
+import org.jahia.modules.npmplugins.helpers.CoreHelperFactory;
 import org.jahia.modules.npmplugins.helpers.RegistryHelper;
+import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public class JSScriptResolver implements ScriptResolver {
 
     private RenderService renderService;
-    private RegistryHelper registryHelper;
+    private GraalVMEngine graalVMEngine;
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -29,8 +31,8 @@ public class JSScriptResolver implements ScriptResolver {
     }
 
     @Reference
-    public void setRegistryHelper(RegistryHelper registryHelper) {
-        this.registryHelper = registryHelper;
+    public void setGraalVMEngine(GraalVMEngine graalVMEngine) {
+        this.graalVMEngine = graalVMEngine;
     }
 
     @Activate
@@ -50,7 +52,7 @@ public class JSScriptResolver implements ScriptResolver {
     @Override
     public Script resolveScript(Resource resource, RenderContext renderContext) throws TemplateNotFoundException {
         try {
-            return new JSScript(resolveView(resource, renderContext));
+            return new JSScript(resolveView(resource, renderContext), graalVMEngine);
         } catch (RepositoryException e) {
             throw new TemplateNotFoundException(e);
         }
@@ -100,6 +102,8 @@ public class JSScriptResolver implements ScriptResolver {
         Map<String, Object> filter = new HashMap<>();
         filter.put("target", extendedNodeType.getName());
         filter.put("templateType", templateType);
-        return registryHelper.getRegistry().find(filter).stream().map(JSView::new).collect(Collectors.toCollection(TreeSet::new));
+        return graalVMEngine.doWithContext(contextProvider -> {
+            return contextProvider.getRegistry().find(filter).stream().map(JSView::new).collect(Collectors.toCollection(TreeSet::new));
+        });
     }
 }
