@@ -1,0 +1,6 @@
+- importSite: jar:mvn:org.jahia.modules/digitall/2.0.0/zip/import!/Digitall.zip
+- import: jar:mvn:org.jahia.modules/digitall/2.0.0/zip/import!/users.zip
+- addMavenRepository: 'https://devtools.jahia.com/nexus/content/repositories/jahia-snapshots@id=jahia-snapshots@snapshots'
+- installBundle: 'mvn:org.jahia.modules/npm-plugins'
+  autoStart: true
+  uninstallPreviousVersion: true
