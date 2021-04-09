@@ -241,6 +241,8 @@ jobs:
             if [ << parameters.SKIP_ARTIFACTS >> == false ]; then
               sudo cp -r /home/circleci/source/target/*.jar << pipeline.parameters.TESTS_PATH >>artifacts/
             fi
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Docker login
           # This is needed to fetch private docker images (such as Jahia snapshot)
