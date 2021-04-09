@@ -198,7 +198,7 @@ jobs:
   integration_tests:
     <<: *workdir
     docker:
-      - image: cimg/openjdk:8.0.275
+      - image: cimg/openjdk:8.0.275-node
     # Available types: medium, large, xlarge, 2xlarge https://circleci.com/docs/2.0/configuration-reference/#machine-executor-linux
     resource_class: xlarge
     parameters:
@@ -310,10 +310,6 @@ jobs:
           command: |
             set +e
             cd << pipeline.parameters.TESTS_PATH >>
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install v12
-            nvm alias default v12
             npm install -g jahia-reporter
             echo "Fetching modules"
             jahia-reporter utils:modules \
