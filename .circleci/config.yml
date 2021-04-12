@@ -312,6 +312,7 @@ jobs:
             cd << pipeline.parameters.TESTS_PATH >>
             sudo npm install -g jahia-reporter
             echo "Fetching modules"
+            ssh -4 -f -L 8080:localhost:8080 remote-docker sleep 5
             jahia-reporter utils:modules \
               --moduleId="<< pipeline.parameters.MODULE_ID >>" \
               --dependencies="graphql-dxm-provider" \
