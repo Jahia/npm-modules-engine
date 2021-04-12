@@ -6,6 +6,8 @@ if [[ ! -f .env ]]; then
  cp .env.example .env
 fi
 
+source .env
+
 #!/usr/bin/env bash
 START_TIME=$SECONDS
 
@@ -13,41 +15,47 @@ echo " == Using MANIFEST: ${MANIFEST}"
 echo " == Using JAHIA_URL= ${JAHIA_URL}"
 
 echo " == Waiting for Jahia to startup"
-./node_modules/jahia-reporter/bin/run utils:alive --jahiaUrl=${JAHIA_URL}
+while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${JAHIA_URL}/cms/login)" != "200" ]];
+  do sleep 5;
+done
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo " == Jahia became alive in ${ELAPSED_TIME} seconds"
+
+mkdir -p ./run-artifacts
+mkdir -p ./results
 
 # Add the credentials to a temporary manifest for downloading files
 # Execute jobs listed in the manifest
 # If the file doesn't exist, we assume it is a URL and we download it locally
 if [[ -e ${MANIFEST} ]]; then
-  cp ${MANIFEST} /tmp/run-artifacts
+  cp ${MANIFEST} ./run-artifacts
 else
   echo "Downloading: ${MANIFEST}"
-  curl ${MANIFEST} --output /tmp/run-artifacts/curl-manifest
+  curl ${MANIFEST} --output ./run-artifacts/curl-manifest
   MANIFEST="curl-manifest"
 fi
-sed -i -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" /tmp/run-artifacts/${MANIFEST}
-sed -i -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" /tmp/run-artifacts/${MANIFEST}
+sed -i -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
+sed -i -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
 
 echo " == Warming up the environement =="
-./node_modules/jahia-reporter/bin/run utils:provision --jahiaUrl=${JAHIA_URL} --script=/tmp/run-artifacts/${MANIFEST}
+curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning -H 'content-type: application/yaml' --data-binary "@${MANIFEST}"
 echo " == Environment warmup complete =="
 
 # If we're building the module (and manifest name contains build), then we'll end up pushing that module individually 
-if [[ ${MANIFEST} == *"build"* ]]; then
-  echo " == Submitting Npm plugins module from: /tmp/artifacts/npm-plugins-SNAPSHOT.jar =="
-  ./node_modules/jahia-reporter/bin/run utils:module --jahiaUrl=${JAHIA_URL} --moduleId=npm-plugins --moduleFile=/tmp/artifacts/npm-plugins-SNAPSHOT.jar
+for file in ./artifacts/*-SNAPSHOT.jar
+do
+  echo " == Submitting module from: $file =="
+  curl -s --user root:${SUPER_USER_PASSWORD} --form bundle=@$file --form start=true ${JAHIA_URL}/modules/api/bundles
   echo " == Module submitted =="
-fi
+done
 
 echo "== Run tests =="
-CYPRESS_baseUrl=${JAHIA_URL} yarn e2e:ci
+yarn e2e:ci
 if [[ $? -eq 0 ]]; then
-  echo "success" > /tmp/results/test_success
+  echo "success" > ./results/test_success
   exit 0
 else
-  echo "failure" > /tmp/results/test_failure
+  echo "failure" > ./results/test_failure
   exit 1
 fi
 

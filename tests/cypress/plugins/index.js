@@ -1,13 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const codeCoverage = require('@cypress/code-coverage/task');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const installLogsPrinter = require('cypress-terminal-report/src/installLogsPrinter');
+const env = require('./env');
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const cypressTypeScriptPreprocessor = require("./cy-ts-preprocessor");
 
 module.exports = (on, config) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require("@cypress/code-coverage/task")(on, config);
+    env(on, config)
+    codeCoverage(on, config);
     
     //https://github.com/archfz/cypress-terminal-report
-    // eslint-disable-next-line @typescript-eslint/no-var-requires    
-    require('cypress-terminal-report/src/installLogsPrinter')(on);
+    installLogsPrinter(on);
     on("file:preprocessor", cypressTypeScriptPreprocessor);
     return config;
 };

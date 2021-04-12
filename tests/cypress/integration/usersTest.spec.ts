@@ -1,7 +1,9 @@
-import { users } from '../page-object/users.page'
-
 describe('navigation to user', () => {
-    it('navigates to the users page successfully', function () {
-        users.goTo()
+    it('should login', () => {
+        cy.visit('/', { failOnStatusCode: false })
+        cy.get('input[name=username]').type('root')
+        cy.get('input[name=password]').type(Cypress.env('SUPER_USER_PASSWORD'))
+        cy.get('button[type=submit]').click()
+        cy.url().should('include', '/jahia/dashboard')
     })
 })
