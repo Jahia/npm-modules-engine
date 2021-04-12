@@ -310,7 +310,7 @@ jobs:
           command: |
             set +e
             cd << pipeline.parameters.TESTS_PATH >>
-            npm install -g jahia-reporter
+            sudo npm install -g jahia-reporter
             echo "Fetching modules"
             jahia-reporter utils:modules \
               --moduleId="<< pipeline.parameters.MODULE_ID >>" \
