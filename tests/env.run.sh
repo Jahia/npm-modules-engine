@@ -34,13 +34,12 @@ else
   curl ${MANIFEST} --output ./run-artifacts/curl-manifest
   MANIFEST="curl-manifest"
 fi
-sed -i -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
-sed -i -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
+sed -i "" -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
+sed -i "" -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
 
 
 echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
 curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning -H 'content-type: application/yaml' --data-binary "@${MANIFEST}"
-#curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@${MANIFEST};type=text/yaml"
 echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
 
 # If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
