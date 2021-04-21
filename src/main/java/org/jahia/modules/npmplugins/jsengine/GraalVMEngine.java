@@ -18,11 +18,14 @@ import org.jahia.services.content.JCRTemplate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.touk.throwing.ThrowingSupplier;
 
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -31,6 +34,8 @@ import java.util.function.Function;
  */
 @Component(service = GraalVMEngine.class, immediate = true)
 public class GraalVMEngine {
+    private static final Logger logger = LoggerFactory.getLogger(GraalVMEngine.class);
+
     public static final String JS = "js";
 
     private Engine sharedEngine;
@@ -41,6 +46,7 @@ public class GraalVMEngine {
     private ThreadLocal<ContextProvider> currentContext = new ThreadLocal<>();
 
     private LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
+    private AtomicInteger version = new AtomicInteger(0);
 
     private Collection<Registrar> registrars = new ArrayList<>();
 
@@ -64,7 +70,7 @@ public class GraalVMEngine {
 
     public void addInitScript(Bundle bundle, String script) throws IOException {
         initScripts.put(bundle, getGraalSource(bundle, script));
-
+        version.incrementAndGet();
         doWithContext(contextProvider -> {
             for (Registrar registrar : registrars) {
                 registrar.register(contextProvider.getRegistry(), bundle, this);
@@ -79,7 +85,9 @@ public class GraalVMEngine {
             }
         });
 
-        initScripts.remove(bundle);
+        if (initScripts.remove(bundle) != null) {
+            version.incrementAndGet();
+        }
     }
 
     @Activate
@@ -87,7 +95,7 @@ public class GraalVMEngine {
         try {
             initScripts.put(bundleContext.getBundle(), getGraalSource(bundleContext.getBundle(), "META-INF/js/main.js"));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Cannot execute main init script", e);
         }
 
         Engine.Builder builder = Engine.newBuilder();
@@ -113,41 +121,6 @@ public class GraalVMEngine {
         sharedEngine.close();
     }
 
-//    /**
-//     * Execute JS code from URL
-//     */
-//    public Value executeJs(URL code) throws IOException {
-//        return executeJs(code, null);
-//    }
-//
-//    /**
-//     * Execute JS code from URL with additional bindings
-//     */
-//    public Value executeJs(URL code, Map<String, Object> bindings) throws IOException {
-//        ContextProvider cx = getContextProvider();
-//        return cx.doWithinLock(() -> {
-//            Map<String, Object> oldBindings = new HashMap<>();
-//            Value jsBindings = cx.getContext().getBindings(JS);
-//            try {
-//                if (bindings != null) {
-//                    bindings.forEach((key, value) -> {
-//                        oldBindings.put(key, jsBindings.getMember(key));
-//                        jsBindings.putMember(key, value);
-//                    });
-//                }
-//                Source source = Source.newBuilder(JS, code)
-//                        .cached(false)
-//                        .uri(new URI(code.toExternalForm()))
-//                        .build();
-//                return cx.getContext().eval(source);
-//            } catch (URISyntaxException e) {
-//                throw new IOException(e);
-//            } finally {
-//                oldBindings.forEach(jsBindings::putMember);
-//            }
-//        });
-//    }
-
     public <T> T doWithContext(Function<ContextProvider, T> callback) {
         ContextProvider cx = currentContext.get();
         if (cx != null) {
@@ -157,12 +130,12 @@ public class GraalVMEngine {
                 cx = pool.borrowObject();
                 currentContext.set(cx);
             } catch (Exception e) {
-                throw new RuntimeException("Unable to borrow context from pool" + e.toString(), e);
+                throw new GraalVMException("Unable to borrow context from pool: " + e.getMessage(), e);
             }
             try {
                 return callback.apply(cx);
             } finally {
-                currentContext.set(null);
+                currentContext.remove();
                 pool.returnObject(cx);
             }
         }
@@ -208,7 +181,7 @@ public class GraalVMEngine {
                     .ofNullable(getSourceFile(bundle, path))
                     .orElseGet(ThrowingSupplier.unchecked(() -> IOUtils.toString(bundle.getResource(path))));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Cannot get resource", e);
         }
         return null;
     }
@@ -217,7 +190,7 @@ public class GraalVMEngine {
     class ContextPoolFactory extends BasePooledObjectFactory<ContextProvider> {
         @Override
         public ContextProvider create() throws Exception {
-            System.out.println("ContextPoolFactory.create");
+            logger.info("ContextPoolFactory.create");
             Context context = Context.newBuilder(JS)
                     .allowHostClassLookup(s -> true)
                     .allowHostAccess(HostAccess.ALL)
@@ -225,7 +198,7 @@ public class GraalVMEngine {
                     .allowIO(true)
                     .engine(sharedEngine).build();
 
-            ContextProvider contextProvider = new ContextProvider(context);
+            ContextProvider contextProvider = new ContextProvider(context, version.get());
 
             Map<String, Object> helpers = new HashMap<>();
             for (JSGlobalVariableFactory global : globals) {
@@ -246,7 +219,7 @@ public class GraalVMEngine {
                     contextProvider.getRegisteredBundles().add(entry.getKey());
                     context.getBindings(JS).removeMember("bundle");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Cannot execute init script {}", entry.getValue(), e);
                 }
             }
             return contextProvider;
@@ -259,27 +232,13 @@ public class GraalVMEngine {
 
         @Override
         public boolean validateObject(PooledObject<ContextProvider> p) {
-            // TODO Improve validity check. Should check internal bundle version, and helpers list
-            Collection<Bundle> registeredSources = p.getObject().getRegisteredBundles();
-            Collection<Bundle> currentSources = initScripts.keySet();
-
-            return registeredSources.containsAll(currentSources) && currentSources.containsAll(registeredSources);
+            return version.get() == p.getObject().getVersion();
         }
 
         @Override
         public void destroyObject(PooledObject<ContextProvider> p) throws Exception {
-            System.out.println("ContextPoolFactory.destroyObject");
+            logger.info("ContextPoolFactory.destroyObject");
             p.getObject().close();
-        }
-
-        @Override
-        public void activateObject(PooledObject<ContextProvider> p) throws Exception {
-            super.activateObject(p);
-        }
-
-        @Override
-        public void passivateObject(PooledObject<ContextProvider> p) throws Exception {
-            super.passivateObject(p);
         }
     }
 }

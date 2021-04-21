@@ -3,10 +3,7 @@ package org.jahia.modules.npmplugins;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npmplugins.helpers.CoreHelperFactory;
-import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
-import org.jahia.modules.npmplugins.registrars.Registrar;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRTemplate;
@@ -14,7 +11,10 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Map;
 
 /**
  * Listener to execute scripts at activate/desactivate time
@@ -30,6 +30,8 @@ import java.util.*;
 @Component(immediate = true)
 public class JSInitListener implements BundleListener {
     private static final Logger logger = LoggerFactory.getLogger(JSInitListener.class);
+    public static final String SOURCES = "sources";
+    public static final String MODULES = "/modules/";
     private GraalVMEngine engine;
 
     @Reference
@@ -80,11 +82,11 @@ public class JSInitListener implements BundleListener {
         if (url != null) {
             JCRTemplate.getInstance().doExecuteWithSystemSession(session -> {
                 JahiaTemplatesPackage pkg = BundleUtils.getModule(bundle);
-                JCRNodeWrapper n = session.getNode("/modules/" + pkg.getIdWithVersion());
-                if (n.hasNode("sources")) {
-                    n.getNode("sources").remove();
+                JCRNodeWrapper n = session.getNode(MODULES + pkg.getIdWithVersion());
+                if (n.hasNode(SOURCES)) {
+                    n.getNode(SOURCES).remove();
                 }
-                JCRNodeWrapper sources = n.addNode("sources", "jnt:moduleVersionFolder");
+                JCRNodeWrapper sources = n.addNode(SOURCES, "jnt:moduleVersionFolder");
                 try {
                     importResources(pkg, "/", sources);
                 } catch (IOException e) {
@@ -118,11 +120,6 @@ public class JSInitListener implements BundleListener {
                 if (jahia != null && jahia.containsKey("server")) {
                     String script = (String) jahia.get("server");
                     engine.addInitScript(bundle, script);
-//                    Source source = GraalVMEngine.getGraalSource(bundle, script);
-//
-//                    if (source != null) {
-//                        engine.registerBundle(put(bundle, source);
-//                    }
                 }
             }
         } catch (Exception e) {
@@ -133,24 +130,6 @@ public class JSInitListener implements BundleListener {
     private void disableBundle(Bundle bundle) {
         try {
             engine.removeInitScript(bundle);
-//            if (bundles.contains(bundle)) {
-//                Map<String, Object> filter = new HashMap<>();
-//                filter.put("bundle", bundle);
-//
-//                for (Registrar registrar : registrars) {
-//                    registrar.unregister(registryHelper, bundle);
-//                }
-//
-//                List<Map<String, Object>> toRemoveObjects = registryHelper.getRegistry().find(filter);
-//                for (Map<String, Object> toRemoveObject : toRemoveObjects) {
-//                    registryHelper.getRegistry().remove((String) toRemoveObject.get("type"), (String) toRemoveObject.get("key"));
-//                }
-//
-//                if (unregisters.containsKey(bundle.getSymbolicName())) {
-//                    unregisters.remove(bundle.getSymbolicName()).execute();
-//                }
-//                bundles.remove(bundle);
-//            }
         } catch (Exception e) {
             logger.error("Cannot disable bundle {}", bundle.getSymbolicName(), e);
         }

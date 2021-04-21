@@ -5,22 +5,31 @@ import org.jahia.modules.npmplugins.helpers.Registry;
 import org.jahia.modules.npmplugins.helpers.RegistryHelper;
 import org.osgi.framework.Bundle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContextProvider {
 
     private boolean isActive = true;
+    private int version;
     private final Context context;
 
     private Collection<Bundle> registeredBundles = new ArrayList<>();
     private Map<String, Object> helpers = new HashMap<>();
 
-    public ContextProvider(Context cx) {
+    public ContextProvider(Context cx, int version) {
         this.context = cx;
+        this.version = version;
     }
 
     public Context getContext() {
         return context;
+    }
+
+    public int getVersion() {
+        return version;
     }
 
     public Collection<Bundle> getRegisteredBundles() {

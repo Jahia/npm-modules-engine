@@ -2,11 +2,7 @@
 # This script can be used to warmup the environment and execute the tests
 # It is used by the docker image at startup
 
-if [[ ! -f .env ]]; then
- cp .env.example .env
-fi
-
-source .env
+source ./set-env.sh
 
 #!/usr/bin/env bash
 START_TIME=$SECONDS
@@ -34,22 +30,25 @@ else
   curl ${MANIFEST} --output ./run-artifacts/curl-manifest
   MANIFEST="curl-manifest"
 fi
-sed -i -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
-sed -i -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
+sed -i "" -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
+sed -i "" -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
+sed -i "" -e "s/JAHIA_VERSION/${JAHIA_VERSION}/g" ./run-artifacts/${MANIFEST}
 
-echo " == Warming up the environement =="
-curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning -H 'content-type: application/yaml' --data-binary "@${MANIFEST}"
-echo " == Environment warmup complete =="
+echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
+curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@./run-artifacts/${MANIFEST};type=text/yaml"
+echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
 
-# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually 
-for file in ./artifacts/*-SNAPSHOT.jar
+# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
+cd ./artifacts
+for file in *-SNAPSHOT.jar
 do
-  echo " == Submitting module from: $file =="
-  curl -s --user root:${SUPER_USER_PASSWORD} --form bundle=@$file --form start=true ${JAHIA_URL}/modules/api/bundles
-  echo " == Module submitted =="
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting module from: $file =="
+  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installAndStartBundle":"'"$file"'"}]' --form file=@$file
+  echo "$(date +'%d %B %Y - %k:%M') == Module submitted =="
 done
+cd ..
 
-echo "== Run tests =="
+echo "$(date +'%d %B %Y - %k:%M')== Run tests =="
 yarn e2e:ci
 if [[ $? -eq 0 ]]; then
   echo "success" > ./results/test_success
