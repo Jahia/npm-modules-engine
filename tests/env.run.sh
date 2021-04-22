@@ -8,6 +8,10 @@ fi
 
 source .env
 
+# Execute expansions to have file understandable by docker-compose and node dotenv
+mv .env .env.orig
+( cat .env.orig ; echo "cat <<EOF" ; cat .env.orig ; echo EOF ) | sh > .env
+
 #!/usr/bin/env bash
 START_TIME=$SECONDS
 
