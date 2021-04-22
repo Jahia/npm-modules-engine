@@ -210,11 +210,13 @@ jobs:
         default: ""
       MANIFEST:
         type: string
-        default: "provisioning-manifest.yml"
       # Why this is not a boolean, see: https://discuss.circleci.com/t/run-job-within-workflow-conditionally/34125/2
       SKIP_TESTRAIL:
         type: string
         default: ""
+      SKIP_ARTIFACTS:
+        type: boolean
+        default: true
       TESTS_IMAGE:
         type: string
         default: << pipeline.parameters.TESTS_IMAGE >>:latest
@@ -236,6 +238,9 @@ jobs:
           command: |
             if [ ! -d << pipeline.parameters.TESTS_PATH >>artifacts ]; then
               mkdir -p << pipeline.parameters.TESTS_PATH >>artifacts
+            fi
+            if [ << parameters.SKIP_ARTIFACTS >> == false ]; then
+              sudo cp -r /home/circleci/source/target/*.jar << pipeline.parameters.TESTS_PATH >>artifacts/
             fi
       - setup_remote_docker:
           docker_layer_caching: true
@@ -771,8 +776,10 @@ workflows:
           context: QA_ENVIRONMENT
           #Using Aliases here (8 is the latest of the 8 tree, 8.1 is the latest of the tree, ...)
           TESTS_IMAGE: << pipeline.parameters.TESTS_IMAGE >>:latest
+          MANIFEST: provisioning-manifest-build.yml
           TESTRAIL_MILESTONE: Jahia-Latest
           SKIP_TESTRAIL: "true"
+          SKIP_ARTIFACTS: false
           BUILD_TESTSIMAGE: true
       - docker-publish:
           context: QA_ENVIRONMENT

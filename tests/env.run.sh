@@ -45,6 +45,14 @@ echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
 curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@./run-artifacts/${MANIFEST};type=text/yaml"
 echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
 
+# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
+for file in ./artifacts/*-SNAPSHOT.jar
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting module from: $file =="
+  curl -s --user root:${SUPER_USER_PASSWORD} --form bundle=@$file --form start=true ${JAHIA_URL}/modules/api/bundles
+  echo "$(date +'%d %B %Y - %k:%M') == Module submitted =="
+done
+
 echo "$(date +'%d %B %Y - %k:%M')== Run tests =="
 yarn e2e:ci
 if [[ $? -eq 0 ]]; then
