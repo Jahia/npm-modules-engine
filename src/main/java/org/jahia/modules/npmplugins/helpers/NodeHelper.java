@@ -3,12 +3,15 @@ package org.jahia.modules.npmplugins.helpers;
 import org.graalvm.polyglot.Value;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 public class NodeHelper {
+    private static final Logger logger = LoggerFactory.getLogger(NodeHelper.class);
 
     private ContextProvider context;
 
@@ -25,7 +28,7 @@ public class NodeHelper {
                 v.getMember("properties").putMember(next.getName(), next.getValue());
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            logger.error("Cannot get node",e);
         }
         return v;
     }

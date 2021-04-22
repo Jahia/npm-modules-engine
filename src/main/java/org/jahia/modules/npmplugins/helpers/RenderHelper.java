@@ -12,6 +12,8 @@ import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
 import org.jahia.taglibs.template.include.ModuleTag;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
@@ -21,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenderHelper {
+    private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
+
     private JCRSessionFactory jcrSessionFactory;
     private JCRTemplate jcrTemplate;
     private RenderService renderService;
@@ -58,7 +62,7 @@ public class RenderHelper {
             try {
                 onResolve.execute(renderModuleSync(attr, renderContext));
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Cannot render module", e);
                 onReject.execute(e.getMessage());
             }
         };
@@ -79,7 +83,7 @@ public class RenderHelper {
             try {
                 onResolve.execute(renderComponentSync(definition, renderContext));
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Cannot render module", e);
                 onReject.execute(e.getMessage());
             }
         };

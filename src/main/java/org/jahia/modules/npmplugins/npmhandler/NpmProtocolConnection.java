@@ -5,6 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -24,7 +26,9 @@ import java.util.zip.ZipEntry;
  * Transform npm pack into bundle
  */
 public class NpmProtocolConnection extends URLConnection {
-    private URL wrappedUrl;
+    private static final Logger logger = LoggerFactory.getLogger(NpmProtocolConnection.class);
+
+    private final URL wrappedUrl;
 
     public NpmProtocolConnection(URL url) throws MalformedURLException {
         super(url);
@@ -33,7 +37,7 @@ public class NpmProtocolConnection extends URLConnection {
 
     @Override
     public void connect() throws IOException {
-        //
+        // Do nothing
     }
 
     @Override
@@ -46,14 +50,11 @@ public class NpmProtocolConnection extends URLConnection {
         Properties manifest = new Properties();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        JarOutputStream jos = null;
-
         Collection<String> extensions = new HashSet<>();
 
         File f = new File(outputDir, "package");
         Collection<File> files = FileUtils.listFiles(f,null, true);
-        try {
-            jos = new JarOutputStream(byteArrayOutputStream);
+        try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
             for (File file : files) {
                 String path = f.toURI().relativize(file.toURI()).getPath();
 
@@ -62,8 +63,8 @@ public class NpmProtocolConnection extends URLConnection {
                     Map<String, Object> properties = mapper.readValue(file, Map.class);
 
                     String name = (String) properties.get("name");
-                    manifest.put("Bundle-Name", "Javascript module : " + name);
-                    manifest.put("Bundle-SymbolicName", "js-" + name.replace("@", "").replace('/', '-'));
+                    manifest.put("Bundle-Name", name + "(npm module)");
+                    manifest.put("Bundle-SymbolicName", name.replace("@", "").replace('/', '-'));
                     manifest.put("Bundle-Version", properties.get("version"));
                     manifest.put("Bundle-Category", "jahia-module");
                     manifest.put("Jahia-GroupId", "org.jahia.npm");
@@ -83,12 +84,13 @@ public class NpmProtocolConnection extends URLConnection {
                 } else {
                     jos.putNextEntry(new ZipEntry(path));
                 }
-                IOUtils.copy(new FileInputStream(file), jos);
+                try (FileInputStream input = new FileInputStream(file)) {
+                    IOUtils.copy(input, jos);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Cannot transform npm-module", e);
         }
-        IOUtils.closeQuietly(jos);
         FileUtils.deleteDirectory(outputDir);
 
         if (!extensions.isEmpty()) {
