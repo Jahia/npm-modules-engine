@@ -63,7 +63,7 @@ public class NpmProtocolConnection extends URLConnection {
                     Map<String, Object> properties = mapper.readValue(file, Map.class);
 
                     String name = (String) properties.get("name");
-                    manifest.put("Bundle-Name", name + "(npm module)");
+                    manifest.put("Bundle-Name", name + " (npm module)");
                     manifest.put("Bundle-SymbolicName", name.replace("@", "").replace('/', '-'));
                     manifest.put("Bundle-Version", properties.get("version"));
                     manifest.put("Bundle-Category", "jahia-module");

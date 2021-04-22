@@ -105,7 +105,12 @@
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-bnd</artifactId>
             <version>1.8.3</version>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
