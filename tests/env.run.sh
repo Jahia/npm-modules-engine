@@ -3,7 +3,7 @@
 # It is used by the docker image at startup
 
 if [[ ! -f .env ]]; then
- cp .env.example .env
+ ( cat .env.example ; echo "cat <<EOF" ; cat .env.example ; echo EOF ) | sh > .env
 fi
 
 source .env

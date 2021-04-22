@@ -3,7 +3,7 @@
 # It should be executed from the tests folder
 
 if [[ ! -f .env ]]; then
- cp .env.example .env
+ ( cat .env.example ; echo "cat <<EOF" ; cat .env.example ; echo EOF ) | sh > .env
 fi
 
 source .env
