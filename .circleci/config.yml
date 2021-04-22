@@ -207,6 +207,7 @@ jobs:
         default: Default
       JAHIA_IMAGE:
         type: string
+        default: ""
       MANIFEST:
         type: string
         default: "provisioning-manifest.yml"
