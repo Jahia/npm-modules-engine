@@ -775,6 +775,7 @@ workflows:
             - build
           context: QA_ENVIRONMENT
           #Using Aliases here (8 is the latest of the 8 tree, 8.1 is the latest of the tree, ...)
+          JAHIA_IMAGE: jahia/jahia-ee-dev:8.0.3.0-SNAPSHOT-graalvm
           TESTS_IMAGE: << pipeline.parameters.TESTS_IMAGE >>:latest
           MANIFEST: provisioning-manifest-build.yml
           TESTRAIL_MILESTONE: Jahia-Latest
