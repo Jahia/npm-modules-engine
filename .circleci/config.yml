@@ -227,6 +227,15 @@ jobs:
             - v1-maven-dependencies-{{ checksum "maven_cache_seed" }}
             # fallback to using the latest cache if no exact match is found
             - v1-maven-dependencies-
+      - run:
+          name:
+            Prepare artifacts
+            # This command copy the various build artifacts into the /tests/ folder to be later
+            # used by jahia-cli to provision Jahia for testing
+          command: |
+            if [ ! -d << pipeline.parameters.TESTS_PATH >>artifacts ]; then
+              mkdir -p << pipeline.parameters.TESTS_PATH >>artifacts
+            fi
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
