@@ -34,9 +34,6 @@ sed -i "" -e "s/NEXUS_USERNAME/${NEXUS_USERNAME}/g" ./run-artifacts/${MANIFEST}
 sed -i "" -e "s/NEXUS_PASSWORD/${NEXUS_PASSWORD}/g" ./run-artifacts/${MANIFEST}
 sed -i "" -e "s/JAHIA_VERSION/${JAHIA_VERSION}/g" ./run-artifacts/${MANIFEST}
 
-echo JAHIA_URL=${JAHIA_URL} > ./run-artifacts/cypress.env
-echo SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD} >> ./run-artifacts/cypress.env
-
 echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
 curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@./run-artifacts/${MANIFEST};type=text/yaml"
 echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
