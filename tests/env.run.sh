@@ -2,15 +2,7 @@
 # This script can be used to warmup the environment and execute the tests
 # It is used by the docker image at startup
 
-if [[ ! -f .env ]]; then
- cp .env.example .env
-fi
-
-source .env
-
-# Execute expansions to have file understandable by docker-compose and node dotenv
-mv .env .env.orig
-( cat .env.orig ; echo "cat <<EOF" ; cat .env.orig ; echo EOF ) | sh > .env
+source ./set-env.sh
 
 #!/usr/bin/env bash
 START_TIME=$SECONDS
