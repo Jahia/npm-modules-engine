@@ -271,7 +271,7 @@ jobs:
           # We need to copy the dummy.tgz to the docker container /var/jahia/modules
           name: Copy tgz bundle to docker
           command: |
-            docker cp /tests/cypress/fixtures/dummy.tgz jahia:/var/jahia/modules
+            docker cp tests/cypress/fixtures/dummy.tgz jahia:/var/jahia/modules
       - run:
           # We want to build the test image from scratch with any code change (since that code change could be in the tests themselves)
           name: Build << pipeline.parameters.TESTS_IMAGE >> image
