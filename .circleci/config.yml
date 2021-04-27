@@ -276,8 +276,8 @@ jobs:
             sleep 30          
             docker cp tests/cypress/fixtures/dummy.tgz jahia:/tmp
             docker exec -it jahia ls -lah /tmp            
-            docker exec -it jahia chown jahians /tmp/dummy.tgz
-            docker exec -it jahia chgrp jahians /tmp/dummy.tgz
+            docker exec -it jahia chown tomcat /tmp/dummy.tgz
+            docker exec -it jahia chgrp tomcat /tmp/dummy.tgz
             docker exec -it jahia mv /tmp/dummy.tgz /var/jahia/modules/
             docker exec -it jahia ls -lah /var/jahia/modules/
             echo "Module copied"
