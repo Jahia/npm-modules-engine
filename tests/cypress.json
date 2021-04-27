@@ -7,6 +7,10 @@
     "reporterOptions": {
         "configFile": "reporter-config.json"
     },
+    "env": {
+        "JAHIA_USERNAME": "root",
+        "JAHIA_PASSWORD": "root1234"
+    },
     "screenshotsFolder": "./results/screenshots",
     "videosFolder": "./results/videos",
     "ignoreTestFiles": "*.example.ts",

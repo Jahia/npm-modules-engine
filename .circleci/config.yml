@@ -268,13 +268,18 @@ jobs:
             TESTS_IMAGE: << parameters.TESTS_IMAGE >>
             SUPER_USER_PASSWORD: root1234
       - run:
+          # We need to copy the dummy.tgz to the docker container /var/jahia/modules
+          name: Copy tgz bundle to docker
+          command: |
+            docker cp /tests/cypress/fixtures/dummy.tgz jahia:/var/jahia/modules
+      - run:
           # We want to build the test image from scratch with any code change (since that code change could be in the tests themselves)
           name: Build << pipeline.parameters.TESTS_IMAGE >> image
           command: |
             if [ << parameters.BUILD_TESTSIMAGE >> == true ]; then
-              cd << pipeline.parameters.TESTS_PATH >>
-              docker build -t << pipeline.parameters.TESTS_IMAGE >> .
-              docker save -o tests_image.tar << pipeline.parameters.TESTS_IMAGE >>
+            cd << pipeline.parameters.TESTS_PATH >>
+            docker build -t << pipeline.parameters.TESTS_IMAGE >> .
+            docker save -o tests_image.tar << pipeline.parameters.TESTS_IMAGE >>
             fi
       - run:
           name: Execute tests
