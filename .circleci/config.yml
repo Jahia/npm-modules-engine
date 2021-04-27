@@ -274,7 +274,12 @@ jobs:
           command: |
             echo "Pausing for 30s before copying dummy tgz module"          
             sleep 30          
-            docker cp tests/cypress/fixtures/dummy.tgz jahia:/var/jahia/modules
+            docker cp tests/cypress/fixtures/dummy.tgz jahia:/tmp
+            docker exec -it jahia ls -lah /tmp            
+            docker exec -it jahia chown jahians /tmp/dummy.tgz
+            docker exec -it jahia chgrp jahians /tmp/dummy.tgz
+            docker exec -it jahia mv /tmp/dummy.tgz /var/jahia/modules/
+            docker exec -it jahia ls -lah /var/jahia/modules/
             echo "Module copied"
       - run:
           # We want to build the test image from scratch with any code change (since that code change could be in the tests themselves)
