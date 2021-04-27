@@ -73,10 +73,4 @@ describe('Install NPM Modules via Module Manager API', () => {
                 })
             })
     })
-
-    it('Uninstall tgz bundle success path', () => {
-        cy.apiRequest('POST', uninstallAPI, null, authorization, 'application/x-www-form-urlencoded', (response) => {
-            expect(response.status).to.eq(200)
-        })
-    })
 })
