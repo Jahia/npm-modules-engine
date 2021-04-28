@@ -1,6 +1,5 @@
 describe('Install NPM Modules via Module Manager API', () => {
     const bundleApiUrl = '/modules/api/bundles'
-    const localStateAPI = bundleApiUrl + '/org.jahia.modules/npm-plugin-example/1.0.0/_localState'
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
 
     it('Install tgz bundle success path', () => {
@@ -21,12 +20,6 @@ describe('Install NPM Modules via Module Manager API', () => {
                     expect(response.response).to.contains('successful')
                 })
             })
-
-        // // Check if bundle is Active
-        cy.apiRequest('GET', localStateAPI, null, authorization, null, (response) => {
-            expect(response.status).to.eq(200)
-            expect(response.response).to.eq('"ACTIVE"')
-        })
     })
 
     it('Should be Unauthorized', () => {
