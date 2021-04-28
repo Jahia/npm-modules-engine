@@ -2,6 +2,14 @@ describe('Install NPM Modules via Module Manager API', () => {
     const bundleApiUrl = '/modules/api/bundles'
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
 
+    it('Should be Unauthorized', () => {
+        // Perform the request
+        cy.apiRequest('POST', bundleApiUrl, null, null, null, (response) => {
+            expect(response.status).to.eq(401)
+            expect(response.response).to.contains('User guest is not allowed')
+        })
+    })
+
     it('Install tgz bundle success path', () => {
         const fileName = 'dummy.tgz'
 
@@ -21,14 +29,6 @@ describe('Install NPM Modules via Module Manager API', () => {
                 })
             })
     })
-
-    // it('Should be Unauthorized', () => {
-    //     // Perform the request
-    //     cy.apiRequest('POST', bundleApiUrl, null, null, null, (response) => {
-    //         expect(response.status).to.eq(401)
-    //         expect(response.response).to.contains('User guest is not allowed')
-    //     })
-    // })
 
     it('Should fail requesting at least one bundle', () => {
         // Build up the form
