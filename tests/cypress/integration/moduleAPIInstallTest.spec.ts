@@ -1,7 +1,6 @@
 describe('Install NPM Modules via Module Manager API', () => {
     const bundleApiUrl = '/modules/api/bundles'
-    const uninstallAPI = bundleApiUrl + '/org.jahia.modules/npm-plugin-example/1.0.0/_uninstall'
-    // const localStateAPI = bundleApiUrl + '/org.jahia.modules/npm-plugin-example/1.0.0/_localState'
+    const localStateAPI = bundleApiUrl + '/org.jahia.modules/npm-plugin-example/1.0.0/_localState'
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
 
     it('Install tgz bundle success path', () => {
@@ -23,11 +22,11 @@ describe('Install NPM Modules via Module Manager API', () => {
                 })
             })
 
-        // // // Check if bundle is Active
-        // cy.apiRequest('GET', localStateAPI, null, authorization, null, (response) => {
-        //     expect(response.status).to.eq(200)
-        //     expect(response.response).to.eq('"ACTIVE"')
-        // })
+        // // Check if bundle is Active
+        cy.apiRequest('GET', localStateAPI, null, authorization, null, (response) => {
+            expect(response.status).to.eq(200)
+            expect(response.response).to.eq('"ACTIVE"')
+        })
     })
 
     it('Should be Unauthorized', () => {
@@ -48,12 +47,6 @@ describe('Install NPM Modules via Module Manager API', () => {
             expect(response.response).to.contains('At least one bundle file is required')
         })
     })
-
-    // it('Uninstall tgz bundle success path', () => {
-    //     cy.apiRequest('POST', uninstallAPI, null, authorization, 'application/x-www-form-urlencoded', (response) => {
-    //         expect(response.status).to.eq(200)
-    //     })
-    // })
 
     it('Should fail installing corrupted bundle', () => {
         const fileName = 'dummy-corrupted.tgz'
