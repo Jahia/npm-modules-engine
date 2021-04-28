@@ -10,7 +10,7 @@ describe('Install wrong formats NPM Modules via Module Manager API', () => {
         })
     })
 
-     it('Should fail requesting at least one bundle', () => {
+    it('Should fail requesting at least one bundle', () => {
         // Build up the form
         const formData = new FormData()
         formData.set('start', 'true') //adding a plain input to the form

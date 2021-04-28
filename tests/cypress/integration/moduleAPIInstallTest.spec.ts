@@ -21,5 +21,4 @@ describe('Install NPM Modules via Module Manager API', () => {
                 })
             })
     })
-
 })
