@@ -267,7 +267,7 @@ jobs:
             JAHIA_IMAGE: << parameters.JAHIA_IMAGE >>
             TESTS_IMAGE: << parameters.TESTS_IMAGE >>
             SUPER_USER_PASSWORD: root1234
-      - run: //Commented for now since the test is also commented out
+      - run:
           # We need to copy the dummy.tgz to the docker container /var/jahia/modules
           name: Copy tgz bundle to docker
           background: true
