@@ -7,9 +7,16 @@
     "reporterOptions": {
         "configFile": "reporter-config.json"
     },
+    "env": {
+        "JAHIA_USERNAME": "root",
+        "JAHIA_PASSWORD": "root1234"
+    },
     "screenshotsFolder": "./results/screenshots",
     "videosFolder": "./results/videos",
-    "ignoreTestFiles": "*.example.ts",
+
+    "_comment": "fileInstallTest is being ignored since there is probably a bug when installing npm modules right after start jahia",
+    "ignoreTestFiles": "fileInstallTest.spec.ts",
+
     "viewportWidth": 1366,
     "viewportHeight": 768
 }

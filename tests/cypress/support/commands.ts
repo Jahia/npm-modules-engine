@@ -10,6 +10,14 @@ declare namespace Cypress {
          * @example cy.goTo('/start')
          */
         goTo(value: string): Chainable<Element>
+        apiRequest(
+            method: string,
+            url: string,
+            formData: FormData,
+            authorization: string,
+            contentType: string,
+            done,
+        ): Chainable<Element>
     }
 }
 
@@ -20,4 +28,22 @@ Cypress.Commands.add('goTo', function (url: string) {
             password: Cypress.env('SUPER_USER_PASSWORD'),
         },
     })
+})
+
+Cypress.Commands.add('apiRequest', (method, url, formData, authorization, contentType, done) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    xhr.onload = function () {
+        done(xhr)
+    }
+    xhr.onerror = function () {
+        done(xhr)
+    }
+
+    if (contentType != null) {
+        xhr.setRequestHeader('Content-type', contentType)
+    }
+
+    xhr.setRequestHeader('Authorization', authorization)
+    xhr.send(formData)
 })
