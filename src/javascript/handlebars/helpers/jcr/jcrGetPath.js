@@ -1,5 +1,7 @@
-export default function (resource) {
-    const node = resource.getClass().getName() === 'org.jahia.services.render.Resource' ? resource.getNode() : resource;
+import {getNode} from "./util";
+
+export default function (resource, options) {
+    const node = getNode(resource, options.data.root.currentResource.getNode());
 
     return node.getPath();
 }

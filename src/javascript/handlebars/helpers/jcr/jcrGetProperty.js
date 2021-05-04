@@ -1,15 +1,25 @@
 import {SafeString} from 'handlebars';
+import {getNode} from "./util";
 
-export default function (resource, name) {
-    const node = resource.getClass().getName() === 'org.jahia.services.render.Resource' ? resource.getNode() : resource;
+function convertValue(jcrValue) {
+    if (jcrValue.getType() === 10) {
+        return jcrValue.getNode().getPath();
+    }
+
+    return new SafeString(jcrValue.getString());
+}
+
+export default function (resource, name, options) {
+    const node = getNode(resource, options.data.root.currentResource.getNode());
 
     if (!node.hasProperty(name)) {
         return '';
     }
 
-    if (node.getProperty(name).getType() === 10) {
-        return node.getProperty(name).getNode().getPath();
+    const property = node.getProperty(name);
+    if (property.isMultiple()) {
+        return property.getValues().map(convertValue)
+    } else {
+        return convertValue(property.getValue());
     }
-
-    return new SafeString(node.getProperty(name).getString());
 }
