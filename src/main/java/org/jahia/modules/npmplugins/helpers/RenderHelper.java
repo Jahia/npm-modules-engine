@@ -2,7 +2,6 @@ package org.jahia.modules.npmplugins.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
-import org.jahia.modules.npmplugins.jsengine.Promise;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRTemplate;
@@ -10,14 +9,17 @@ import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
+import org.jahia.taglibs.template.include.AddResourcesTag;
+import org.jahia.taglibs.template.include.IncludeTag;
 import org.jahia.taglibs.template.include.ModuleTag;
-import org.jetbrains.annotations.NotNull;
+import org.jahia.taglibs.template.include.OptionTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,17 +37,7 @@ public class RenderHelper {
         this.context = context;
     }
 
-    public Promise render(Map<String, Object> parameters) {
-        return (onResolve, onReject) -> {
-            try {
-                onResolve.execute(renderSync(parameters));
-            } catch (Exception e) {
-                onReject.execute(e.getMessage());
-            }
-        };
-    }
-
-    public String renderSync(Map<String, Object> parameters) throws RepositoryException, RenderException {
+    public String renderNode(Map<String, Object> parameters) throws RepositoryException, RenderException {
         RenderContext renderContext = (RenderContext) parameters.get("renderContext");
         String path = (String) parameters.get("path");
         String template = (String) parameters.get("template");
@@ -57,39 +49,19 @@ public class RenderHelper {
         return renderService.render(resource, renderContext);
     }
 
-    public Promise renderModule(Map<String, Object> attr, RenderContext renderContext) {
-        return (onResolve, onReject) -> {
-            try {
-                onResolve.execute(renderModuleSync(attr, renderContext));
-            } catch (Exception e) {
-                logger.error("Cannot render module", e);
-                onReject.execute(e.getMessage());
-            }
-        };
+    public String renderModule(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        return renderTag(new ModuleTag(), attr, renderContext);
     }
 
-    @NotNull
-    public String renderModuleSync(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        ModuleTag moduleTag = new ModuleTag();
-        BeanUtils.populate(moduleTag, attr);
-        MockPageContext pageContext = new MockPageContext(renderContext);
-        moduleTag.setPageContext(pageContext);
-        moduleTag.doEndTag();
-        return pageContext.getTargetWriter().getBuffer().toString();
+    public String renderInclude(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        return renderTag(new IncludeTag(), attr, renderContext);
     }
 
-    public Promise renderComponent(Map<String, ?> definition, RenderContext renderContext) {
-        return (onResolve, onReject) -> {
-            try {
-                onResolve.execute(renderComponentSync(definition, renderContext));
-            } catch (Exception e) {
-                logger.error("Cannot render module", e);
-                onReject.execute(e.getMessage());
-            }
-        };
+    public String renderOption(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        return renderTag(new OptionTag(), attr, renderContext);
     }
 
-    public String renderComponentSync(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
+    public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
         return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, renderContext.getMainResource().getLocale(), session -> {
             String path = (String) definition.get("path");
 
@@ -116,7 +88,7 @@ public class RenderHelper {
             String contextConfiguration = (String) definition.get("contextConfiguration");
 
             if (contextConfiguration == null) {
-                contextConfiguration = "preview";
+                contextConfiguration = "module";
             }
             if (templateType == null) {
                 templateType = "html";
@@ -132,11 +104,23 @@ public class RenderHelper {
         });
     }
 
-    public String renderSimpleComponentSync(String name, String type, RenderContext renderContext) throws RepositoryException {
+    public String renderSimpleComponent(String name, String type, RenderContext renderContext) throws RepositoryException {
         Map<String, String> definition = new HashMap<>();
         definition.put("name", name);
         definition.put("primaryNodeType", type);
-        return renderComponentSync(definition, renderContext);
+        return renderComponent(definition, renderContext);
+    }
+
+    public String addResourcesTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        return renderTag(new AddResourcesTag(), attr, renderContext);
+    }
+
+    private String renderTag(BodyTagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        BeanUtils.populate(tag, attr);
+        MockPageContext pageContext = new MockPageContext(renderContext);
+        tag.setPageContext(pageContext);
+        tag.doEndTag();
+        return pageContext.getTargetWriter().getBuffer().toString();
     }
 
     @Inject
