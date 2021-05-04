@@ -9,17 +9,14 @@ import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
-import org.jahia.taglibs.template.include.AddResourcesTag;
-import org.jahia.taglibs.template.include.IncludeTag;
-import org.jahia.taglibs.template.include.ModuleTag;
-import org.jahia.taglibs.template.include.OptionTag;
+import org.jahia.taglibs.template.include.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,7 +112,11 @@ public class RenderHelper {
         return renderTag(new AddResourcesTag(), attr, renderContext);
     }
 
-    private String renderTag(BodyTagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public String addCacheDependencyTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        return renderTag(new AddCacheDependencyTag(), attr, renderContext);
+    }
+
+    private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
         BeanUtils.populate(tag, attr);
         MockPageContext pageContext = new MockPageContext(renderContext);
         tag.setPageContext(pageContext);
