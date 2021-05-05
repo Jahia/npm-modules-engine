@@ -16,3 +16,11 @@ export function getNode(resource, currentNode) {
 
     return resource;
 }
+
+export function setResult(result, context, options) {
+    if (options.hash['varName']) {
+        context[options.hash['varName']] = result;
+    } else {
+        return result;
+    }
+}

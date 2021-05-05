@@ -1,5 +1,6 @@
-import {getNode} from "./util";
+import {getNode, setResult} from "./util";
 
 export default function (resource, options) {
-    return getNode(resource, options.data.root.currentResource.getNode());
+    var result = getNode(resource, options.data.root.currentResource.getNode());
+    return setResult(result, this, options);
 }
