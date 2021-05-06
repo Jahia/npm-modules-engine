@@ -1,11 +1,12 @@
 import {SafeString} from 'handlebars';
-import {getNode, setResult} from "./util";
+import {getNode, setResult} from './util';
 
 export default function (resource, name, options) {
     function convertValue(jcrValue) {
-        if (options.hash['renderer']) {
+        if (options.hash.renderer) {
+            // eslint-disable-next-line no-undef
             const choiceListRendererService = Java.type('org.jahia.services.content.nodetypes.renderer.ChoiceListRendererService').getInstance();
-            const renderer = choiceListRendererService.getRenderers().get(options.hash['renderer']);
+            const renderer = choiceListRendererService.getRenderers().get(options.hash.renderer);
             if (renderer) {
                 return renderer.getObjectRendering(options.data.root.renderContext, jcrValue.getDefinition(), jcrValue.getString());
             }
@@ -18,7 +19,6 @@ export default function (resource, name, options) {
         return new SafeString(jcrValue.getString());
     }
 
-
     const node = getNode(resource, options.data.root.currentResource.getNode());
 
     if (!node.hasProperty(name)) {
@@ -29,7 +29,7 @@ export default function (resource, name, options) {
 
     var result;
     if (property.isMultiple()) {
-        result = property.getValues().map(convertValue)
+        result = property.getValues().map(convertValue);
     } else {
         result = convertValue(property.getValue());
     }

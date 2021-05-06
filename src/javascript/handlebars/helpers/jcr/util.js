@@ -4,13 +4,17 @@ export function getNode(resource, currentNode) {
     if (typeof resource === 'string') {
         let session = currentNode.getSession();
         if (uuidRegex.test(resource)) {
-            return session.getNodeByIdentifier(resource)
-        } else if (resource.startsWith("/")) {
-            return session.getNode(resource)
-        } else {
-            return currentNode.getNode(resource);
+            return session.getNodeByIdentifier(resource);
         }
-    } else if (resource.getClass().getName() === 'org.jahia.services.render.Resource') {
+
+        if (resource.startsWith('/')) {
+            return session.getNode(resource);
+        }
+
+        return currentNode.getNode(resource);
+    }
+
+    if (resource.getClass().getName() === 'org.jahia.services.render.Resource') {
         return resource.getNode();
     }
 
@@ -18,8 +22,8 @@ export function getNode(resource, currentNode) {
 }
 
 export function setResult(result, context, options) {
-    if (options.hash['varName']) {
-        context[options.hash['varName']] = result;
+    if (options.hash.varName) {
+        context[options.hash.varName] = result;
     } else {
         return result;
     }

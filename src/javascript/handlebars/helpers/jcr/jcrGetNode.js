@@ -1,4 +1,4 @@
-import {getNode, setResult} from "./util";
+import {getNode, setResult} from './util';
 
 export default function (resource, options) {
     var result = getNode(resource, options.data.root.currentResource.getNode());

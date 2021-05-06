@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import i18next from 'i18next';
 import backend from './backend';
 
 export default () => {
@@ -10,4 +10,4 @@ export default () => {
             defaultNS: 'npm-plugins',
             initImmediate: false
         });
-}
+};
