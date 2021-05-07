@@ -25,6 +25,7 @@ definitions, filter, and other jahia extensions.
 ## Table of content
 
 - [Presentation](#presentation)
+- [GraalVM engine](#graalvm-engine)
 - [Module deployment](#module-deployment)
 - [Registering extensions](#registering-extensions)
 - [Views](#views)
@@ -35,12 +36,16 @@ definitions, filter, and other jahia extensions.
 
 ### JS Context pooling
 
+As Javascript engine is not multi-threaded, it's not possible for different threads to use the same JS context in parallel. 
+Instead, a pool of JS contexts can be used when a thread need to do JS calls. Each context is initialized with the same scripts, and should contain the same values. 
+
 ### Java helpers
 
 NPM module comes with a list of Java helpers, available from javascript code. These helpers are provided by [`CoreHelperFactory`](./src/main/java/org/jahia/modules/npmplugins/helpers/CoreHelperFactory.java)
 Any module can add new helpers by exposing an OSGi service implementing [`JSGlobalVariableFactory`](./src/main/java/org/jahia/modules/npmplugins/jsengine/JSGlobalVariableFactory.java).
 
-All helpers are available inside a global `jahiaHelpers` object in Javascript context.
+All helpers are available inside a global `jahiaHelpers` object in Javascript context. 
+Java helpers are also per JS context. These helpers can safely use the JS context they are bound to execute JS callbacks.
 
 When working with webpack, it can be handy to declare these helpers as "externals" : 
 ```js
@@ -92,7 +97,7 @@ The goal of these initialization scripts is to initialize the Javascript context
 
 ## Registering extensions
 
-All extensions need to be registered by calling the registry `add` method. The registry is available as java helper in `jahiaHelpers.registry` global variable.
+All extensions need to be registered by calling the registry `add` method, in the init script. The registry is available as java helper in `jahiaHelpers.registry` global variable.
 
 ### Views
 
@@ -118,6 +123,7 @@ The implementation is currently simple and not really optimized, but it basicall
 
 A complex JS view example can be found [here](https://github.com/Jahia/npm-plugin-example/blob/8e111d7303a81a48dd064e1c75a1a31797e4d126/src/views/test/test.js) - it has been removed since as all views have been replaced with handlebars, but can still be interesting for review. Using pure JS view is not something people will do for basic views, but are the base for implementing any js templating language (as handlebars).
 
-### Handlebars support
-
 Views can be implemented in handlebars, documentation [here](./handlebars.md)
+
+### Render filters
+
