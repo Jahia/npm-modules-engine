@@ -51,9 +51,9 @@ These additional helpers are available :
 
 Creates a JS object based on hash options
 
-**Params**
+**Named params**
 
-* `options` hash
+Object values
 
 **Example**
 
@@ -68,9 +68,8 @@ Formats a date, based on dayjs
 
 **Params**
 
-* `date` 
-* `format` 
-* `options` hash
+- `date` : date input
+- `format` : date format
 
 **Example**
 
@@ -88,7 +87,7 @@ Default namespace is set to the calling bundle, default language is the current 
 
 ### JCR
 
-All JCR helpers takes a node as first parameters. Node can be defined in different ways :
+All JCR helpers takes a "node" as first parameters. Node can be defined in different ways :
 
 - UUID (`"095fb1d8-b42a-4f5c-9794-35b6b46a2a96"`)
 - Absolute node path (`"/sites/digitall"`)
@@ -108,8 +107,11 @@ Get the identifier of a node
 
 **Params**
 
-* `node` 
-* `options` hash : varName
+- `node` : node to use
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
 
 **Example**
 
@@ -124,8 +126,11 @@ Get the name of a node
 
 **Params**
 
-* `node` 
-* `options` hash : varName
+- `node` : node to use
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
 
 **Example**
 
@@ -140,8 +145,11 @@ Get the node object (`javax.jcr.Node`), mainly used with `varName` or nested in 
 
 **Params**
 
-* `node` 
-* `options` hash : varName
+- `node` : node to use
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
 
 **Example**
 
@@ -158,8 +166,11 @@ Get the path of a node
 
 **Params**
 
-* `node` 
-* `options` hash : varName
+- `node` : node to use
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
 
 **Example**
 
@@ -176,9 +187,13 @@ If property is multiple, returns an array of values.
 
 **Params**
 
-* `node` 
-* `propertyName` 
-* `options` hash : varName, renderer
+- `node` : node to use
+- `propertyName` :  name of the property to get
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
+- `render` : Name of the ChoiceListRenderer to use
 
 **Example**
 
@@ -201,6 +216,23 @@ The `{{gql}}` helper executes a graphql query and put the results in a variable 
 This is a block helper, the query itself being the block content.
 
 Variables to the query can be passed through the `variables` hash parameter, as an object
+
+
+**Content block**
+
+The GQL query
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
+- `variables` : Object containing all variables to bind to the query 
+- `operationName` : Graphql operation name
+
+**Example**
 
 ```handlebars
 {{#gql varName="result"}}
@@ -241,9 +273,128 @@ Variables to the query can be passed through the `variables` hash parameter, as 
 Render helper are mostly similar to JSP "template" taglib.
 
 #### [{{addCacheDependency}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
-#### [{{addResources}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
-#### [{{renderComponent}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
-#### [{{renderInclude}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
-#### [{{renderModule}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
-#### [{{renderOption}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
 
+Add cache dependency to the specified node
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `path` : node path to be added as a dependency
+- `uuid` : node uuid to be added as a dependency
+- `flushOnPathMatchingRegexp` : Regexp matching path that should flush this component
+
+**Example**
+
+```handlebars
+{{addCacheDependency path="/sites/digitall/page"}}
+```
+
+#### [{{addResources}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+
+Add a static resource link to the page (CSS or JS)
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `type` : Type of the resources (will define where to find (in css direcory for css, in javascript directory for javascript). If not set the content of the tag body will be used as the asset itself and the resources attribute can be left empty.
+- `resources` : The list of resources they will be included in the defined order. If the tag body is not empty, it will be used as the asset itself and the resources attribute can be left empty.
+- `async` : async attribute to load resource asynchronously
+- `defer` : defer attribute to load resource asynchronously
+- `targetTag` : The target tag where the link will be inserted
+- `rel` : For css resource type, this attribute specify the relationship type of the link
+- `media` : For css resource type, this attribute specifies the media (or medias, comma separated) on which the css will be applied.
+- `condition` : optional html browser condition (ex : if gte IE 6)
+- `insert` : If set to true the resource is inserted at the top of the resources list. Otherwise it is appended to the end. [false]
+- `title` : An optional title value for this asset (in case of a link).
+- `key` : key for managing uniqueness of inline type. 
+- `var` : Name of the exported pageContext variable to hold the value specified in the action.
+
+**Example**
+
+```handlebars
+{{addResources type="css" resources="styles.css"}}
+```
+
+#### [{{renderModule}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+
+Renders a node using the render chain, with the specified view/template . 
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `path` : Relative (to the current node) or absolute path to the node to include
+- `nodeName` : Name of the variable that exposes the node in the page context
+- `view` : The view used to display the node. Overrides the view defined on the node itself (layout tab in edit mode), which is used when this attribute is not set.
+- `templateType` : The output type to use. By default, inherited from parent fragment, or HTML.
+- `editable` : Enables or disables edition of this content in edit mode. Mainly used for absolute or references.
+- `nodeTypes` : Space separated list of allowed node types. If the node does not match any node type, it won't be displayed. Edit mode will forbid drop of any incompatible node.
+- `listLimit`
+- `constraints`
+- `var` : Name of the exported pageContext variable to hold the value specified in the action.
+- `checkConstraints`
+- `showAreaButton`
+- `skipAggregation` : Enables or disables aggregation for sub fragments.
+
+**Example**
+
+```handlebars
+Display an existing node by absolute path : {{renderModule path="/path" view="view"}}
+Display a subnode, with constraint on node type : {{renderModule path="simpletext" nodeTypes="jnt:text"}}
+Creates a placeholder for creating subnodes : {{renderModule path="*" nodeTypes="jnt:test"}}
+```
+
+#### [{{renderInclude}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+
+Include another view of the same node, using render chain.
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `view` : The view used to display the node. Overrides the view defined on the node itself (layout tab in edit mode), which is used when this attribute is not set.
+- `templateType` : The output type to use. By default, inherited from parent fragment, or HTML.
+- `var` : Name of the exported pageContext variable to hold the value specified in the action.
+
+**Example**
+
+```handlebars
+{{renderInclude view="view"}}
+```
+
+#### [{{renderComponent}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+
+Renders the view of a component based on a nodetype and properties values.
+
+Not to be confused with renderModule, which renders an existing node - this one takes a nodetype name and properties values, and renders the associated view, without having an existing node. This will actually create a temporary node and renders it.
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `primaryNodeType` : The component nodetype
+- `properties` : object holding the properties values
+- `view` : The view used to display the node. Overrides the view defined on the node itself (layout tab in edit mode), which is used when this attribute is not set.
+- `templateType` : The output type to use. By default, inherited from parent fragment, or HTML. (defaults to 'html')
+- `contextConfiguration` : context configuration for render chain (defaults to 'module')
+- `name` : name of the temporary node, if needed (defaults to 'temp-node')
+- `path` : path of the temporary node, if needed (defaults to '/')
+
+**Example**
+
+```handlebars
+Renders an area : {{renderComponent name="area-test" primaryNodeType="jnt:absoluteArea"}}
+Renders a navigation menu : {{renderComponent name="navMenu" primaryNodeType="jnt:navMenu" properties=(obj j:maxDepth="2" j:baselineNode="home" j:menuItemView="menuElement")}}
+```
