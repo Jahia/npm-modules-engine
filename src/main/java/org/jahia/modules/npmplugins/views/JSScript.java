@@ -24,7 +24,9 @@ public class JSScript implements Script {
     @Override
     public String execute(Resource resource, RenderContext renderContext) throws RenderException {
         return graalVMEngine.doWithContext(contextProvider -> {
-            Map<String, Object> viewValue = contextProvider.getRegistry().get("view", jsView.getRegistryKey());
+
+            Map<String, Object> viewValue = jsView.getValue(contextProvider);
+
             Object executionResult = Value.asValue(viewValue.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValue));
             Value value = Value.asValue(executionResult);
             if (value.getMetaObject() != null && value.getMetaObject().getMetaSimpleName().equals("Promise")) {

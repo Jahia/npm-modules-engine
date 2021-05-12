@@ -13,10 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.jar.JarOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -47,7 +44,7 @@ public class NpmProtocolConnection extends URLConnection {
         File outputDir = Files.createTempDirectory("npm.").toFile();
         TarUtils.unTar(new GZIPInputStream(wrappedUrl.openStream()), outputDir);
 
-        Properties manifest = new Properties();
+        Properties instructions = new Properties();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Collection<String> extensions = new HashSet<>();
@@ -61,17 +58,19 @@ public class NpmProtocolConnection extends URLConnection {
                 if (path.equals("package.json")) {
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, Object> properties = mapper.readValue(file, Map.class);
+                    Map<String, Object> jahiaProps = (Map<String, Object>) properties.getOrDefault("jahia", new HashMap<>());
 
                     String name = (String) properties.get("name");
-                    manifest.put("Bundle-Name", name + " (npm module)");
-                    manifest.put("Bundle-SymbolicName", name.replace("@", "").replace('/', '-'));
-                    manifest.put("Bundle-Version", properties.get("version"));
-                    manifest.put("Bundle-Category", "jahia-module");
-                    manifest.put("Jahia-GroupId", "org.jahia.npm");
-                    manifest.put("Jahia-Required-Version", "8.0.0.0");
-                    manifest.put("Jahia-Module-Type", "npm");
-                    manifest.put("Jahia-Javascript-Name", name);
-                    manifest.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
+                    instructions.put("Bundle-Name", name + " (npm module)");
+                    instructions.put("Bundle-SymbolicName", name.replace("@", "").replace('/', '-'));
+                    instructions.put("Bundle-Version", properties.get("version"));
+                    instructions.put("Bundle-Category", "jahia-module");
+                    instructions.put("Jahia-GroupId", "org.jahia.npm");
+                    instructions.put("Jahia-Required-Version", "8.0.0.0");
+                    instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
+                    instructions.put("Jahia-Javascript-Name", name);
+                    instructions.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
+                    instructions.put("-removeheaders", "Private-Package, Export-Package");
                 }
                 if (path.startsWith("jahia-views/")) {
                     path = path.substring("jahia-views/".length());
@@ -79,8 +78,8 @@ public class NpmProtocolConnection extends URLConnection {
                         extensions.add(StringUtils.substringAfterLast(file.getName(), "."));
                     }
                 }
-                if (path.equals("definitions.cnd")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
+                if (path.equals("definitions.cnd") || path.equals("import.xml")) {
+                    jos.putNextEntry(new ZipEntry("META-INF/" + path));
                 } else {
                     jos.putNextEntry(new ZipEntry(path));
                 }
@@ -94,9 +93,9 @@ public class NpmProtocolConnection extends URLConnection {
         FileUtils.deleteDirectory(outputDir);
 
         if (!extensions.isEmpty()) {
-            manifest.put("Jahia-Module-Scripting-Views", StringUtils.join(extensions, ","));
+            instructions.put("Jahia-Module-Scripting-Views", StringUtils.join(extensions, ","));
         }
 
-        return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), manifest, wrappedUrl.toExternalForm());
+        return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
     }
 }
