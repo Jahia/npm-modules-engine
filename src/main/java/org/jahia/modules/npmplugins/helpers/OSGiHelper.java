@@ -1,29 +1,40 @@
 package org.jahia.modules.npmplugins.helpers;
 
 
-import org.apache.commons.io.IOUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
-import org.jahia.osgi.BundleUtils;
-import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRTemplate;
+import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.osgi.framework.Bundle;
-import pl.touk.throwing.ThrowingSupplier;
 
-import javax.jcr.RepositoryException;
-import java.io.IOException;
-import java.util.Optional;
+import javax.inject.Inject;
 
 public class OSGiHelper {
 
     private ContextProvider contextProvider;
 
+    private JahiaTemplateManagerService templateManagerService;
+
     public OSGiHelper(ContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }
 
+    public Bundle getBundle(String symbolicName) {
+        JahiaTemplatesPackage packageById = templateManagerService.getTemplatePackageById(symbolicName);
+        if (packageById != null) {
+            return packageById.getBundle();
+        }
+
+        return null;
+    }
+
     public String loadResource(Bundle bundle, String path) {
         return GraalVMEngine.loadResource(bundle, path);
+    }
+
+    @Inject
+    @OSGiService
+    public void setTemplateManagerService(JahiaTemplateManagerService templateManagerService) {
+        this.templateManagerService = templateManagerService;
     }
 }

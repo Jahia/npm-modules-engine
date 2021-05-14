@@ -179,7 +179,7 @@ public class GraalVMEngine {
         try {
             return Optional
                     .ofNullable(getSourceFile(bundle, path))
-                    .orElseGet(ThrowingSupplier.unchecked(() -> IOUtils.toString(bundle.getResource(path))));
+                    .orElseGet(ThrowingSupplier.unchecked(() -> bundle.getResource(path) != null ? IOUtils.toString(bundle.getResource(path)) : null));
         } catch (Exception e) {
             logger.error("Cannot get resource", e);
         }

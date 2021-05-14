@@ -1,4 +1,5 @@
 const path = require('path');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = (env, argv) => {
     let _argv = argv || {};
@@ -15,10 +16,33 @@ module.exports = (env, argv) => {
         },
         resolve: {
             alias: {
-                'handlebars': 'handlebars/dist/cjs/handlebars.js'
+                'handlebars': 'handlebars/dist/cjs/handlebars.js',
+            },
+            fallback: {
+                "fs": false,
             }
         },
-        devtool: "inline-source-map"
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    include:[
+                        // path.resolve(__dirname, "node_modules/log-utils"),
+                        // path.resolve(__dirname, "node_modules/logging-helpers"),
+                        path.resolve(__dirname, "node_modules/create-frame"),
+                        path.resolve(__dirname, "node_modules/handlebars-helpers")
+                    ],
+                    loader: 'unlazy-loader'
+                }
+            ]
+        },
+        plugins: [
+            new NodePolyfillPlugin({
+                excludeAliases: ["console"]
+            })
+        ],
+        devtool: "inline-source-map",
+        mode: "development"
     };
 
     return config;
