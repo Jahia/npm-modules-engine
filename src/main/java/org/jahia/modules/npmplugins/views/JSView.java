@@ -1,7 +1,9 @@
 package org.jahia.modules.npmplugins.views;
 
+import org.apache.commons.lang.StringUtils;
 import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
+import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.render.View;
 import org.osgi.framework.Bundle;
@@ -11,26 +13,46 @@ import java.util.Properties;
 import java.util.function.Function;
 
 public class JSView implements View, Comparable<View> {
-    private final String registryKey;
-    private final String key;
-    private final JahiaTemplatesPackage module;
-    private final Properties properties;
-    private final Properties defaultProperties;
-    private String displayName;
+    protected String registryKey;
+    protected String key;
+    protected JahiaTemplatesPackage module;
+    protected Properties properties;
+    protected Properties defaultProperties;
+    protected String path;
+    protected String displayName;
+    protected String target;
+    protected String templateType;
+
+    public JSView(String registryKey, String viewName, JahiaTemplatesPackage module, String target, String templateType) {
+        this.registryKey = registryKey;
+        this.key = viewName;
+        this.module = module;
+        this.target = target;
+        this.templateType = templateType;
+    }
 
     public JSView(Map<String, Object> jsValue) {
         registryKey = jsValue.get("key").toString();
         key = jsValue.get("templateName") != null ? jsValue.get("templateName").toString() : "default";
-        displayName = jsValue.containsKey("displayName") ? jsValue.get("displayName").toString() : getKey();
 
         Bundle bundle = ((Value)jsValue.get("bundle")).asHostObject();
         module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
+
+        target = jsValue.get("target").toString();
+        templateType = jsValue.get("templateType").toString();
+
+        displayName = jsValue.containsKey("displayName") ? jsValue.get("displayName").toString() : getKey();
 
         properties = new Properties();
         if (jsValue.containsKey("properties")) {
             properties.putAll((Map<?, ?>) jsValue.get("properties"));
         }
         defaultProperties = new Properties();
+        path = getModule().getBundleKey() + "/" + getRegistryKey();
+    }
+
+    public Map<String,Object> getValue(ContextProvider contextProvider) {
+        return contextProvider.getRegistry().get("view", getRegistryKey());
     }
 
     @Override
@@ -60,7 +82,7 @@ public class JSView implements View, Comparable<View> {
 
     @Override
     public String getPath() {
-        return getModule().getBundleKey() + "/" + getRegistryKey();
+        return path;
     }
 
     @Override
@@ -73,13 +95,29 @@ public class JSView implements View, Comparable<View> {
         return properties;
     }
 
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
     @Override
     public Properties getDefaultProperties() {
         return defaultProperties;
     }
 
+    public void setDefaultProperties(Properties defaultProperties) {
+        this.defaultProperties = defaultProperties;
+    }
+
     public String getRegistryKey() {
         return registryKey;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public String getTemplateType() {
+        return templateType;
     }
 
     @Override
