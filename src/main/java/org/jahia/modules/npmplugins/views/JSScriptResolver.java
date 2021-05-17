@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,12 +135,18 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
             String[] viewNameParts = StringUtils.split(StringUtils.substringAfterLast(viewPath, "/"), ".");
             JahiaTemplatesPackage module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
 
-            //todo: bad replace
+            //todo: bad replace from _ to :
             JSFileView fileView = new JSFileView("handlebars", viewPath, viewNameParts.length > 2 ? viewNameParts[1] : "default", module, parts[1].replace('_', ':'), parts[2]);
-
-            //todo read from properties file
             fileView.setProperties(new Properties());
-            fileView.getProperties().put("fullPageAllowed", "true");
+
+            URL props = bundle.getResource(StringUtils.substringBeforeLast(viewPath, ".hbs") + ".properties");
+            if (props != null) {
+                try (InputStream inStream = props.openStream()) {
+                    fileView.getProperties().load(inStream);
+                } catch (IOException e) {
+                    logger.error("Cannot read", e);
+                }
+            }
 
             fileView.setDefaultProperties(new Properties());
             return fileView;

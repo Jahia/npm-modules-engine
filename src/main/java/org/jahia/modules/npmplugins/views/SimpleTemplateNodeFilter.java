@@ -38,7 +38,7 @@ public class SimpleTemplateNodeFilter extends AbstractFilter {
             }
         }
 
-        if (Boolean.parseBoolean(script.getView().getProperties().getProperty("fullPageAllowed"))) {
+        if (Boolean.parseBoolean(script.getView().getProperties().getProperty("template"))) {
             chain.pushAttribute(renderContext.getRequest(), "inWrapper", Boolean.TRUE);
             chain.pushAttribute(renderContext.getRequest(),"skipWrapper",  Boolean.TRUE);
             chain.pushAttribute(renderContext.getRequest(),"templateSet",  Boolean.TRUE);
