@@ -268,13 +268,13 @@ jobs:
             TESTS_IMAGE: << parameters.TESTS_IMAGE >>
             SUPER_USER_PASSWORD: root1234
 #        - run: //Commented for now since the test is also commented out
-#            # We need to copy the dummy.tgz to the docker container /var/jahia/modules
+#            # We need to copy the npm-plugin-example.tgz to the docker container /var/jahia/modules
 #            name: Copy tgz bundle to docker
 #            background: true
 #            command: |
 #              echo "Pausing for 30s before copying dummy tgz module"
 #              sleep 30
-#              docker cp tests/cypress/fixtures/dummy.tgz jahia:/var/jahia/modules/
+#              docker cp tests/cypress/fixtures/npm-plugin-example.tgz jahia:/var/jahia/modules/
 #              echo "Module copied"
       - run:
           # We want to build the test image from scratch with any code change (since that code change could be in the tests themselves)

@@ -3,7 +3,7 @@ describe('Install NPM Modules via Module Manager API', () => {
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
 
     it('Install tgz bundle success path', () => {
-        const fileName = 'dummy.tgz'
+        const fileName = 'npm-plugin-example.tgz'
 
         // Install new Bundle
         cy.fixture(fileName, 'binary')
