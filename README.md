@@ -132,6 +132,24 @@ These views need to declare `template: 'true'` in their properties. The `SimpleT
 
 ### Render filters
 
+Render filter can be added in the registry, in the form of a pair of 2 methods `execute` and `prepare` :
+
+```javascript
+registry.add("render-filter", "test", renderFilterTest, {
+    target: 'render:50',
+    applyOnNodeTypes: 'jnt:bigText',
+
+    prepare: (renderContext, resource, chain) => {
+        
+    },
+    execute: (previousOut, renderContext, resource, chain) => {
+        return previousOut.replace('toto', 'tutu');
+    }
+})
+```
+
+The target must be `render`, followed by the filter priority.
+
 ### Other files : import and definitions
 
 Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
