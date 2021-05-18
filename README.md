@@ -125,6 +125,11 @@ A complex JS view example can be found [here](https://github.com/Jahia/npm-plugi
 
 Views can be implemented in handlebars, documentation [here](./handlebars.md)
 
+### Views as templates
+
+In npm-pluins, templates are only views - there's no need to create a template in the studio anymore. Page templates will be created as views for the `jnt:page` type - the `jnt:template` type is not used at all.
+These views need to declare `template: 'true'` in their properties. The `SimpleTemplateNodeFilter` will detect that and change the behaviour of the standard `TemplateNodeFilter` when this property is detected. 
+
 ### Render filters
 
 ### Other filesImport and definitions
