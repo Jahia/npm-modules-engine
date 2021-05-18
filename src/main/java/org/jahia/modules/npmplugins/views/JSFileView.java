@@ -15,6 +15,15 @@ public class JSFileView extends JSView {
     }
 
     @Override
+    public String getDisplayName() {
+        if (getProperties().containsKey("name")) {
+            return (String) getProperties().get("name");
+        }
+
+        return key;
+    }
+
+    @Override
     public Map<String, Object> getValue(ContextProvider contextProvider) {
         Map<String, Object> viewValue = super.getValue(contextProvider);
 
