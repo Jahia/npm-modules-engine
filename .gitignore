@@ -11,6 +11,10 @@
 # Maven
 target
 
+# Node
+/node_modules
+/node
+
 # Jahia DX Studio
 repository.xml.generated
 
