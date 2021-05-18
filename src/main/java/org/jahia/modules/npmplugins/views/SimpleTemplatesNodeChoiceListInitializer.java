@@ -1,6 +1,7 @@
 package org.jahia.modules.npmplugins.views;
 
 import org.apache.commons.lang.StringUtils;
+import org.jahia.bin.Jahia;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Component(immediate = true)
 public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListInitializer {
-    private static Logger logger = org.slf4j.LoggerFactory.getLogger(SimpleTemplatesNodeChoiceListInitializer.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(SimpleTemplatesNodeChoiceListInitializer.class);
 
     private ChoiceListInitializerService service;
 
@@ -48,7 +49,7 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
     @Override
     public List<ChoiceListValue> getChoiceListValues(ExtendedPropertyDefinition epd, String param, List<ChoiceListValue> previousValues, Locale locale, Map<String, Object> context) {
         List<ChoiceListValue> values = oldInitializer.getChoiceListValues(epd, param, previousValues, locale, context);
-         new ArrayList<>();
+        new ArrayList<>();
 
         try {
             JCRNodeWrapper node = (JCRNodeWrapper) context.get("contextNode");
@@ -80,10 +81,21 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
     private List<ChoiceListValue> addTemplates(JCRSiteNode site, JCRSessionWrapper session, ExtendedNodeType nodetype, String defaultTemplate, ExtendedPropertyDefinition propertyDefinition, Locale locale, Map<String, Object> context) throws RepositoryException {
         return RenderService.getInstance().getViewsSet(nodetype, site, "html").stream()
                 .filter(v -> "true".equals(v.getProperties().getProperty("template")))
-                .map(v -> new ChoiceListValue(v.getDisplayName(),
-                        StringUtils.equals(v.getKey(), defaultTemplate) ? Collections.singletonMap("defaultProperty", true) : null,
-                        session.getValueFactory().createValue(v.getKey())))
+                .map(v -> new ChoiceListValue(v.getDisplayName(), getProperties(v, defaultTemplate), session.getValueFactory().createValue(v.getKey())))
                 .sorted()
                 .collect(Collectors.toList());
     }
+
+    private Map<String, Object> getProperties(View view, String defaultTemplate) {
+        Map<String, Object> props = new HashMap<>();
+        if (StringUtils.equals(view.getKey(), defaultTemplate)) {
+            props.put("defaultProperty", true);
+        }
+
+        if (view.getProperties().containsKey("thumbnail")) {
+            props.put("image", Jahia.getContextPath() + "/modules/" + view.getModule().getBundle().getSymbolicName() + view.getProperties().getProperty("thumbnail"));
+        }
+        return props;
+    }
+
 }
