@@ -132,7 +132,7 @@ These views need to declare `template: 'true'` in their properties. The `SimpleT
 
 ### Render filters
 
-### Other filesImport and definitions
+### Other files : import and definitions
 
 Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
 They follow the same format as in a standard jahia module.
