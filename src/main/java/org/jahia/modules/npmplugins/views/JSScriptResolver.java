@@ -183,7 +183,7 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
     }
 
     private List<ExtendedNodeType> getNodeTypeList(ExtendedNodeType nt) throws NoSuchNodeTypeException {
-        List<ExtendedNodeType> nodeTypeList = new LinkedList<ExtendedNodeType>();
+        List<ExtendedNodeType> nodeTypeList = new LinkedList<>();
         nodeTypeList.add(nt);
         nodeTypeList.addAll(nt.getSupertypeSet());
         ExtendedNodeType base = NodeTypeRegistry.getInstance().getNodeType("nt:base");
@@ -195,9 +195,9 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
 
     private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
         return (JSView) nodeTypeList.stream().flatMap(t -> getViewsSet(t, renderContext.getSite(), resource.getTemplateType()).stream())
-                .filter(v -> v.getKey().equals(resource.getTemplate()))
+                .filter(v -> v.getKey().equals(resource.getResolvedTemplate()))
                 .findFirst()
-                .orElseThrow(() -> new TemplateNotFoundException(resource.getTemplate()));
+                .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
     }
 
 
