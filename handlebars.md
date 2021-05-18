@@ -1,10 +1,19 @@
 # Handlebars templating
 
-Handlebars support is done directly in npm-plugins modules, by registering an extendable base view 'handlebars' which implements the render method.
+Handlebars support is done directly in npm-plugins modules, by registering an extendable base view 'handlebars' which implements the render method and automatic registration of .hbs files.
 
-## Registering views
+## Adding views
 
-In order to use it, one have to declare its own view using the registry, extending this predefined 'handlebars' view :
+Handlebars views are automatically detected if they are placed in a "views" folder, with the same naming convention as in a standard Jahia module :
+
+`views/<node_type>/<template_type>/<node_type>.<view_name>.hbs`
+
+View properties can be provided with a `.properties` file.
+
+### Manual registration
+
+It's usually not needed to manually register handlebars views in the registry, as you can use the naming convention to let the npm-plugins module handle it.
+However, if you don't use this convention, you will have to declare your own view using the registry, extending the predefined 'handlebars' view :
 
 ```javascript
 registry.add("view", "page-simple", registry.get('view', 'handlebars'), {
@@ -12,11 +21,11 @@ registry.add("view", "page-simple", registry.get('view', 'handlebars'), {
   templateName: 'sub',
   templateType: 'html',
   displayName: "Sub template",
-  templateFile: "src/views/test/test.sub.hbs"
+  properties: {
+  },
+  templateFile: "src/test/test.sub.hbs"
 });
 ```
-
-[Or, use the naming convention defined in BACKLOG-15773 , which exempt the user to explicitly declare its view into the registry.]
 
 The implementation needs the templateFile - the path of the file within the bundle. It uses the [OSGi helper](./src/main/java/org/jahia/modules/npmplugins/helpers/OSGiHelper.java) to read the file from the bundle. Other properties are "standard" view properties (not handlebars specific), used by the `JSScriptResolver` .
 

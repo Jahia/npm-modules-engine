@@ -112,7 +112,7 @@ registry.add("view", "page-simple", {
   templateType: 'html',
   displayName: "Simple template",
   properties: {
-    fullPageAllowed: 'true'
+    template: 'true'
   },
   render: (resource,context) => 'toto'
 });
@@ -126,4 +126,9 @@ A complex JS view example can be found [here](https://github.com/Jahia/npm-plugi
 Views can be implemented in handlebars, documentation [here](./handlebars.md)
 
 ### Render filters
+
+### Other filesImport and definitions
+
+Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
+They follow the same format as in a standard jahia module.
 
