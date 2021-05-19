@@ -4,7 +4,7 @@ describe('Validating handlebars', () => {
         handlebarsTestPage.goTo()
     })
     it('Check sub View Test Prop', function () {
-        handlebarsTestPage.checksubViewTestProp()
+        handlebarsTestPage.checkSubViewTestProp()
     })
     it('Check view is working', function () {
         handlebarsTestPage.checkNpmViewIsWorkingDiv()

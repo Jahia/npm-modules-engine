@@ -3,7 +3,8 @@ import 'cypress-file-upload'
 
 class HandlebarsTestPage extends BasePage {
     elements = {
-        handlebarsTestPage: '/cms/render/default/en/sites/mySite/home.html',
+        handlebarsTestPage: '/cms/editframe//default/en/sites/mySite/home.html?redirect=false',
+        // handlebarsTestPage: '/cms/render/default/en/sites/mySite/home.html',
         subViewTestProp: '.headerContent > :nth-child(1)',
         npmViewIsWorkingDiv: "[data-testid*='npm-view']",
         handlebarsHelper118: "[data-testid*='helper-118']",
@@ -30,7 +31,7 @@ class HandlebarsTestPage extends BasePage {
         return this
     }
 
-    checksubViewTestProp() {
+    checkSubViewTestProp() {
         cy.get(this.elements.subViewTestProp).should(($div) => {
             expect($div.text()).contains('prop1=123')
         })
