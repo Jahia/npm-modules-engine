@@ -260,6 +260,7 @@ jobs:
             set -e
             cd << pipeline.parameters.TESTS_PATH >>
             . ./set-env.sh
+            docker-compose pull jahia
             docker-compose -f docker-compose.yml up -d jahia
           no_output_timeout: 2h
           environment:
