@@ -38,6 +38,16 @@ echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
 curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@./run-artifacts/${MANIFEST};type=text/yaml"
 echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
 
+# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
+cd ./artifacts
+for file in *-SNAPSHOT.jar
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting module from: $file =="
+  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installAndStartBundle":"'"$file"'"}]' --form file=@$file
+  echo "$(date +'%d %B %Y - %k:%M') == Module submitted =="
+done
+cd ..
+
 # Provisioning NPM modules
 cd ./assets
 for file in *.tgz
@@ -53,17 +63,6 @@ do
   echo "$(date +'%d %B %Y - %k:%M') == Submitting Site: $file =="
   curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"importSite":"'"$file"'"}]' --form file=@$file
   echo "$(date +'%d %B %Y - %k:%M') == Site submitted =="
-done
-cd ..
-
-
-# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
-cd ./artifacts
-for file in *-SNAPSHOT.jar
-do
-  echo "$(date +'%d %B %Y - %k:%M') == Submitting module from: $file =="
-  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installAndStartBundle":"'"$file"'"}]' --form file=@$file
-  echo "$(date +'%d %B %Y - %k:%M') == Module submitted =="
 done
 cd ..
 
