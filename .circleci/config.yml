@@ -768,16 +768,6 @@ workflows:
           SKIP_TESTRAIL: "true"
           SKIP_ARTIFACTS: false
           BUILD_TESTSIMAGE: true
-      - docker-publish:
-          context: QA_ENVIRONMENT
-          requires:
-            - Int. Tests - Jahia Latest - Built modules
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              only:
-                - << pipeline.parameters.PRIMARY_RELEASE_BRANCH >>
 
   # The on-release workflow was created to handle the full release lifecycle after creating a release using GitHub
   # https://github.com/Jahia/npm-plugins/releases
