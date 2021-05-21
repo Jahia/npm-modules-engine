@@ -48,6 +48,24 @@ do
 done
 cd ..
 
+# Provisioning NPM modules
+cd ./assets
+for file in *.tgz
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting npm modules: $file =="
+  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installBundle":"'"$file"'", "forceUpdate":true, "autoStart":true}]' --form file=@$file
+  echo "$(date +'%d %B %Y - %k:%M') == Modules submitted =="
+done
+
+# Importing zip sites
+for file in *.zip
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting Site: $file =="
+  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"importSite":"'"$file"'"}]' --form file=@$file
+  echo "$(date +'%d %B %Y - %k:%M') == Site submitted =="
+done
+cd ..
+
 echo "$(date +'%d %B %Y - %k:%M')== Run tests =="
 yarn e2e:ci
 if [[ $? -eq 0 ]]; then
