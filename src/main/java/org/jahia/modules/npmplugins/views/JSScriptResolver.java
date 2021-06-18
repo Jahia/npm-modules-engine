@@ -104,7 +104,7 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
     private void parseBundeFolder(Bundle bundle) {
         Enumeration<String> nodeTypesPaths = bundle.getEntryPaths("views");
         if (nodeTypesPaths != null) {
-            Set<JSView> views = new TreeSet<>();
+            Set<JSView> views = new HashSet<>();
 
             while (nodeTypesPaths.hasMoreElements()) {
                 String nodeTypePath = nodeTypesPaths.nextElement();
