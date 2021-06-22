@@ -1,6 +1,5 @@
 package org.jahia.modules.npmplugins.views;
 
-import org.apache.commons.lang.StringUtils;
 import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
@@ -9,8 +8,8 @@ import org.jahia.services.render.View;
 import org.osgi.framework.Bundle;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
-import java.util.function.Function;
 
 public class JSView implements View, Comparable<View> {
     protected String registryKey;
@@ -118,6 +117,19 @@ public class JSView implements View, Comparable<View> {
 
     public String getTemplateType() {
         return templateType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JSView)) return false;
+        JSView jsView = (JSView) o;
+        return registryKey.equals(jsView.registryKey) && key.equals(jsView.key) && module.equals(jsView.module) && Objects.equals(path, jsView.path) && target.equals(jsView.target) && templateType.equals(jsView.templateType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(registryKey, key, module, path, target, templateType);
     }
 
     @Override
