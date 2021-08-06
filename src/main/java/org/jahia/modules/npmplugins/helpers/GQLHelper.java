@@ -54,7 +54,8 @@ public class GQLHelper {
     }
 
     @Inject
-    @OSGiService(service = HttpServlet.class, filter = "(jmx.objectname=graphql.servlet:type=graphql)")
+    @OSGiService(service = HttpServlet.class,
+        filter = "(component.name=graphql.kickstart.servlet.OsgiGraphQLHttpServlet)")
     public void setServlet(HttpServlet servlet) {
         this.servlet = (HttpServlet) servlet;
     }
