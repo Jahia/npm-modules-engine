@@ -206,6 +206,9 @@ jobs:
       TESTRAIL_MILESTONE:
         type: string
         default: Default
+      JAHIA_VERSION:
+        type: string
+        default: ""
       JAHIA_IMAGE:
         type: string
         default: ""
@@ -261,12 +264,15 @@ jobs:
             set -e
             cd << pipeline.parameters.TESTS_PATH >>
             . ./set-env.sh
+            echo "JAHIA_IMAGE: $JAHIA_IMAGE"
+            echo "JAHIA_VERSION: $JAHIA_VERSION"
             docker-compose pull jahia
             docker-compose -f docker-compose.yml up -d jahia
           no_output_timeout: 2h
           environment:
             MANIFEST: << parameters.MANIFEST >>
             JAHIA_IMAGE: << parameters.JAHIA_IMAGE >>
+            JAHIA_VERSION: << parameters.JAHIA_VERSION >>
             TESTS_IMAGE: << parameters.TESTS_IMAGE >>
             SUPER_USER_PASSWORD: root1234
 #        - run: //Commented for now since the test is also commented out
@@ -707,8 +713,9 @@ workflows:
           requires:
             - build
           context: QA_ENVIRONMENT
+          JAHIA_VERSION: 8.1.0.0-SNAPSHOT
           #Using Aliases here (8 is the latest of the 8 tree, 8.1 is the latest of the tree, ...)
-          JAHIA_IMAGE: jahia/jahia-ee-dev:8.0.3.0-SNAPSHOT-graalvm
+          JAHIA_IMAGE: jahia/jahia-ee-dev:8.1.0.0-SNAPSHOT-graalvm
           TESTS_IMAGE: << pipeline.parameters.TESTS_IMAGE >>:latest
           MANIFEST: provisioning-manifest-build.yml
           TESTRAIL_MILESTONE: Jahia-Latest
