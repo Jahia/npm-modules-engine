@@ -10,6 +10,5 @@ Promise.all([
 
     import('./bootstrap').then(res => {
         window.jahia = res;
-        window.document.dispatchEvent(new Event('appShellReady'));
     });
 });

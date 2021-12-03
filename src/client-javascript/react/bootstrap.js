@@ -1,7 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const startAppShell = ({view, bundleKey, id, props}) => {
+const reactRender = ({view, bundleKey, id, props}) => {
+    window.appShell[bundleKey].get(view).then(f => {
+        ReactDOM.render(React.createElement(f().default, props), document.getElementById(id), () => {
+            console.log('React component rendered', id)
+        })
+    })
+}
+
+const reactHydrate = ({view, bundleKey, id, props}) => {
     window.appShell[bundleKey].get(view).then(f => {
         ReactDOM.hydrate(React.createElement(f().default, props), document.getElementById(id), () => {
             console.log('React component hydrated', id)
@@ -9,12 +17,17 @@ const startAppShell = ({view, bundleKey, id, props}) => {
     })
 }
 
-document.querySelectorAll('[data-reactcomponent]').forEach(function(data) {
-    startAppShell(JSON.parse(data.dataset.reactcomponent));
+document.querySelectorAll('[data-reactrender]').forEach(data => {
+    reactRender(JSON.parse(data.dataset.reactrender));
+});
+
+document.querySelectorAll('[data-reacthydrate]').forEach(data => {
+    reactHydrate(JSON.parse(data.dataset.reacthydrate));
 });
 
 // Theses value will be exposed in window.jahia
 export {
-    startAppShell,
+    reactRender,
+    reactHydrate,
     ReactDOM
 };
