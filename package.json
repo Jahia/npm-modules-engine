@@ -10,8 +10,10 @@
     "lint:fix": "eslint --ext js,jsx,json --fix ."
   },
   "dependencies": {
+    "@apollo/client": "^3.5.5",
     "@jahia/ui-extender": "^1.0.1",
     "dayjs": "^1.10.4",
+    "graphql": "^16.0.1",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "handlebars-i18next": "^1.0.1",

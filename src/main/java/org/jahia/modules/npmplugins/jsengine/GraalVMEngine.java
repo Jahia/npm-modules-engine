@@ -43,7 +43,7 @@ public class GraalVMEngine {
     private List<JSGlobalVariableFactory> globals = new ArrayList<>();
 
     private GenericObjectPool<ContextProvider> pool;
-    private ThreadLocal<ContextProvider> currentContext = new ThreadLocal<>();
+    private ThreadLocal<Stack<ContextProvider>> currentContext = ThreadLocal.withInitial(Stack::new);
 
     private LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
     private AtomicInteger version = new AtomicInteger(0);
@@ -121,22 +121,34 @@ public class GraalVMEngine {
         sharedEngine.close();
     }
 
+    public <T> T doWithNewContext(Function<ContextProvider, T> callback) {
+        Stack<ContextProvider> cx = currentContext.get();
+        try {
+            cx.push(pool.borrowObject());
+        } catch (Exception e) {
+            throw new GraalVMException("Unable to borrow context from pool: " + e.getMessage(), e);
+        }
+        try {
+            return callback.apply(cx.peek());
+        } finally {
+            pool.returnObject(cx.pop());
+        }
+    }
+
     public <T> T doWithContext(Function<ContextProvider, T> callback) {
-        ContextProvider cx = currentContext.get();
-        if (cx != null) {
-            return callback.apply(cx);
+        Stack<ContextProvider> cx = currentContext.get();
+        if (!cx.isEmpty()) {
+            return callback.apply(cx.peek());
         } else {
             try {
-                cx = pool.borrowObject();
-                currentContext.set(cx);
+                cx.push(pool.borrowObject());
             } catch (Exception e) {
                 throw new GraalVMException("Unable to borrow context from pool: " + e.getMessage(), e);
             }
             try {
-                return callback.apply(cx);
+                return callback.apply(cx.peek());
             } finally {
-                currentContext.remove();
-                pool.returnObject(cx);
+                pool.returnObject(cx.pop());
             }
         }
     }

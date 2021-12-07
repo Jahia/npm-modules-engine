@@ -52,7 +52,7 @@
     <parent>
         <artifactId>jahia-modules</artifactId>
         <groupId>org.jahia.modules</groupId>
-        <version>8.0.0.0</version>
+        <version>8.1.0.0</version>
     </parent>
     <groupId>org.jahia.modules</groupId>
     <artifactId>npm-plugins</artifactId>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>21.0.0</version>
+            <version>21.3.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -173,7 +173,7 @@
                             <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v12.16.0</nodeVersion>
+                            <nodeVersion>v14.18.2</nodeVersion>
                             <yarnVersion>v1.19.1</yarnVersion>
                         </configuration>
                     </execution>

@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 module.exports = (env, argv) => {
     let config = {
         entry: {
-            reactAppShell: path.resolve(__dirname, 'src/client-javascript/react')
+            reactAppShell: path.resolve(__dirname, 'src/client-javascript/main')
         },
         output: {
             path: path.resolve(__dirname, 'src/main/resources/javascript/apps')
@@ -34,12 +34,17 @@ module.exports = (env, argv) => {
             new ModuleFederationPlugin({
                 name: "reactAppShell",
                 exposes: {
-                    'render': path.resolve(__dirname, 'src/client-javascript/react/render')
+                    '.': './src/client-javascript/exposed'
                 },
-                shared: [
-                    'react',
-                    'react-dom'
-                ]
+                shared: {
+                    'react': {
+                        requiredVersion: "^17.0.2"
+                    },
+                    'react-dom': {},
+                    '@apollo/client': {},
+                    '@apollo/react-hooks': {},
+                    '@jahia/data-helper': {}
+                }
             })
         ],
         devtool: "inline-source-map",
