@@ -15,13 +15,11 @@ export const getSsrLink = (renderContext) => new ApolloLink(
 export const getClient = (renderContext) => new ApolloClient({
     ssrMode: true,
     link: getSsrLink(renderContext),
-    defaultOptions: {
-        watchQuery: {
-            fetchPolicy: 'no-cache'
+    cache: new InMemoryCache({
+        typePolicies: {
+            GqlNpmHelper: {
+                merge: true
+            }
         },
-        query: {
-            fetchPolicy: 'no-cache'
-        }
-    },
-    cache: new InMemoryCache()
+    })
 });

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Objects;
 
 public class GqlNpmHelper {
     private JCRSessionFactory jcrSessionFactory;
@@ -99,12 +100,6 @@ public class GqlNpmHelper {
 //    }
 
     @GraphQLField
-    @GraphQLDescription("Rendering output")
-    public String getId() {
-        return "1";
-    }
-
-    @GraphQLField
     public SimpleRenderedNode getRenderedComponent(
             @GraphQLName("mainResourcePath") String mainResourcePath,
             @GraphQLName("path") String path,
@@ -117,7 +112,9 @@ public class GqlNpmHelper {
             DataFetchingEnvironment environment
     ) {
         try {
-            return new SimpleRenderedNode(jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, LanguageCodeConverters.languageCodeToLocale(language),
+
+            String id = "cache" + (Objects.hash(mainResourcePath, path, view, templateType, input.getName(), input.getPrimaryNodeType(), contextConfiguration, isEditMode, language));
+            return new SimpleRenderedNode(id, jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, LanguageCodeConverters.languageCodeToLocale(language),
                     session -> getRenderedComponent(mainResourcePath, path, input, view, templateType, contextConfiguration, isEditMode, environment, session)
             ));
         } catch (RepositoryException e) {
@@ -217,10 +214,18 @@ public class GqlNpmHelper {
 
     @GraphQLDescription("Rendering result for a node")
     public static class SimpleRenderedNode {
+        private String id;
         private String output;
 
-        public SimpleRenderedNode(String output) {
+        public SimpleRenderedNode(String id, String output) {
+            this.id = id;
             this.output = output;
+        }
+
+        @GraphQLField
+        @GraphQLDescription("Rendering output")
+        public String getId() {
+            return id;
         }
 
         @GraphQLField

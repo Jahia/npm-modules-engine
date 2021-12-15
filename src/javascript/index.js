@@ -10,3 +10,14 @@ registry.add('module', 'helpers', {
 initI18next();
 initHandlebars();
 initReact();
+
+// setTimeout polyfill
+global.setTimeout = ((cb, t) => {
+    if (t === 0) {
+        new Promise(resolve => {
+            console.log('Execute timeout')
+            cb();
+            resolve();
+        })
+    }
+})
