@@ -44,7 +44,11 @@ public class GQLHelper {
         params.put("query", (String) parameters.get("query"));
         params.put("operationName", (String) parameters.get("operationName"));
         if (parameters.containsKey("variables")) {
-            params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            if (parameters.get("variables") instanceof String) {
+                params.put("variables", (String) parameters.get("variables"));
+            } else {
+                params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            }
         }
         StringWriter out = new StringWriter();
 
@@ -54,12 +58,15 @@ public class GQLHelper {
         RenderContext renderContext = (RenderContext)  parameters.get("renderContext");
         HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
             public String getParameter(String name) {
-                return (String) params.get(name);
+                if (params.containsKey(name)) {
+                    return (String) params.get(name);
+                }
+                return super.getParameter(name);
             }
         };
-
+        System.out.println(params);
         servlet.service(req, new HttpServletResponseMock(out));
-
+        System.out.println(out);
         Value js = context.getContext().eval("js", "(" + out + ")");
         return js;
     }
@@ -369,7 +376,7 @@ public class GQLHelper {
 
         @Override
         public String encodeURL(String url) {
-            return null;
+            return url;
         }
 
         @Override
