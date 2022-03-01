@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
 import org.jahia.modules.npmplugins.registrars.Registrar;
+import org.jahia.modules.npmplugins.views.hbs.HandlebarsParser;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
@@ -31,13 +32,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(immediate = true, service = {ScriptResolver.class, Registrar.class})
+@Component(immediate = true, service = {ScriptResolver.class})
 public class JSScriptResolver implements ScriptResolver, BundleListener {
     private static final Logger logger = LoggerFactory.getLogger(JSScriptResolver.class);
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
+    private List<ViewParser> parsers;
     private Map<Bundle, Collection<JSView>> autoDetectedViews = new HashMap<>();
 
     @Reference
@@ -56,13 +58,14 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
         l.add(0, this);
         renderService.setScriptResolvers(l);
 
+        parsers = Arrays.asList(new HandlebarsParser());
+
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.ACTIVE) {
                 enableBundle(bundle);
             }
         }
         context.addBundleListener(this);
-
     }
 
     @Deactivate
@@ -110,15 +113,23 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
                 String nodeTypePath = nodeTypesPaths.nextElement();
 
                 Enumeration<String> templateTypePaths = bundle.getEntryPaths(nodeTypePath);
-                while (templateTypePaths.hasMoreElements()) {
-                    String templateTypePath = templateTypePaths.nextElement();
+                if (templateTypePaths != null) {
+                    while (templateTypePaths.hasMoreElements()) {
+                        String templateTypePath = templateTypePaths.nextElement();
 
-                    Enumeration<String> viewPaths = bundle.getEntryPaths(templateTypePath);
-                    while (viewPaths.hasMoreElements()) {
-                        String viewPath = viewPaths.nextElement();
-                        JSView view = parseView(bundle, viewPath);
-                        if (view != null) {
-                            views.add(view);
+                        Enumeration<String> viewPaths = bundle.getEntryPaths(templateTypePath);
+                        if (viewPaths != null) {
+                            while (viewPaths.hasMoreElements()) {
+                                String viewPath = viewPaths.nextElement();
+                                for (ViewParser parser : parsers) {
+                                    if (parser.canHandle(viewPath)) {
+                                        JSView view = parser.parseView(bundle, viewPath);
+                                        if (view != null) {
+                                            views.add(view);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -127,31 +138,6 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
                 autoDetectedViews.put(bundle, views);
             }
         }
-    }
-
-    private JSFileView parseView(Bundle bundle, String viewPath) {
-        if (viewPath.endsWith(".hbs")) {
-            String[] parts = StringUtils.split(viewPath, "/");
-            String[] viewNameParts = StringUtils.split(StringUtils.substringAfterLast(viewPath, "/"), ".");
-            JahiaTemplatesPackage module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
-
-            //todo: bad replace from _ to :
-            JSFileView fileView = new JSFileView("handlebars", viewPath, viewNameParts.length > 2 ? viewNameParts[1] : "default", module, parts[1].replace('_', ':'), parts[2]);
-            fileView.setProperties(new Properties());
-
-            URL props = bundle.getResource(StringUtils.substringBeforeLast(viewPath, ".hbs") + ".properties");
-            if (props != null) {
-                try (InputStream inStream = props.openStream()) {
-                    fileView.getProperties().load(inStream);
-                } catch (IOException e) {
-                    logger.error("Cannot read", e);
-                }
-            }
-
-            fileView.setDefaultProperties(new Properties());
-            return fileView;
-        }
-        return null;
     }
 
     public void disableBundle(Bundle bundle) {

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.graalvm.polyglot.Value;
 import org.jahia.modules.npmplugins.jsengine.ContextProvider;
 import org.jahia.modules.npmplugins.jsengine.Promise;
+import org.jahia.osgi.BundleUtils;
+import org.jahia.services.render.RenderContext;
+import org.jahia.services.securityfilter.PermissionService;
 
 import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
@@ -13,10 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.*;
 import java.io.*;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class GQLHelper {
     private ContextProvider context;
@@ -44,12 +44,30 @@ public class GQLHelper {
         params.put("query", (String) parameters.get("query"));
         params.put("operationName", (String) parameters.get("operationName"));
         if (parameters.containsKey("variables")) {
-            params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            if (parameters.get("variables") instanceof String) {
+                params.put("variables", (String) parameters.get("variables"));
+            } else {
+                params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
+            }
         }
         StringWriter out = new StringWriter();
 
-        servlet.service(new HttpServletRequestMock(params), new HttpServletResponseMock(out));
-        Value js = context.getContext().eval("js", "JSON.parse('" + out.toString().replace("'", "\\'") + "')");
+        PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
+        permissionService.addScopes(Collections.singleton("graphql"), null);
+
+        RenderContext renderContext = (RenderContext)  parameters.get("renderContext");
+        HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
+            public String getParameter(String name) {
+                if (params.containsKey(name)) {
+                    return (String) params.get(name);
+                }
+                return super.getParameter(name);
+            }
+        };
+        System.out.println(params);
+        servlet.service(req, new HttpServletResponseMock(out));
+        System.out.println(out);
+        Value js = context.getContext().eval("js", "(" + out + ")");
         return js;
     }
 
@@ -358,7 +376,7 @@ public class GQLHelper {
 
         @Override
         public String encodeURL(String url) {
-            return null;
+            return url;
         }
 
         @Override

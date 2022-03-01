@@ -120,6 +120,7 @@ public class RenderHelper {
         BeanUtils.populate(tag, attr);
         MockPageContext pageContext = new MockPageContext(renderContext);
         tag.setPageContext(pageContext);
+        tag.doStartTag();
         tag.doEndTag();
         return pageContext.getTargetWriter().getBuffer().toString();
     }

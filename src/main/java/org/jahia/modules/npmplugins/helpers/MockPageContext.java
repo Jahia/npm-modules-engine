@@ -14,7 +14,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-class MockPageContext extends PageContext {
+public class MockPageContext extends PageContext {
     private final Map<String,Object> pageAttrs = Collections.synchronizedMap(new HashMap<>());
     private final Map<String,Object> appAttr = Collections.synchronizedMap(new HashMap<>());
     private final JspWriter writer;
