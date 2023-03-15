@@ -212,6 +212,7 @@ public class GraalVMEngine {
 
             ContextProvider contextProvider = new ContextProvider(context, version.get());
 
+            // Todo refactor / simplify "global variables" and "helpers" relationship
             Map<String, Object> helpers = new HashMap<>();
             for (JSGlobalVariableFactory global : globals) {
                 Map<String,Object> instances = global.getHelperInstances(contextProvider);

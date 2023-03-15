@@ -1,11 +1,7 @@
 package org.jahia.modules.npmplugins.views;
 
-import org.apache.commons.lang.StringUtils;
-import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
-import org.jahia.modules.npmplugins.registrars.Registrar;
 import org.jahia.modules.npmplugins.views.hbs.HandlebarsParser;
-import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
@@ -25,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -100,11 +94,11 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
     public void enableBundle(Bundle bundle) {
         URL packagejson = bundle.getResource("package.json");
         if (packagejson != null) {
-            parseBundeFolder(bundle);
+            parseBundleFolder(bundle);
         }
     }
 
-    private void parseBundeFolder(Bundle bundle) {
+    private void parseBundleFolder(Bundle bundle) {
         Enumeration<String> nodeTypesPaths = bundle.getEntryPaths("views");
         if (nodeTypesPaths != null) {
             Set<JSView> views = new HashSet<>();
