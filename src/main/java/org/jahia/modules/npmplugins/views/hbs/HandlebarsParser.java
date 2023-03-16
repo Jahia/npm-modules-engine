@@ -3,7 +3,6 @@ package org.jahia.modules.npmplugins.views.hbs;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npmplugins.views.JSFileView;
-import org.jahia.modules.npmplugins.views.JSScriptResolver;
 import org.jahia.modules.npmplugins.views.JSView;
 import org.jahia.modules.npmplugins.views.ViewParser;
 import org.jahia.registries.ServicesRegistry;
@@ -17,7 +16,7 @@ import java.net.URL;
 import java.util.Properties;
 
 public class HandlebarsParser implements ViewParser {
-    private static final Logger logger = LoggerFactory.getLogger(JSScriptResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(HandlebarsParser.class);
 
     @Override
     public boolean canHandle(String viewPath) {

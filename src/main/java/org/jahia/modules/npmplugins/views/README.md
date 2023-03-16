@@ -1,6 +1,6 @@
 ## Views
 
-JS-based views are resolved with the help of `JSScriptResolver` class. 
+JS-based views are resolved with the help of [`ViewsRegistrar`](../registrars/ViewsRegistrar.java) class. 
 
 In npm-plugins views are JS functions, which takes "resource" and "render context" parameters (as java objects), and returns a string. 
 In this context, "view" and "template" terms are equivalent. 

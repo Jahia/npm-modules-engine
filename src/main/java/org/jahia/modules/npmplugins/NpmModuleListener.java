@@ -28,8 +28,8 @@ import java.util.Map;
  * Listener to execute scripts at activate/desactivate time
  */
 @Component(immediate = true)
-public class JSInitListener implements BundleListener {
-    private static final Logger logger = LoggerFactory.getLogger(JSInitListener.class);
+public class NpmModuleListener implements BundleListener {
+    private static final Logger logger = LoggerFactory.getLogger(NpmModuleListener.class);
     public static final String SOURCES = "sources";
     public static final String MODULES = "/modules/";
     private GraalVMEngine engine;
@@ -119,7 +119,7 @@ public class JSInitListener implements BundleListener {
                 Map<?,?> jahia = (Map<?, ?>) json.get("jahia");
                 if (jahia != null && jahia.containsKey("server")) {
                     String script = (String) jahia.get("server");
-                    engine.addInitScript(bundle, script);
+                    engine.enableBundle(bundle, script);
                 }
             }
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class JSInitListener implements BundleListener {
 
     private void disableBundle(Bundle bundle) {
         try {
-            engine.removeInitScript(bundle);
+            engine.disableBundle(bundle);
         } catch (Exception e) {
             logger.error("Cannot disable bundle {}", bundle.getSymbolicName(), e);
         }

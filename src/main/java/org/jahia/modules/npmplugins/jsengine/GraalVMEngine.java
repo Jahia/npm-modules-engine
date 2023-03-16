@@ -68,7 +68,7 @@ public class GraalVMEngine {
         registrars.remove(registrar);
     }
 
-    public void addInitScript(Bundle bundle, String script) throws IOException {
+    public void enableBundle(Bundle bundle, String script) throws IOException {
         initScripts.put(bundle, getGraalSource(bundle, script));
         version.incrementAndGet();
         doWithContext(contextProvider -> {
@@ -78,7 +78,7 @@ public class GraalVMEngine {
         });
     }
 
-    public void removeInitScript(Bundle bundle) {
+    public void disableBundle(Bundle bundle) {
         doWithContext(contextProvider -> {
             for (Registrar registrar : registrars) {
                 registrar.unregister(contextProvider.getRegistry(), bundle);
@@ -212,17 +212,9 @@ public class GraalVMEngine {
 
             ContextProvider contextProvider = new ContextProvider(context, version.get());
 
-            // Todo refactor / simplify "global variables" and "helpers" relationship
-            Map<String, Object> helpers = new HashMap<>();
             for (JSGlobalVariableFactory global : globals) {
-                Map<String,Object> instances = global.getHelperInstances(contextProvider);
-                for (Map.Entry<String, Object> entry : instances.entrySet()) {
-                    OSGiServiceInjector.handleMethodInjection(entry.getValue());
-                    helpers.put(entry.getKey(), entry.getValue());
-                }
+                context.getBindings(JS).putMember(global.getName(), global.getObject(contextProvider));
             }
-            contextProvider.getHelpers().putAll(helpers);
-            context.getBindings(JS).putMember("jahiaHelpers", ProxyObject.fromMap(helpers));
 
             // Initialize context with available JS
             for (Map.Entry<Bundle, Source> entry : initScripts.entrySet()) {

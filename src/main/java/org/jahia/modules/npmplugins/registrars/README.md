@@ -31,5 +31,5 @@ The target must be `render`, followed by the filter priority.
 
 ### Views
 
-Views should be registered through a registrar, instead of being handled directly by `jsengine`. See [views](../views/README.md) for details on how JS-based views are registered.
+Views are registered through the [`ViewsRegistrar`](./ViewsRegistrar.java), which is also an instance of `ScriptResolver`. See [views](../views/README.md) for details on how JS-based views are registered.
 

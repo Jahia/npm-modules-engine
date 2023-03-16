@@ -1,6 +1,11 @@
-package org.jahia.modules.npmplugins.views;
+package org.jahia.modules.npmplugins.registrars;
 
+import org.graalvm.polyglot.Value;
+import org.jahia.modules.npmplugins.helpers.Registry;
 import org.jahia.modules.npmplugins.jsengine.GraalVMEngine;
+import org.jahia.modules.npmplugins.views.JSScript;
+import org.jahia.modules.npmplugins.views.JSView;
+import org.jahia.modules.npmplugins.views.ViewParser;
 import org.jahia.modules.npmplugins.views.hbs.HandlebarsParser;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
@@ -10,8 +15,6 @@ import org.jahia.services.render.scripting.Script;
 import org.jahia.services.render.scripting.ScriptResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -21,20 +24,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(immediate = true, service = {ScriptResolver.class})
-public class JSScriptResolver implements ScriptResolver, BundleListener {
-    private static final Logger logger = LoggerFactory.getLogger(JSScriptResolver.class);
+@Component(immediate = true, service = {Registrar.class, ScriptResolver.class})
+public class ViewsRegistrar implements ScriptResolver, Registrar {
+    private static final Logger logger = LoggerFactory.getLogger(ViewsRegistrar.class);
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
     private List<ViewParser> parsers;
-    private Map<Bundle, Collection<JSView>> autoDetectedViews = new HashMap<>();
+    private Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -53,13 +55,6 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
         renderService.setScriptResolvers(l);
 
         parsers = Arrays.asList(new HandlebarsParser());
-
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.ACTIVE) {
-                enableBundle(bundle);
-            }
-        }
-        context.addBundleListener(this);
     }
 
     @Deactivate
@@ -67,38 +62,31 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
         List<ScriptResolver> l = new ArrayList<>(renderService.getScriptResolvers());
         l.remove(this);
         renderService.setScriptResolvers(l);
-
-        context.removeBundleListener(this);
-
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.ACTIVE) {
-                disableBundle(bundle);
-            }
-        }
     }
 
     @Override
-    public void bundleChanged(BundleEvent event) {
-        try {
-            Bundle bundle = event.getBundle();
-            if (event.getType() == BundleEvent.STARTED) {
-                enableBundle(bundle);
-            } else if (event.getType() == BundleEvent.STOPPED) {
-                disableBundle(bundle);
-            }
-        } catch (Exception e) {
-            logger.error("Cannot handle event", e);
-        }
+    public void register(Registry registry, Bundle bundle, GraalVMEngine engine) {
+        Set<JSView> views = new HashSet<>();
+
+        views.addAll(parseBundleFolder(bundle));
+        views.addAll(getRegistryViewsSet(registry, bundle));
+
+        viewsPerBundle.put(bundle, views);
     }
 
-    public void enableBundle(Bundle bundle) {
-        URL packagejson = bundle.getResource("package.json");
-        if (packagejson != null) {
-            parseBundleFolder(bundle);
-        }
+    @Override
+    public void unregister(Registry registry, Bundle bundle) {
+        viewsPerBundle.remove(bundle);
     }
 
-    private void parseBundleFolder(Bundle bundle) {
+    private Collection<JSView> getRegistryViewsSet(Registry registry, Bundle bundle) {
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("type", "view");
+        filter.put("bundle", Value.asValue(bundle));
+        return registry.find(filter).stream().map(JSView::new).collect(Collectors.toSet());
+    };
+
+    private Collection<JSView> parseBundleFolder(Bundle bundle) {
         Enumeration<String> nodeTypesPaths = bundle.getEntryPaths("views");
         if (nodeTypesPaths != null) {
             Set<JSView> views = new HashSet<>();
@@ -128,14 +116,10 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
                     }
                 }
             }
-            if (!views.isEmpty()) {
-                autoDetectedViews.put(bundle, views);
-            }
+            return views;
         }
-    }
 
-    public void disableBundle(Bundle bundle) {
-        autoDetectedViews.remove(bundle);
+        return Collections.emptySet();
     }
 
     @Override
@@ -189,7 +173,7 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
     @Override
     public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType) {
         Set<String> modulesWithAllDependencies = jcrSiteNode.getInstalledModulesWithAllDependencies();
-        return Stream.concat(getRegistryViewsSet(), getFilesViewsSet())
+        return getFilesViewsSet()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
                 .filter(v -> extendedNodeType.isNodeType(v.getTarget()))
@@ -197,18 +181,8 @@ public class JSScriptResolver implements ScriptResolver, BundleListener {
     }
 
     private Stream<JSView> getFilesViewsSet() {
-        return autoDetectedViews.values().stream()
+        return viewsPerBundle.values().stream()
                 .flatMap(Collection::stream);
     }
 
-    private Stream<JSView> getRegistryViewsSet() {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("type", "view");
-        return graalVMEngine.doWithContext(contextProvider -> {
-            return contextProvider.getRegistry().find(filter).stream()
-                    .filter(p -> p.containsKey("templateType"))
-                    .filter(p -> p.containsKey("target"))
-                    .map(JSView::new);
-        });
-    }
 }

@@ -51,13 +51,13 @@ public class SourcesFilter extends AbstractServletFilter {
 
         String uri = httpRequest.getRequestURI();
         if (uri.endsWith(".css")) {
-            String moduleName = StringUtils.substringBetween(uri, JSInitListener.MODULES,"/");
-            String path = StringUtils.substringAfter(uri, JSInitListener.MODULES + moduleName);
+            String moduleName = StringUtils.substringBetween(uri, NpmModuleListener.MODULES,"/");
+            String path = StringUtils.substringAfter(uri, NpmModuleListener.MODULES + moduleName);
             JahiaTemplatesPackage pack = modulesService.getTemplatePackageById(moduleName);
             if (pack != null) {
                 try {
                     String value = jcrTemplate.doExecuteWithSystemSession(session -> {
-                        String nodePath = JSInitListener.MODULES + moduleName + '/' + pack.getVersion().toString() + '/' + JSInitListener.SOURCES + path + '/' + Constants.JCR_CONTENT;
+                        String nodePath = NpmModuleListener.MODULES + moduleName + '/' + pack.getVersion().toString() + '/' + NpmModuleListener.SOURCES + path + '/' + Constants.JCR_CONTENT;
                         if (session.itemExists(nodePath)) {
                             return session.getNode(nodePath).getProperty("jcr:data").getString();
                         }
