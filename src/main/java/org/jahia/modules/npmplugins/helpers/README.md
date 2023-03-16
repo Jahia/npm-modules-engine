@@ -1,7 +1,8 @@
 ## Helpers
 
-Helpers are available in the `jahiaHelpers` global variable. Every context has a different version of the helpers, 
-meaning no data are shared between them.
+The java helpers provide the main entry point for JS to java interoperability. 
+Helpers are instantiated when a new context is created. Every context has a different instance of the helpers, 
+meaning no data are shared between them. These helpers can safely use the JS context to execute JS callbacks.
 
 ### Registry
 
@@ -28,3 +29,21 @@ Provide access to OSGi bundles.
 ### NodeHelper
 
 The NodeHelper gives an JS like access to JCR nodes.
+
+## Using helpers
+
+Helpers are available in the `jahiaHelpers` global variable.
+
+When working with webpack, it can be handy to declare these helpers as "externals" :
+```js
+externals: {
+  '@jahia/server-helpers': 'jahiaHelpers'
+}
+```
+
+So that they can be used afterwards as standard imports :
+```javascript
+import {registry} from '@jahia/server-helpers';
+```
+
+Completion is provided by adding typing packages for `@jahia/server-helpers` [TBD in BACKLOG-15768]
