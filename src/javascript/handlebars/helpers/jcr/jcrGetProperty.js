@@ -1,6 +1,8 @@
 import {SafeString} from 'handlebars';
 import {getNode, setResult} from './util';
 
+const JCR_WEAKREFERENCE_PROPERTY_TYPE = 10;
+
 export default function (resource, name, options) {
     function convertValue(jcrValue) {
         if (options.hash.renderer) {
@@ -12,8 +14,8 @@ export default function (resource, name, options) {
             }
         }
 
-        if (jcrValue.getType() === 10) {
-            return jcrValue.getNode().getPath();
+        if (jcrValue.getType() === JCR_WEAKREFERENCE_PROPERTY_TYPE) {
+            return jcrValue.getNode().getUrl();
         }
 
         return new SafeString(jcrValue.getString());
