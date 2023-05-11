@@ -1,6 +1,6 @@
 ## Registrars
 
-The role of registrars is to parse NPM plugins to detect and register specific extensions, written in JS (or anything that require GraalVM engine).
+The role of registrars is to parse NPM modules to detect and register specific extensions, written in JS (or anything that require GraalVM engine).
 Registrars are called when a NPM plugin is started, after the execution of the initialization script.
 
 Usually, extensions will be installed in the registry by the NPM plugin during this initialization phase. This can bve done 

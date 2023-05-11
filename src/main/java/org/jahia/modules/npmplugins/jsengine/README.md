@@ -43,7 +43,7 @@ A bundle listener ([`NpmModuleListener`](../NpmModuleListener.java)) listen to t
 
 When a bundle is started, we goes into the following flow :
 
-- Check if we have a `package.json` at root level, and if it contains `jahia.server` entry. If it does, this is a NPM plugin. The `jahia.server` entry gives the path to the initialization script of the module. All NPM plugins must a have an initialization script.
+- Check if we have a `package.json` at root level, and if it contains `jahia.server` entry. If it does, this is a NPM plugin. The `jahia.server` entry gives the path to the initialization script of the module. All NPM modules must a have an initialization script.
 - This script must be a single executable js file, compiled with webpack.
 - The init script is added to the list of scripts to be executed when creating a new context. 
 - Version number is incremented to invalidate the existing contexts in the pool

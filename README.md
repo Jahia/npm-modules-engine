@@ -7,13 +7,12 @@
     More can be generated from here: https://shields.io/
 -->
 
-|           |                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Module    | ![ID](https://img.shields.io/badge/ID-npm--plugins-blue) ![Store](https://img.shields.io/badge/Jahia%20Store-No-red) |
-| CI / CD   | [![CircleCI](https://circleci.com/gh/Jahia/npm-plugins/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/Jahia/npm-plugins) |
-| Artifacts | [![Snapshot](https://img.shields.io/badge/Snapshot-Nexus-blue)](https://devtools.jahia.com/nexus/content/repositories/jahia-snapshots/org/jahia/modules/npm-plugins/) [![Release](https://img.shields.io/badge/Release-Nexus-blue)](https://devtools.jahia.com/nexus/content/repositories/jahia-releases/org/jahia/modules/npm-plugins/) |
+<a href="https://www.jahia.com/">
+    <img src="https://www.jahia.com/modules/jahiacom-templates/images/jahia-3x.png" alt="Jahia logo" title="Jahia" align="right" height="60" />
+</a>
 
-# NPM Plugins
+NPM Modules Engine
+======================
 
 <p align="center">A module that provide support for NPM-style modules deployment in Jahia</p>
 
@@ -30,11 +29,11 @@ The GraalVM engine provides context to execute Javascript code. More details on 
 
 NPM module comes with a list of Java helpers, available from javascript code. All helpers are described [here](./src/main/java/org/jahia/modules/npmplugins/helpers/README.md)
 
-## NPM plugins
+## NPM Modules
 
 ### Content
 
-A NPM plugin module can contain views, definitions, and other standard jahia extensions. 
+A NPM module can contain views, definitions, and other standard jahia extensions. 
 
 How to include views in a module is described [here](./src/main/java/org/jahia/modules/npmplugins/views/README.md).
 
@@ -70,3 +69,6 @@ Modules can also be deployed as other modules, through REST api, Module manageme
 curl -s --user root:root1234 --form bundle=@npm-plugin-example.tgz --form start=true http://localhost:8080/modules/api/bundles
 ```
 
+## Open-Source
+
+This is an Open-Source module, you can find more details about Open-Source @ Jahia [in this repository](https://github.com/Jahia/open-source)

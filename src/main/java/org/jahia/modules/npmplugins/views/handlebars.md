@@ -1,6 +1,6 @@
 # Handlebars templating
 
-Handlebars support is done directly in npm-plugins modules, by registering an extendable base view 'handlebars' which implements the render method and automatic registration of .hbs files.
+Handlebars support is done directly in npm-modules-engine modules, by registering an extendable base view 'handlebars' which implements the render method and automatic registration of .hbs files.
 
 ## Adding views
 
@@ -12,7 +12,7 @@ View properties can be provided with a `.properties` file.
 
 ### Manual registration
 
-It's usually not needed to manually register handlebars views in the registry, as you can use the naming convention to let the npm-plugins module handle it.
+It's usually not needed to manually register handlebars views in the registry, as you can use the naming convention to let the npm-modules-engine module handle it.
 However, if you don't use this convention, you will have to declare your own view using the registry, extending the predefined 'handlebars' view :
 
 ```javascript
@@ -33,7 +33,7 @@ The [handlebars init code](./src/javascript/handlebars/init.js) initialize the h
 
 ## Handlebars helpers
 
-NPM plugins comes with a set of handlebars helpers, providing the different functionalities that are required when builing a Jahia template.
+NPM modules comes with a set of handlebars helpers, providing the different functionalities that are required when builing a Jahia template.
 
 ### Generic helper
 

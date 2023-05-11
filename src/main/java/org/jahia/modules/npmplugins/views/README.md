@@ -2,7 +2,7 @@
 
 JS-based views are resolved with the help of [`ViewsRegistrar`](../registrars/ViewsRegistrar.java) class. 
 
-In npm-plugins views are JS functions, which takes "resource" and "render context" parameters (as java objects), and returns a string. 
+In NPM modules views are JS functions, which takes "resource" and "render context" parameters (as java objects), and returns a string. 
 In this context, "view" and "template" terms are equivalent. 
 Resource contains the node, the optional view name to use, and some other rendering parameters. 
 Render context is the global context for the request. 
@@ -14,7 +14,7 @@ These views need to declare `template: 'true'` in their properties. The `SimpleT
 
 ### View resolution
 
-When it needs to render a node, the render service asks for registered "ScriptResolver" implementation - NPM plugins provide an implementation [`JSScriptResolver.java`](./JSScriptResolver.java) which is looking into the registry to get these view.
+When it needs to render a node, the render service asks for registered "ScriptResolver" implementation - NPM modules provide an implementation [`JSScriptResolver.java`](./JSScriptResolver.java) which is looking into the registry to get these view.
 The implementation is currently simple and not really optimized, but it basically looks into the registry for any view that matches the criteria. [`JSView`](./JSView.java) contains the view metadata, and [`JSScript`](./JSScript.java) the rendering part. 
 It simply dispatches the resource/context to the JS function, and return the generated result.
 

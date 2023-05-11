@@ -55,11 +55,11 @@
         <version>8.1.4.0-SNAPSHOT</version>
     </parent>
     <groupId>org.jahia.modules</groupId>
-    <artifactId>npm-plugins</artifactId>
-    <name>NPM plugins</name>
+    <artifactId>npm-modules-engine</artifactId>
+    <name>NPM modules engine</name>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <description>This is the custom module (NPM plugins) for running on a Jahia server.</description>
+    <description>This is the engine allowing NPM modules to run on a Jahia server.</description>
 
     <scm>
         <connection>scm:dummy:uri</connection>
