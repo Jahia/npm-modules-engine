@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.jsengine;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
 import org.graalvm.polyglot.Value;
 import pl.touk.throwing.ThrowingSupplier;

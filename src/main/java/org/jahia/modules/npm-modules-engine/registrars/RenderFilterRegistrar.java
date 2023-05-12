@@ -1,9 +1,9 @@
-package org.jahia.modules.npm-modules-engine.registrars;
+package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm-modules-engine.helpers.Registry;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
-import org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.helpers.Registry;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;

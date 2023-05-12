@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.npmhandler;
+package org.jahia.modules.npm.modules.engine.npmhandler;
 
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;

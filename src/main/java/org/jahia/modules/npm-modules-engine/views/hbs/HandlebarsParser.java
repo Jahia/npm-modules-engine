@@ -1,10 +1,10 @@
-package org.jahia.modules.npm-modules-engine.views.hbs;
+package org.jahia.modules.npm.modules.engine.views.hbs;
 
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm-modules-engine.views.JSFileView;
-import org.jahia.modules.npm-modules-engine.views.JSView;
-import org.jahia.modules.npm-modules-engine.views.ViewParser;
+import org.jahia.modules.npm.modules.engine.views.JSFileView;
+import org.jahia.modules.npm.modules.engine.views.JSView;
+import org.jahia.modules.npm.modules.engine.views.ViewParser;
 import org.jahia.registries.ServicesRegistry;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;

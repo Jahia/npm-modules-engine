@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.views;
+package org.jahia.modules.npm.modules.engine.views;
 
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;

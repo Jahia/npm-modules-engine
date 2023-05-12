@@ -1,12 +1,12 @@
-package org.jahia.modules.npm-modules-engine.registrars;
+package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm-modules-engine.helpers.Registry;
-import org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine;
-import org.jahia.modules.npm-modules-engine.views.JSScript;
-import org.jahia.modules.npm-modules-engine.views.JSView;
-import org.jahia.modules.npm-modules-engine.views.ViewParser;
-import org.jahia.modules.npm-modules-engine.views.hbs.HandlebarsParser;
+import org.jahia.modules.npm.modules.engine.helpers.Registry;
+import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.views.JSScript;
+import org.jahia.modules.npm.modules.engine.views.JSView;
+import org.jahia.modules.npm.modules.engine.views.ViewParser;
+import org.jahia.modules.npm.modules.engine.views.hbs.HandlebarsParser;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;

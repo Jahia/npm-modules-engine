@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.graphql;
+package org.jahia.modules.npm.modules.engine.graphql;
 
 import graphql.annotations.annotationTypes.GraphQLDescription;
 import graphql.annotations.annotationTypes.GraphQLField;

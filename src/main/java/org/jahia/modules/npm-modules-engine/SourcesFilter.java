@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine;
+package org.jahia.modules.npm.modules.engine;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jahia.api.Constants;

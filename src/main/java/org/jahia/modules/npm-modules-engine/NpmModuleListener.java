@@ -1,9 +1,9 @@
-package org.jahia.modules.npm-modules-engine;
+package org.jahia.modules.npm.modules.engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRTemplate;

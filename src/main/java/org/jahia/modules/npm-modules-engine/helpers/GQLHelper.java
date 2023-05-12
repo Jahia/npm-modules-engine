@@ -1,9 +1,9 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
-import org.jahia.modules.npm-modules-engine.jsengine.Promise;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.Promise;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.securityfilter.PermissionService;

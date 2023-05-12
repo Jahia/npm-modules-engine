@@ -1,11 +1,11 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine.JS;
+import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
 
 public class Registry {
     private ContextProvider context;

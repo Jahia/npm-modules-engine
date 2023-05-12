@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;

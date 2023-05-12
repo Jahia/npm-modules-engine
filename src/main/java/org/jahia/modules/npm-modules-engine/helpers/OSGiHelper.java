@@ -1,9 +1,9 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
-import org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.osgi.framework.Bundle;
 

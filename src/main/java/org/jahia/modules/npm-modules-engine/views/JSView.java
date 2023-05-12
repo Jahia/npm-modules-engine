@@ -1,8 +1,8 @@
-package org.jahia.modules.npm-modules-engine.views;
+package org.jahia.modules.npm.modules.engine.views;
 
 import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.render.View;
 import org.osgi.framework.Bundle;

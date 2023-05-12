@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

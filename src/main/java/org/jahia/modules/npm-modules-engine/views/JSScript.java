@@ -1,9 +1,9 @@
-package org.jahia.modules.npm-modules-engine.views;
+package org.jahia.modules.npm.modules.engine.views;
 
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
-import org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.Resource;

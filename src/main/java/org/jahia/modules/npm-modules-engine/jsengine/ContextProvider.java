@@ -1,8 +1,8 @@
-package org.jahia.modules.npm-modules-engine.jsengine;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
 import org.graalvm.polyglot.Context;
-import org.jahia.modules.npm-modules-engine.helpers.Registry;
-import org.jahia.modules.npm-modules-engine.helpers.RegistryHelper;
+import org.jahia.modules.npm.modules.engine.helpers.Registry;
+import org.jahia.modules.npm.modules.engine.helpers.RegistryHelper;
 import org.osgi.framework.Bundle;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.npmhandler;
+package org.jahia.modules.npm.modules.engine.npmhandler;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.url.AbstractURLStreamHandlerService;

@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;

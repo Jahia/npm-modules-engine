@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.jsengine;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
 public interface JSGlobalVariableFactory {
     String getName();

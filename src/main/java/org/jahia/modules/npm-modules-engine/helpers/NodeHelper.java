@@ -1,7 +1,7 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

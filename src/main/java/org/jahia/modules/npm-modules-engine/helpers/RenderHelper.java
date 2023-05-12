@@ -1,7 +1,7 @@
-package org.jahia.modules.npm-modules-engine.helpers;
+package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.jahia.modules.npm-modules-engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRTemplate;

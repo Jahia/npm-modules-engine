@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.views;
+package org.jahia.modules.npm.modules.engine.views;
 
 import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Jahia;

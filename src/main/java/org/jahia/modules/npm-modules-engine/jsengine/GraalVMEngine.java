@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.jsengine;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -10,8 +10,8 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm-modules-engine.helpers.OSGiServiceInjector;
-import org.jahia.modules.npm-modules-engine.registrars.Registrar;
+import org.jahia.modules.npm.modules.engine.helpers.OSGiServiceInjector;
+import org.jahia.modules.npm.modules.engine.registrars.Registrar;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRTemplate;

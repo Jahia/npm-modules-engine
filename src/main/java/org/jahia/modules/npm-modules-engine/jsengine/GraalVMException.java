@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.jsengine;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
 /**
  * Base exception

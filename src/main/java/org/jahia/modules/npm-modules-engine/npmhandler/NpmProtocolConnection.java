@@ -1,4 +1,4 @@
-package org.jahia.modules.npm-modules-engine.npmhandler;
+package org.jahia.modules.npm.modules.engine.npmhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;

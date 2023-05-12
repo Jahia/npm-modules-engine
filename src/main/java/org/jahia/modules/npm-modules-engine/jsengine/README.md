@@ -20,7 +20,7 @@ New contexts will be created with the new scripts list.
 
 ### Configuration
 
-The engine can be configured with the `org.jahia.modules.npm-modules-engine.jsengine.GraalVMEngine.cfg` configuration file. All keys prefixed by `polyglot.` will be passed as options to the engine builder.
+The engine can be configured with the `org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.cfg` configuration file. All keys prefixed by `polyglot.` will be passed as options to the engine builder.
 
 `experimental` enable experimental features on the engine
 
