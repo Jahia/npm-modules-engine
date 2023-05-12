@@ -23,6 +23,9 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
+  "resolutions": {
+    "minimist" : "^1.2.6"
+  },  
   "devDependencies": {
     "@jahia/eslint-config": "^1.1.0",
     "eslint": "^6.7.2",
