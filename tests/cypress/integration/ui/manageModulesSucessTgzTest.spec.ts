@@ -4,6 +4,6 @@ describe('Install TGZ bundle success path', () => {
     it('Install tgz bundle via UI success path', function () {
         manageModules.goTo()
         manageModules.uploadModule('npm-modules-example-v1.0.0.tgz')
-        manageModules.assertModuleInResults('npm-modules-example')
+        manageModules.assertModuleInResults('npm-plugin-example')
     })
 })
