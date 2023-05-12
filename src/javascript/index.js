@@ -11,7 +11,7 @@ initI18next();
 initHandlebars();
 initReact();
 
-// SetTimeout polyfill
+// setTimeout polyfill
 global.setTimeout = ((cb, t) => {
     if (t === 0) {
         // eslint-disable-next-line no-new
