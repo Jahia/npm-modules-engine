@@ -1,8 +1,8 @@
-import {ApolloClient, InMemoryCache} from "@apollo/client";
+import {ApolloClient, InMemoryCache} from '@apollo/client';
 
 console.log('creating client');
 
-let apolloState = {}
+let apolloState = {};
 
 /**
  * Simple object check.
@@ -23,11 +23,12 @@ export function mergeDeep(target, source) {
         for (const key in source) {
             if (isObject(source[key])) {
                 if (!target[key]) {
-                    Object.assign(target, { [key]: {} });
+                    Object.assign(target, {[key]: {}});
                 }
+
                 mergeDeep(target[key], source[key]);
             } else {
-                Object.assign(target, { [key]: source[key] });
+                Object.assign(target, {[key]: source[key]});
             }
         }
     }
@@ -40,10 +41,9 @@ document.querySelectorAll('[data-apollostate]').forEach(data => {
     apolloState = mergeDeep(apolloState, JSON.parse(data.dataset.apollostate));
 });
 
-
 const client = new ApolloClient({
     uri: 'http://localhost:8080/modules/graphql',
-    cache: new InMemoryCache().restore(apolloState),
+    cache: new InMemoryCache().restore(apolloState)
 });
 
 export default client;

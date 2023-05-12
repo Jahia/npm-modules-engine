@@ -1,7 +1,7 @@
 const path = require('path');
-const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
-module.exports = (env, argv) => {
+module.exports = () => {
     let config = {
         entry: {
             reactAppShell: path.resolve(__dirname, 'src/client-javascript/main')
@@ -32,13 +32,13 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: "reactAppShell",
+                name: 'reactAppShell',
                 exposes: {
                     '.': './src/client-javascript/exposed'
                 },
                 shared: {
-                    'react': {
-                        requiredVersion: "^17.0.2"
+                    react: {
+                        requiredVersion: '^17.0.2'
                     },
                     'react-dom': {},
                     '@apollo/client': {},
@@ -47,7 +47,7 @@ module.exports = (env, argv) => {
                 }
             })
         ],
-        devtool: "inline-source-map",
+        devtool: 'inline-source-map',
         mode: 'development'
     };
 

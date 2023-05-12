@@ -1,12 +1,13 @@
 import {registry} from '@jahia/server-helpers';
-import React from "react";
-import ReactDOMServer from "react-dom/server";
-import {flushToHTML} from 'styled-jsx/server'
-import styledJsx from 'styled-jsx/style'
-import {getMarkupFromTree} from "@apollo/client/react/ssr";
-import {getClient} from "../apollo/client";
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import {flushToHTML} from 'styled-jsx/server';
+import styledJsx from 'styled-jsx/style';
+import {getMarkupFromTree} from '@apollo/client/react/ssr';
+import {getClient} from '../apollo/client';
 
 function getEncodedData(data) {
+    // eslint-disable-next-line no-useless-escape
     return JSON.stringify(data).replace(/[\u00A0-\u9999<>\&";]/g, i => '&#' + i.charCodeAt(0) + ';');
 }
 
@@ -48,34 +49,34 @@ export default () => {
                     <div id=${id} data-reactrender="${getEncodedData(props)}"></div>
                     <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
                     <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
-                `
-            } else {
-                // SSR
-                const element = React.createElement(view.component, {...props, currentResource, renderContext});
+                `;
+            }
 
-                const client = getClient(renderContext);
-                registry.get('module', 'helpers').exports.apollo = client;
+            // SSR
+            const element = React.createElement(view.component, {...props, currentResource, renderContext});
 
-                const styles = {};
-                // Render function that also get styles from styled-jsx
-                let renderFunction = element => {
-                    const res = ReactDOMServer.renderToString(element);
-                    styles.resolved = flushToHTML()
-                    return res;
-                }
-                return getMarkupFromTree({tree: element, renderFunction: renderFunction}).then((r) => {
-                    const initialState = client.extract();
-                    const stylesResource = styles.resolved ? `<jahia:resource type="inline" key="styles${id}">${styles.resolved}</jahia:resource>` : '';
+            const client = getClient(renderContext);
+            registry.get('module', 'helpers').exports.apollo = client;
 
-                    return `
+            const styles = {};
+            // Render function that also get styles from styled-jsx
+            let renderFunction = element => {
+                const res = ReactDOMServer.renderToString(element);
+                styles.resolved = flushToHTML();
+                return res;
+            };
+
+            return getMarkupFromTree({tree: element, renderFunction: renderFunction}).then(r => {
+                const initialState = client.extract();
+                const stylesResource = styles.resolved ? `<jahia:resource type="inline" key="styles${id}">${styles.resolved}</jahia:resource>` : '';
+
+                return `
                             <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
                             ${stylesResource}
                             <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
                             <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
-                        `
-                });
-            }
+                        `;
+            });
         }
     });
-
-}
+};
