@@ -23,11 +23,11 @@ definitions, filter, and other jahia extensions.
 
 ## GraalVM engine
 
-The GraalVM engine provides context to execute Javascript code. More details on the engine features and configuration [here](./src/main/java/org/jahia/modules/npm-modules-engine/jsengine/README.md).
+The GraalVM engine provides context to execute Javascript code. More details on the engine features and configuration [here](./src/main/java/org/jahia/modules/npm/modules/engine/jsengine/README.md).
 
 ### Java helpers
 
-NPM module comes with a list of Java helpers, available from javascript code. All helpers are described [here](./src/main/java/org/jahia/modules/npm-modules-engine/helpers/README.md)
+NPM module comes with a list of Java helpers, available from javascript code. All helpers are described [here](./src/main/java/org/jahia/modules/npm/modules/engine/helpers/README.md)
 
 ## NPM Modules
 
@@ -35,12 +35,12 @@ NPM module comes with a list of Java helpers, available from javascript code. Al
 
 A NPM module can contain views, definitions, and other standard jahia extensions. 
 
-How to include views in a module is described [here](./src/main/java/org/jahia/modules/npm-modules-engine/views/README.md).
+How to include views in a module is described [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/README.md).
 
 Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
 They follow the same format as in a standard jahia module.
 
-Other extensions are supported with the help of [registrars](./src/main/java/org/jahia/modules/npm-modules-engine/registrars/README.md).
+Other extensions are supported with the help of [registrars](./src/main/java/org/jahia/modules/npm/modules/engine/registrars/README.md).
 
 ### Deployment
 
@@ -57,11 +57,11 @@ The `package.json` file must contain a `jahia` section with a `server` entry. Th
 }
 ```
 
-See [here](./src/main/java/org/jahia/modules/npm-modules-engine/jsengine/README.md#module-registration) for more details on the whole deployment process. 
+See [here](./src/main/java/org/jahia/modules/npm/modules/engine/jsengine/README.md#module-registration) for more details on the whole deployment process. 
 
 In order to be parsed as NPM modules, the URL of the module must be wrapped with `npm://` protocol - for example, `npm://file:///tmp/module-1.0.0.tgz`. 
 These URLs can be used within karaf console or provisioning API to install them.
-See [here](./src/main/java/org/jahia/modules/npm-modules-engine/npmhandler/README.md) to see how this protocol is handled.
+See [here](./src/main/java/org/jahia/modules/npm/modules/engine/npmhandler/README.md) to see how this protocol is handled.
 
 Modules can also be deployed as other modules, through REST api, Module management UI, or fileinstall folder, provided that they use the `tgz` extension :
 
