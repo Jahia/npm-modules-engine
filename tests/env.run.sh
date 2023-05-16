@@ -62,6 +62,9 @@ do
   echo "$(date +'%d %B %Y - %k:%M') == Modules submitted =="
 done
 
+# Trying out with a 5s wait in provisioning
+sleep 5
+
 # Importing zip sites
 for file in *.zip
 do
