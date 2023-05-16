@@ -6,8 +6,8 @@ export default () => {
         .use(backend)
         .init({
             fallbackLng: 'en',
-            ns: 'npm-plugins',
-            defaultNS: 'npm-plugins',
+            ns: 'npm-modules-engine',
+            defaultNS: 'npm-modules-engine',
             initImmediate: false
         });
 };

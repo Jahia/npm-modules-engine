@@ -53,6 +53,7 @@ export class BasePage {
      * @param type of content to find
      * @param text to find
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     getByText(type: string, text: string) {
         return cy.contains(type, text)
     }

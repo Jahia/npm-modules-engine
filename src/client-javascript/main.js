@@ -10,7 +10,9 @@ setTimeout(() => {
         console.log('Bootstrapping application ..');
 
         import('./bootstrap').then(res => {
+            console.log(res);
             console.log('Application started');
         });
     });
-}, 1000); // todo do not set any delay, just for test
+// eslint-disable-next-line no-warning-comments
+}, 1000); // Todo do not set any delay, just for test
