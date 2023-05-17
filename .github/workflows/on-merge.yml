@@ -105,6 +105,10 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'      
       - uses: jahia/jahia-modules-action/publish@v2
         with:
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
