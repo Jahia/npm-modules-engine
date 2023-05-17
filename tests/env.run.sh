@@ -62,9 +62,6 @@ do
   echo "$(date +'%d %B %Y - %k:%M') == Modules submitted =="
 done
 
-# Trying out with a 5s wait in provisioning
-sleep 5
-
 # Importing zip sites
 for file in *.zip
 do
@@ -89,6 +86,12 @@ if [[ $INSTALLED_MODULE_VERSION == "UNKNOWN" ]]; then
   echo "failure" > ./results/test_failure
   exit 1
 fi
+
+while [ -f /tmp/debug ]
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Wait for debug file to be removed =="
+  sleep 2 
+done
 
 echo "$(date +'%d %B %Y - %k:%M')== Run tests =="
 yarn e2e:ci
