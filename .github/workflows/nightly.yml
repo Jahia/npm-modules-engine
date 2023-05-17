@@ -1,6 +1,7 @@
-ame: Nightly Test run
+name: Nightly Test run
 
 on:
+  workflow_dispatch:
   schedule:
     - cron:  '0 0 * * *'
 
@@ -13,7 +14,7 @@ jobs:
       matrix:
         # For the time being testing on the release has been desactived since there is no release yet
         # jahia_image: ["jahia/jahia-discovery:8", "jahia/jahia-ee-dev:8-SNAPSHOT-graalvm"]
-        jahia_image: ["jahia/jahia-ee-dev:8-SNAPSHOT-graalvm"]
+        jahia_image: ["jahia/jahia-ee-dev:8.1.6.0-SNAPSHOT-graalvm"]
     timeout-minutes: 45
     steps:
       - uses: jahia/jahia-modules-action/helper@v2
