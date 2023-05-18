@@ -13,11 +13,11 @@ import java.util.Map;
 public class ContextProvider {
 
     private boolean isActive = true;
-    private int version;
+    private final int version;
     private final Context context;
 
-    private Collection<Bundle> registeredBundles = new ArrayList<>();
-    private Map<String, Object> helpers = new HashMap<>();
+    private final Collection<Bundle> registeredBundles = new ArrayList<>();
+    private final Map<String, Object> helpers = new HashMap<>();
 
     public ContextProvider(Context cx, int version) {
         this.context = cx;

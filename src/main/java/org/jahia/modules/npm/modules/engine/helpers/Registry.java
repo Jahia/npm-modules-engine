@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
 
 public class Registry {
-    private ContextProvider context;
+    private final ContextProvider context;
     Map<String, Map<String, Object>> registryMap = new HashMap<>();
 
     public Registry(ContextProvider context) {

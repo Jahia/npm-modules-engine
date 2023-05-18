@@ -25,7 +25,7 @@ public class RenderFilterRegistrar implements Registrar {
     private RenderService renderService;
     private BundleContext bundleContext;
 
-    private Map<Bundle, Collection<ServiceRegistration<RenderFilter>>> registrations = new HashMap<>();
+    private final Map<Bundle, Collection<ServiceRegistration<RenderFilter>>> registrations = new HashMap<>();
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -67,10 +67,10 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     public static class RenderFilterBridge extends AbstractFilter {
-        private GraalVMEngine engine;
-        private String key;
+        private final GraalVMEngine engine;
+        private final String key;
 
-        public RenderFilterBridge(Map<String,Object> value,GraalVMEngine engine) {
+        public RenderFilterBridge(Map<String, Object> value, GraalVMEngine engine) {
             this.engine = engine;
             this.key = (String) value.get("key");
             if (value.containsKey("priority")) {

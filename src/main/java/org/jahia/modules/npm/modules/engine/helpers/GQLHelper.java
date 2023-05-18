@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.util.*;
 
 public class GQLHelper {
-    private ContextProvider context;
+    private final ContextProvider context;
     private HttpServlet servlet;
 
     public GQLHelper(ContextProvider context) {
@@ -59,7 +59,7 @@ public class GQLHelper {
         HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
             public String getParameter(String name) {
                 if (params.containsKey(name)) {
-                    return (String) params.get(name);
+                    return params.get(name);
                 }
                 return super.getParameter(name);
             }
@@ -75,7 +75,7 @@ public class GQLHelper {
     @OSGiService(service = HttpServlet.class,
         filter = "(component.name=graphql.kickstart.servlet.OsgiGraphQLHttpServlet)")
     public void setServlet(HttpServlet servlet) {
-        this.servlet = (HttpServlet) servlet;
+        this.servlet = servlet;
     }
 
     private static class HttpServletRequestMock implements HttpServletRequest {
@@ -247,7 +247,7 @@ public class GQLHelper {
 
         @Override
         public String getParameter(String name) {
-            return (String) params.get(name);
+            return params.get(name);
         }
 
         @Override

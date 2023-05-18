@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 public class OSGiHelper {
 
-    private ContextProvider contextProvider;
+    private final ContextProvider contextProvider;
 
     private JahiaTemplateManagerService templateManagerService;
 

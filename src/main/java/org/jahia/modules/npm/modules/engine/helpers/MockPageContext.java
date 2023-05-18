@@ -99,9 +99,7 @@ public class MockPageContext extends PageContext {
             this.renderContext.getRequest().removeAttribute(name);
         } else if (this.renderContext.getRequest().getSession().getAttribute(name) != null) {
             this.renderContext.getRequest().getSession().removeAttribute(name);
-        } else if (this.appAttr.containsKey(name)) {
-            this.appAttr.remove(name);
-        }
+        } else this.appAttr.remove(name);
 
     }
 

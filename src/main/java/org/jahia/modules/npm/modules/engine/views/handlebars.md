@@ -27,9 +27,13 @@ registry.add("view", "page-simple", registry.get('view', 'handlebars'), {
 });
 ```
 
-The implementation needs the templateFile - the path of the file within the bundle. It uses the [OSGi helper](./src/main/java/org/jahia/modules/npm-modules-engine/helpers/OSGiHelper.java) to read the file from the bundle. Other properties are "standard" view properties (not handlebars specific), used by the `JSScriptResolver` .
+The implementation needs the templateFile - the path of the file within the bundle. It uses
+the [OSGi helper](./src/main/java/org/jahia/modules/npm/engine/helpers/OSGiHelper.java) to read the file from the
+bundle. Other properties are "standard" view properties (not handlebars specific), used by the `JSScriptResolver` .
 
-The [handlebars init code](./src/javascript/handlebars/init.js) initialize the handlebars engine, register all available helpers (currently a non-extendable list of modules), exposes the base view and the engine itself if one wants to use it directly ( like in the "yourHandlebarsTemplate.js" example )
+The [handlebars init code](./src/javascript/handlebars/init.js) initialize the handlebars engine, register all available
+helpers (currently a non-extendable list of modules), exposes the base view and the engine itself if one wants to use it
+directly ( like in the "yourHandlebarsTemplate.js" example )
 
 ## Handlebars helpers
 

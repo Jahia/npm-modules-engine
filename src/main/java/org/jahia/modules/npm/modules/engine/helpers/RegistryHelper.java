@@ -3,12 +3,13 @@ package org.jahia.modules.npm.modules.engine.helpers;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RegistryHelper {
-    private ContextProvider context;
-    private Registry registry;
+    private final ContextProvider context;
+    private final Registry registry;
 
     public RegistryHelper(ContextProvider context) {
         this.context = context;
