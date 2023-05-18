@@ -214,8 +214,8 @@ public class GqlNpmHelper {
 
     @GraphQLDescription("Rendering result for a node")
     public static class SimpleRenderedNode {
-        private String id;
-        private String output;
+        private final String id;
+        private final String output;
 
         public SimpleRenderedNode(String id, String output) {
             this.id = id;

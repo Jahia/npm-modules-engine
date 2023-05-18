@@ -28,7 +28,7 @@ public class RenderHelper {
     private JCRTemplate jcrTemplate;
     private RenderService renderService;
 
-    private ContextProvider context;
+    private final ContextProvider context;
 
     public RenderHelper(ContextProvider context) {
         this.context = context;

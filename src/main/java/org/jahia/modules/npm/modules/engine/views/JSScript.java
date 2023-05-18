@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class JSScript implements Script {
-    private static Logger logger = LoggerFactory.getLogger(JSScript.class);
+    private static final Logger logger = LoggerFactory.getLogger(JSScript.class);
 
-    private JSView jsView;
-    private GraalVMEngine graalVMEngine;
+    private final JSView jsView;
+    private final GraalVMEngine graalVMEngine;
 
     public JSScript(JSView jsView, GraalVMEngine graalVMEngine) {
         this.jsView = jsView;

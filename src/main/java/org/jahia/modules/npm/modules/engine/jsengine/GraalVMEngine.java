@@ -8,9 +8,7 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.graalvm.polyglot.*;
-import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm.modules.engine.helpers.OSGiServiceInjector;
 import org.jahia.modules.npm.modules.engine.registrars.Registrar;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -40,15 +38,15 @@ public class GraalVMEngine {
 
     private Engine sharedEngine;
 
-    private List<JSGlobalVariableFactory> globals = new ArrayList<>();
+    private final List<JSGlobalVariableFactory> globals = new ArrayList<>();
 
     private GenericObjectPool<ContextProvider> pool;
-    private ThreadLocal<Stack<ContextProvider>> currentContext = ThreadLocal.withInitial(Stack::new);
+    private final ThreadLocal<Stack<ContextProvider>> currentContext = ThreadLocal.withInitial(Stack::new);
 
-    private LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
-    private AtomicInteger version = new AtomicInteger(0);
+    private final LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
+    private final AtomicInteger version = new AtomicInteger(0);
 
-    private Collection<Registrar> registrars = new ArrayList<>();
+    private final Collection<Registrar> registrars = new ArrayList<>();
 
     @Reference(service = JSGlobalVariableFactory.class, policy = ReferencePolicy.STATIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void bindVariable(JSGlobalVariableFactory global) {

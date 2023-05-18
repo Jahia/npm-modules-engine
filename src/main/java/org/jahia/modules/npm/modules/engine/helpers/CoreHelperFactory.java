@@ -2,7 +2,6 @@ package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
-import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.modules.npm.modules.engine.jsengine.JSGlobalVariableFactory;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;

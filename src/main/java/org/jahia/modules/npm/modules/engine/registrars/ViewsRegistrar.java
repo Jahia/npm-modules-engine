@@ -36,7 +36,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     private GraalVMEngine graalVMEngine;
 
     private List<ViewParser> parsers;
-    private Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
+    private final Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -54,7 +54,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         l.add(0, this);
         renderService.setScriptResolvers(l);
 
-        parsers = Arrays.asList(new HandlebarsParser());
+        parsers = List.of(new HandlebarsParser());
     }
 
     @Deactivate
@@ -84,7 +84,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         filter.put("type", "view");
         filter.put("bundle", Value.asValue(bundle));
         return registry.find(filter).stream().map(JSView::new).collect(Collectors.toSet());
-    };
+    }
 
     private Collection<JSView> parseBundleFolder(Bundle bundle) {
         Enumeration<String> nodeTypesPaths = bundle.getEntryPaths("views");

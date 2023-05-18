@@ -13,7 +13,7 @@ import javax.jcr.RepositoryException;
 public class NodeHelper {
     private static final Logger logger = LoggerFactory.getLogger(NodeHelper.class);
 
-    private ContextProvider context;
+    private final ContextProvider context;
 
     public NodeHelper(ContextProvider context) {
         this.context = context;
