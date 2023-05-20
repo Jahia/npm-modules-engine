@@ -5,6 +5,7 @@ import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRTemplate;
+import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.RenderService;
@@ -19,7 +20,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RenderHelper {
     private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
@@ -76,7 +79,18 @@ public class RenderHelper {
             Map<String, ?> properties = (Map<String, ?>) definition.get("properties");
             if (properties != null) {
                 for (Map.Entry<String, ?> entry : properties.entrySet()) {
-                    node.setProperty(entry.getKey(), (String) entry.getValue());
+                    ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(entry.getKey());
+                    if (epd != null && epd.isMultiple()) {
+                        if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 0) {
+                            List<?> values = (List<?>) entry.getValue();
+                            List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
+                            node.setProperty(entry.getKey(), stringList.toArray(new String[stringList.size()]));
+                        } else {
+                            node.setProperty(entry.getKey(), ((String) entry.getValue()).split(" "));
+                        }
+                    } else {
+                        node.setProperty(entry.getKey(), (String) entry.getValue());
+                    }
                 }
             }
 

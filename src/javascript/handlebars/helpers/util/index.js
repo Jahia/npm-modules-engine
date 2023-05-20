@@ -1,2 +1,3 @@
 export {default as obj} from './obj';
 export {default as date} from './date';
+export {default as arr} from './arr';

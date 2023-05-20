@@ -28,3 +28,13 @@ export function setResult(result, context, options) {
         return result;
     }
 }
+
+export function getResourceArgs(args) {
+    var options = args[args.length - 1];
+    var resource = options.data.root.currentResource;
+    if (args.length === 2) {
+        resource = args[0];
+    }
+
+    return {resource, options};
+}

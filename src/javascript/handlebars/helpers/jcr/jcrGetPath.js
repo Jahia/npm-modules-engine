@@ -1,6 +1,7 @@
-import {getNode, setResult} from './util';
+import {getNode, getResourceArgs, setResult} from './util';
 
-export default function (resource, options) {
+export default function () {
+    let {resource, options} = getResourceArgs(arguments);
     const node = getNode(resource, options.data.root.currentResource.getNode());
 
     var result = node.getPath();
