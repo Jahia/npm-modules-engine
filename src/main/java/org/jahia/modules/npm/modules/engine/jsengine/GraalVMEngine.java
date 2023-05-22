@@ -26,9 +26,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 /**
  * Base JS engine based on GraalVM
@@ -50,42 +47,6 @@ public class GraalVMEngine {
     private final AtomicInteger version = new AtomicInteger(0);
 
     private final Collection<Registrar> registrars = new ArrayList<>();
-
-    public static class SLF4JBridgeHandler extends Handler {
-        @Override
-        public void publish(LogRecord record) {
-            if (record.getLevel().equals(Level.SEVERE)) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("{}:{} {}", record.getSourceClassName(), record.getSourceMethodName(), record.getMessage());
-                }
-            } else if (record.getLevel().equals(Level.WARNING)) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("{}:{} {}", record.getSourceClassName(), record.getSourceMethodName(), record.getMessage());
-                }
-            } else if (record.getLevel().equals(Level.INFO) || record.getLevel().equals(Level.CONFIG)) {
-                if (logger.isInfoEnabled()) {
-                    logger.info("{}:{} {}", record.getSourceClassName(), record.getSourceMethodName(), record.getMessage());
-                }
-            } else if (record.getLevel().equals(Level.FINE)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("{}:{} {}", record.getSourceClassName(), record.getSourceMethodName(), record.getMessage());
-                }
-            } else if (record.getLevel().equals(Level.FINER) || record.getLevel().equals(Level.FINEST)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("{}:{} {}", record.getSourceClassName(), record.getSourceMethodName(), record.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() throws SecurityException {
-
-        }
-    }
 
     @Reference(service = JSGlobalVariableFactory.class, policy = ReferencePolicy.STATIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void bindVariable(JSGlobalVariableFactory global) {
@@ -244,7 +205,6 @@ public class GraalVMEngine {
                     .allowHostAccess(HostAccess.ALL)
                     .allowPolyglotAccess(PolyglotAccess.ALL)
                     .allowIO(true)
-                    .logHandler(new SLF4JBridgeHandler())
                     .engine(sharedEngine).build();
 
             ContextProvider contextProvider = new ContextProvider(context, version.get());
