@@ -1,8 +1,7 @@
-import {getNode, getResourceArgs, setResult} from './util';
+import {getNode, setResult} from './util';
 
-export default function () {
-    let {resource, options} = getResourceArgs(arguments);
-    var node = getNode(resource, options.data.root.currentResource.getNode());
+export default function (options) {
+    var node = getNode(options.hash, options.data.root.currentResource.getNode());
     var childIterator = node.getNodes();
     var result = [];
     while (childIterator.hasNext()) {
