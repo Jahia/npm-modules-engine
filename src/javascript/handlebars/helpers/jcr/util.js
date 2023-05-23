@@ -1,19 +1,26 @@
 export function getNode(hashParameters, currentNode) {
     if (hashParameters.identifier) {
-        return session.getNodeByIdentifier(identifier);
+        let session = currentNode.getSession();
+        return session.getNodeByIdentifier(hashParameters.identifier);
     }
+
     if (hashParameters.path) {
-        return session.getNode(resource);
+        let session = currentNode.getSession();
+        return session.getNode(hashParameters.path);
     }
+
     if (hashParameters.relPath) {
-        return currentNode.getNode(resource);
+        return currentNode.getNode(hashParameters.relPath);
     }
+
     if (hashParameters.resource) {
-        return resource.getNode();
+        return hashParameters.resource.getNode();
     }
+
     if (hashParameters.node) {
         return hashParameters.node;
     }
+
     return currentNode;
 }
 
