@@ -76,6 +76,16 @@ public class RenderHelper {
             }
 
             JCRNodeWrapper node = parent.addNode(name, (String) definition.get("primaryNodeType"));
+            if (definition.containsKey("addMixins")) {
+                Object addMixins = definition.get("addMixins");
+                if (addMixins instanceof String) {
+                    node.addMixin((String) addMixins);
+                } else if (addMixins instanceof List<?>) {
+                    for (Object mixinName : (List<?>) addMixins) {
+                        node.addMixin(mixinName.toString());
+                    }
+                }
+            }
             Map<String, ?> properties = (Map<String, ?>) definition.get("properties");
             if (properties != null) {
                 for (Map.Entry<String, ?> entry : properties.entrySet()) {
