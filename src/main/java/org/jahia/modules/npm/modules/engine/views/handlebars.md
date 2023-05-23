@@ -75,6 +75,21 @@ Object values
 <!-- results in: {v1: "a", v2: "b"} -->
 ```
 
+#### [{{arr}}](./src/javascript/handlebars/helpers/util/arr.js)
+
+Creates a JS array based on a variable list of parameters
+
+**Params**
+
+Object list entries
+
+**Example**
+
+```handlebars
+{{arr "string1" "string2" "string3"}}
+<!-- results in: ["string1", "string2", "string3" ] -->
+```
+
 #### [{{date}}](./src/javascript/handlebars/helpers/util/date.js)
 
 Formats a date, based on dayjs
@@ -93,103 +108,132 @@ Formats a date, based on dayjs
 
 ### I18n
 
-i18n helper for i18next is [handlebars-i18next](https://github.com/UUDigitalHumanitieslab/handlebars-i18next). 
-It's configured so that namespace is the bundle name where the translations are defined, and translation files are located inside the bundle, under `locales/{lng}.json`
+i18n helper for i18next is [handlebars-i18next](https://github.com/UUDigitalHumanitieslab/handlebars-i18next).
+It's configured so that namespace is the bundle name where the translations are defined, and translation files are
+located inside the bundle, under `locales/{lng}.json`
 
-Default namespace is set to the calling bundle, default language is the current resource language (or `org.jahia.utils.i18n.forceLocale` if present in request).
+Default namespace is set to the calling bundle, default language is the current resource language (
+or `org.jahia.utils.i18n.forceLocale` if present in request).
 
 ### JCR
 
-All JCR helpers takes a "node" as first parameters. Node can be defined in different ways :
+All JCR helpers takes optional named parameters to identify nodes. They can be defined in different ways :
 
-- UUID (`"095fb1d8-b42a-4f5c-9794-35b6b46a2a96"`)
-- Absolute node path (`"/sites/digitall"`)
-- Node path, relative the current node (`"./subnode"`)
-- Node object (`currentNode`)
-- Node resource (`currentResource`)
+- UUID (`identifier="095fb1d8-b42a-4f5c-9794-35b6b46a2a96"`)
+- Absolute node path (`path="/sites/digitall"`)
+- Node path, relative the current node (`relPath="./subnode"`)
+- Node object (`node=currentNode`)
+- Node resource (`resource=currentResource`)
 
-Also most helpers can add `varName` in hash options. When defined, the result will be stored in a variable in the current context, instead of being displayed.
+If no optional named parameter is specified, all the JCR helpers will by default use the `currentResource` to perform
+their function.
+
+Also most helpers can add `varName` in hash options. When defined, the result will be stored in a variable in the
+current context, instead of being displayed.
 
 ```handlebars
-{{jcrGetNode "/sites/digitall" varName="siteNode"}}
+{{jcrGetNode path="/sites/digitall" varName="siteNode"}}
 ```
 
 #### [{{jcrGetIdentifer}}](./src/javascript/handlebars/helpers/jcr/jcrGetIdentifier.js)
 
 Get the identifier of a node
 
-**Params**
+**Named (optional) params**
 
+- `identifier` : node identifier to use
+- `path` : absolute node path to use
+- `relPath` : relative node path to use
 - `node` : node to use
-
-**Named params**
-
+- `resource` : resource containing node to use
 - `varName` : Name of the variable where the result will be stored instead of being returned
+
+If no node identification optional named parameter is passed the currentResource in the context will be used instead.
 
 **Example**
 
 ```handlebars
-{{jcrGetIdentifer "/sites/digitall"}}
+{{jcrGetIdentifer path="/sites/digitall"}}
 <!-- results in: '095fb1d8-b42a-4f5c-9794-35b6b46a2a96' -->
+{{jcrGetIdentifer}}
+<!-- results in: '095fb1d8-b42a-4f5c-9794-35b6b46a2a96' if current resource is also "/sites/digitall" node -->
 ```
 
 #### [{{jcrGetName}}](./src/javascript/handlebars/helpers/jcr/jcrGetName.js)
 
 Get the name of a node
 
-**Params**
-
-- `node` : node to use
-
 **Named params**
 
+- `identifier` : node identifier to use
+- `path` : absolute node path to use
+- `relPath` : relative node path to use
+- `node` : node to use
+- `resource` : resource containing node to use
 - `varName` : Name of the variable where the result will be stored instead of being returned
+
+If no node identification optional named parameter is passed the currentResource in the context will be used instead.
 
 **Example**
 
 ```handlebars
-{{jcrGetName "/sites/digitall"}}
+{{jcrGetName path="/sites/digitall"}}
 <!-- results in: 'digitall' -->
+{{jcrGetName}}
+<!-- results in: 'digitall' if current resource is also "/sites/digitall" node -->
 ```
 
 #### [{{jcrGetNode}}](./src/javascript/handlebars/helpers/jcr/jcrGetNode.js)
 
 Get the node object (`javax.jcr.Node`), mainly used with `varName` or nested in another expression.
 
-**Params**
-
-- `node` : node to use
-
 **Named params**
 
+- `identifier` : node identifier to use
+- `path` : absolute node path to use
+- `relPath` : relative node path to use
+- `node` : node to use
+- `resource` : resource containing node to use
 - `varName` : Name of the variable where the result will be stored instead of being returned
+
+If no node identification optional named parameter is passed the currentResource in the context will be used instead.
 
 **Example**
 
 ```handlebars
-{{jcrGetNode "/sites/digitall" varName="siteObject"}}
+{{jcrGetNode path="/sites/digitall" varName="siteObject"}}
 ..
 {{jcrGetName siteObject}}
 <!-- results in: 'digitall' -->
+
+{{jcrGetNode varName="siteObject"}}
+..
+{{jcrGetName siteObject}}
+<!-- results in: 'digitall' if current resource is also "/sites/digitall" node -->
 ```
 
 #### [{{jcrGetPath}}](./src/javascript/handlebars/helpers/jcr/jcrGetPath.js)
 
 Get the path of a node
 
-**Params**
-
-- `node` : node to use
-
 **Named params**
 
+- `identifier` : node identifier to use
+- `path` : absolute node path to use
+- `relPath` : relative node path to use
+- `node` : node to use
+- `resource` : resource containing node to use
 - `varName` : Name of the variable where the result will be stored instead of being returned
+
+If no node identification optional named parameter is passed the currentResource in the context will be used instead.
 
 **Example**
 
 ```handlebars
-{{jcrGetPath "095fb1d8-b42a-4f5c-9794-35b6b46a2a96"}}
+{{jcrGetPath identifier="095fb1d8-b42a-4f5c-9794-35b6b46a2a96"}}
 <!-- results in: '/sites/digitall' -->
+{{jcrGetPath}}
+<!-- results in: '/sites/digitall' if current resource is also "/sites/digitall" node -->
 ```
 
 #### [{{jcrGetProperty}](./src/javascript/handlebars/helpers/jcr/jcrGetProperty.js)
@@ -200,25 +244,33 @@ If property is multiple, returns an array of values.
 
 **Params**
 
-- `node` : node to use
 - `propertyName` :  name of the property to get
 
 **Named params**
 
+- `identifier` : node identifier to use
+- `path` : absolute node path to use
+- `relPath` : relative node path to use
+- `node` : node to use
+- `resource` : resource containing node to use
 - `varName` : Name of the variable where the result will be stored instead of being returned
 - `render` : Name of the ChoiceListRenderer to use
+
+If no node identification optional named parameter is passed the currentResource in the context will be used instead.
 
 **Example**
 
 ```handlebars
-Get property by absolute path : {{jcrGetProperty (jcrGetPath currentResource) "prop1"}}
-relative path: {{jcrGetProperty "." "prop1"}}
-resource : {{jcrGetProperty currentResource "prop1"}}
-node : {{jcrGetProperty (jcrGetNode currentResource) "prop1"}}
-uuid : {{jcrGetProperty (jcrGetIdentifier currentResource) "prop1"}}
-with renderer : {{jcrGetProperty "." "prop1" renderer='flagcountry' varName='flagObj'}} {{flagObj}}
+Get property on current resource : {{jcrGetProperty "prop1"}}
+Get property by absolute path : {{jcrGetProperty "prop1" path=(jcrGetPath currentResource) }}
+relative path: {{jcrGetProperty "prop1" relPath="."}}
+resource : {{jcrGetProperty  "prop1" resource=currentResource}}
+node : {{jcrGetProperty "prop1" node=(jcrGetNode) }}
+uuid : {{jcrGetProperty "prop1" identifier=(jcrGetIdentifier) }}
+with renderer : {{jcrGetProperty "prop1" relPath="."  renderer='flagcountry' varName='flagObj'}} {{flagObj}}
 
-Get multiple property by absolute path: {{jcrGetProperty "/sites/digitall" "j:installedModules"}}
+Get multiple property by absolute path: {{jcrGetProperty "j:installedModules" path="/sites/digitall" }}
+Get property Url by absolute path: {{jcrGetProperty "icon" path="/sites/digitall" }}
 ```
 
 ### Graphql 
