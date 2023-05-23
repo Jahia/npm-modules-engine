@@ -98,8 +98,8 @@ if [[ $INSTALLED_MODULE_VERSION == "UNKNOWN" ]]; then
   exit 1
 fi
 
-
-
+# This allow for validating the platform manually before starting the tests
+# Simply place a /tmp/debug file in the cypress container as soon as it starts.
 while [ -f /tmp/debug ]
 do
   echo "$(date +'%d %B %Y - %k:%M') == Wait for debug file to be removed =="
