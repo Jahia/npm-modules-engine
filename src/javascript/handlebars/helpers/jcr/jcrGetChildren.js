@@ -1,9 +1,9 @@
 import {getNode, setResult} from './util';
 
 export default function (options) {
-    var node = getNode(options.hash, options.data.root.currentResource.getNode());
-    var childIterator = node.getNodes();
-    var result = [];
+    const node = getNode(options.hash, options.data.root.currentResource.getNode());
+    const childIterator = node.getNodes();
+    const result = [];
     while (childIterator.hasNext()) {
         result.push(childIterator.nextNode());
     }
