@@ -1,5 +1,5 @@
 import { handlebarsTestPage } from '../../page-object/handlebarsTest.page'
-describe.skip('Validating handlebars', () => {
+describe('Validating handlebars', () => {
     before(() => {
         handlebarsTestPage.goTo()
     })

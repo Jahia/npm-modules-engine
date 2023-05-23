@@ -62,9 +62,6 @@ do
   echo "$(date +'%d %B %Y - %k:%M') == Modules submitted =="
 done
 
-# Trying out with a 5s wait in provisioning
-sleep 5
-
 # Importing zip sites
 for file in *.zip
 do
@@ -72,6 +69,17 @@ do
   curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"importSite":"'"$file"'"}]' --form file=@$file
   echo "$(date +'%d %B %Y - %k:%M') == Site submitted =="
 done
+
+# Workaround until https://jira.jahia.org/browse/BACKLOG-21031 is addressed
+# This resubmit the module
+sleep 15
+for file in *.tgz
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Submitting npm modules: $file =="
+  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installBundle":"'"$file"'", "forceUpdate":true, "autoStart":true}]' --form file=@$file
+  echo "$(date +'%d %B %Y - %k:%M') == Modules submitted =="
+done
+
 cd ..
 
 echo "$(date +'%d %B %Y - %k:%M') == Fetching the list of installed modules =="
@@ -89,6 +97,14 @@ if [[ $INSTALLED_MODULE_VERSION == "UNKNOWN" ]]; then
   echo "failure" > ./results/test_failure
   exit 1
 fi
+
+
+
+while [ -f /tmp/debug ]
+do
+  echo "$(date +'%d %B %Y - %k:%M') == Wait for debug file to be removed =="
+  sleep 2 
+done
 
 echo "$(date +'%d %B %Y - %k:%M')== Run tests =="
 yarn e2e:ci
