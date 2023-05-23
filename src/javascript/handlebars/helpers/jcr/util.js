@@ -1,24 +1,27 @@
-const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
-
-export function getNode(resource, currentNode) {
-    if (typeof resource === 'string') {
+export function getNode(hashParameters, currentNode) {
+    if (hashParameters.identifier) {
         let session = currentNode.getSession();
-        if (uuidRegex.test(resource)) {
-            return session.getNodeByIdentifier(resource);
-        }
-
-        if (resource.startsWith('/')) {
-            return session.getNode(resource);
-        }
-
-        return currentNode.getNode(resource);
+        return session.getNodeByIdentifier(hashParameters.identifier);
     }
 
-    if (resource.getClass().getName() === 'org.jahia.services.render.Resource') {
-        return resource.getNode();
+    if (hashParameters.path) {
+        let session = currentNode.getSession();
+        return session.getNode(hashParameters.path);
     }
 
-    return resource;
+    if (hashParameters.relPath) {
+        return currentNode.getNode(hashParameters.relPath);
+    }
+
+    if (hashParameters.resource) {
+        return hashParameters.resource.getNode();
+    }
+
+    if (hashParameters.node) {
+        return hashParameters.node;
+    }
+
+    return currentNode;
 }
 
 export function setResult(result, context, options) {

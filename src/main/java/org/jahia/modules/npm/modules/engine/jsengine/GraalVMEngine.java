@@ -105,7 +105,6 @@ public class GraalVMEngine {
                 builder.option(opt, entry.getValue().toString());
             }
         }
-
         sharedEngine = builder.build();
 
         GenericObjectPoolConfig<ContextProvider> config = new GenericObjectPoolConfig<>();

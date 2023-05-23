@@ -3,7 +3,7 @@ import {getNode, setResult} from './util';
 
 const JCR_WEAKREFERENCE_PROPERTY_TYPE = 10;
 
-export default function (resource, name, options) {
+export default function (name, options) {
     function convertValue(jcrValue) {
         if (options.hash.renderer) {
             // eslint-disable-next-line no-undef
@@ -21,7 +21,7 @@ export default function (resource, name, options) {
         return new SafeString(jcrValue.getString());
     }
 
-    const node = getNode(resource, options.data.root.currentResource.getNode());
+    const node = getNode(options.hash, options.data.root.currentResource.getNode());
 
     if (!node.hasProperty(name)) {
         return '';
