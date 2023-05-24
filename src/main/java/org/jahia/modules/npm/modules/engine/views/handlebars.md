@@ -337,7 +337,7 @@ Variables to the query can be passed through the `variables` hash parameter, as 
 
 Render helper are mostly similar to JSP "template" taglib.
 
-#### [{{addCacheDependency}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+#### [{{addCacheDependency}}](./src/javascript/handlebars/helpers/render/addCacheDependency.js)
 
 Add cache dependency to the specified node
 
@@ -357,7 +357,7 @@ N/A
 {{addCacheDependency path="/sites/digitall/page"}}
 ```
 
-#### [{{addResources}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+#### [{{addResources}}](./src/javascript/handlebars/helpers/render/addResources.js)
 
 Add a static resource link to the page (CSS or JS)
 
@@ -386,7 +386,7 @@ N/A
 {{addResources type="css" resources="styles.css"}}
 ```
 
-#### [{{renderModule}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+#### [{{renderModule}}](./src/javascript/handlebars/helpers/render/renderModule.js)
 
 Renders a node using the render chain, with the specified view/template . 
 
@@ -437,7 +437,7 @@ N/A
 {{renderInclude view="view"}}
 ```
 
-#### [{{renderComponent}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+#### [{{renderComponent}}](./src/javascript/handlebars/helpers/render/renderComponent.js)
 
 Renders the view of a component based on a nodetype and properties values.
 
@@ -464,4 +464,39 @@ N/A
 Renders an area : {{renderComponent name="area-test" primaryNodeType="jnt:absoluteArea"}}
 Renders a navigation menu : {{renderComponent name="navMenu" primaryNodeType="jnt:navMenu" properties=(obj j:maxDepth="2" j:baselineNode="home" j:menuItemView="menuElement")}}
 Render a goto edit button: {{renderComponent name="link-to-edit-mode" primaryNodeType="jnt:gotoEdit" addMixins=(arr "jmix:requiredPermissions") properties=(obj j:requireLoggedUser="false" j:requirePrivilegedUser="false"  j:requiredPermissionNames=(arr "jContentAccess"))}}
+```
+
+#### [{{renderInfo}}](./src/javascript/handlebars/helpers/render/renderInfo.js)
+
+Provides some context information about the rendering, notably if we are in edit mode, the current view and UI locales
+and an URL to link to the current module (useful for links to static module assets such as CSS, Javascript, ..)
+
+**Params**
+
+N/A
+
+**Named params**
+
+- `varName` : Name of the variable where the result will be stored instead of being returned
+
+**Returns**
+
+An object with the following structure :
+
+```javascript
+result = {
+    editMode: true,
+    locale: 'fr_CH',
+    uiLocale: 'en',
+    moduleUrl: '/modules/acme'
+}
+```
+
+**Example**
+
+```handlebars
+{{renderInfo varName='renderInfo'}}
+<img class="header-logo-image" src="{{renderInfo.moduleUrl}}/images/logo.svg" alt="Logo">
+<script src="{{renderInfo.moduleUrl}}/javascript/main.min.js"></script>
+Locale : {{renderInfo.locale}} UI Locale : {{renderInfo.uiLocale}}
 ```
