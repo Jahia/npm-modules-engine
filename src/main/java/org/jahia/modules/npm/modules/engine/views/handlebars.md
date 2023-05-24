@@ -28,10 +28,11 @@ registry.add("view", "page-simple", registry.get('view', 'handlebars'), {
 ```
 
 The implementation needs the templateFile - the path of the file within the bundle. It uses
-the [OSGi helper](./src/main/java/org/jahia/modules/npm/engine/helpers/OSGiHelper.java) to read the file from the
+the [OSGi helper](../helpers/OSGiHelper.java) to read the file from the
 bundle. Other properties are "standard" view properties (not handlebars specific), used by the `JSScriptResolver` .
 
-The [handlebars init code](./src/javascript/handlebars/init.js) initialize the handlebars engine, register all available
+The [handlebars init code](../../../../../../../../../javascript/handlebars/init.js) initialize the handlebars engine,
+register all available
 helpers (currently a non-extendable list of modules), exposes the base view and the engine itself if one wants to use it
 directly ( like in the "yourHandlebarsTemplate.js" example )
 
@@ -60,7 +61,7 @@ These collection of helpers are included :
 
 These additional helpers are available :
 
-#### [{{obj}}](./src/javascript/handlebars/helpers/util/obj.js)
+#### [{{obj}}](../../../../../../../../../javascript/handlebars/helpers/util/obj.js)
 
 Creates a JS object based on hash options
 
@@ -75,7 +76,7 @@ Object values
 <!-- results in: {v1: "a", v2: "b"} -->
 ```
 
-#### [{{arr}}](./src/javascript/handlebars/helpers/util/arr.js)
+#### [{{arr}}](../../../../../../../../../javascript/handlebars/helpers/util/arr.js)
 
 Creates a JS array based on a variable list of parameters
 
@@ -90,7 +91,7 @@ Object list entries
 <!-- results in: ["string1", "string2", "string3" ] -->
 ```
 
-#### [{{date}}](./src/javascript/handlebars/helpers/util/date.js)
+#### [{{date}}](../../../../../../../../../javascript/handlebars/helpers/util/date.js)
 
 Formats a date, based on dayjs
 
@@ -135,7 +136,7 @@ current context, instead of being displayed.
 {{jcrGetNode path="/sites/digitall" varName="siteNode"}}
 ```
 
-#### [{{jcrGetIdentifer}}](./src/javascript/handlebars/helpers/jcr/jcrGetIdentifier.js)
+#### [{{jcrGetIdentifer}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetIdentifier.js)
 
 Get the identifier of a node
 
@@ -159,7 +160,7 @@ If no node identification optional named parameter is passed the currentResource
 <!-- results in: '095fb1d8-b42a-4f5c-9794-35b6b46a2a96' if current resource is also "/sites/digitall" node -->
 ```
 
-#### [{{jcrGetName}}](./src/javascript/handlebars/helpers/jcr/jcrGetName.js)
+#### [{{jcrGetName}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetName.js)
 
 Get the name of a node
 
@@ -183,7 +184,7 @@ If no node identification optional named parameter is passed the currentResource
 <!-- results in: 'digitall' if current resource is also "/sites/digitall" node -->
 ```
 
-#### [{{jcrGetNode}}](./src/javascript/handlebars/helpers/jcr/jcrGetNode.js)
+#### [{{jcrGetNode}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetNode.js)
 
 Get the node object (`javax.jcr.Node`), mainly used with `varName` or nested in another expression.
 
@@ -212,7 +213,7 @@ If no node identification optional named parameter is passed the currentResource
 <!-- results in: 'digitall' if current resource is also "/sites/digitall" node -->
 ```
 
-#### [{{jcrGetPath}}](./src/javascript/handlebars/helpers/jcr/jcrGetPath.js)
+#### [{{jcrGetPath}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetPath.js)
 
 Get the path of a node
 
@@ -236,7 +237,7 @@ If no node identification optional named parameter is passed the currentResource
 <!-- results in: '/sites/digitall' if current resource is also "/sites/digitall" node -->
 ```
 
-#### [{{jcrGetProperty}](./src/javascript/handlebars/helpers/jcr/jcrGetProperty.js)
+#### [{{jcrGetProperty}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetProperty.js)
 
 Get a node property value (as string). Can optionally take a `ChoiceListRenderer`.
 
@@ -275,7 +276,7 @@ Get property Url by absolute path: {{jcrGetProperty "icon" path="/sites/digitall
 
 ### Graphql 
 
-#### [{{gql}}](./src/javascript/handlebars/helpers/gql/gql.js)
+#### [{{gql}}](../../../../../../../../../javascript/handlebars/helpers/gql/gql.js)
 
 The `{{gql}}` helper executes a graphql query and put the results in a variable (default "gql", can be changed in `varName` hash parameter).
 This is a block helper, the query itself being the block content.
@@ -337,7 +338,7 @@ Variables to the query can be passed through the `variables` hash parameter, as 
 
 Render helper are mostly similar to JSP "template" taglib.
 
-#### [{{addCacheDependency}}](./src/javascript/handlebars/helpers/render/addCacheDependency.js)
+#### [{{addCacheDependency}}](../../../../../../../../../javascript/handlebars/helpers/render/addCacheDependency.js)
 
 Add cache dependency to the specified node
 
@@ -357,7 +358,7 @@ N/A
 {{addCacheDependency path="/sites/digitall/page"}}
 ```
 
-#### [{{addResources}}](./src/javascript/handlebars/helpers/render/addResources.js)
+#### [{{addResources}}](../../../../../../../../../javascript/handlebars/helpers/render/addResources.js)
 
 Add a static resource link to the page (CSS or JS)
 
@@ -386,7 +387,7 @@ N/A
 {{addResources type="css" resources="styles.css"}}
 ```
 
-#### [{{renderModule}}](./src/javascript/handlebars/helpers/render/renderModule.js)
+#### [{{renderModule}}](../../../../../../../../../javascript/handlebars/helpers/render/renderModule.js)
 
 Renders a node using the render chain, with the specified view/template . 
 
@@ -417,7 +418,7 @@ Display a subnode, with constraint on node type : {{renderModule path="simpletex
 Creates a placeholder for creating subnodes : {{renderModule path="*" nodeTypes="jnt:test"}}
 ```
 
-#### [{{renderInclude}}](./src/javascript/handlebars/helpers/render/jcrGetPath.js)
+#### [{{renderInclude}}](../../../../../../../../../javascript/handlebars/helpers/render/renderInclude.js)
 
 Include another view of the same node, using render chain.
 
@@ -437,7 +438,7 @@ N/A
 {{renderInclude view="view"}}
 ```
 
-#### [{{renderComponent}}](./src/javascript/handlebars/helpers/render/renderComponent.js)
+#### [{{renderComponent}}](../../../../../../../../../javascript/handlebars/helpers/render/renderComponent.js)
 
 Renders the view of a component based on a nodetype and properties values.
 
@@ -465,7 +466,7 @@ Renders a navigation menu : {{renderComponent name="navMenu" primaryNodeType="jn
                                               properties=(obj j:maxDepth="2" j:baselineNode="home" j:menuItemView="menuElement")}}
 ```
 
-#### [{{renderInfo}}](./src/javascript/handlebars/helpers/render/renderInfo.js)
+#### [{{renderInfo}}](../../../../../../../../../javascript/handlebars/helpers/render/renderInfo.js)
 
 Provides some context information about the rendering, notably if we are in edit mode, the current view and UI locales
 and an URL to link to the current module (useful for links to static module assets such as CSS, Javascript, ..)
