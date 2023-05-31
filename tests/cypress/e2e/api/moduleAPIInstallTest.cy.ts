@@ -1,6 +1,7 @@
 describe('Install NPM Modules via Module Manager API', () => {
     const bundleApiUrl = '/modules/api/bundles'
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
+    const fullBundleApiUrl = 'http://localhost:8080' + bundleApiUrl
 
     it('Install tgz bundle success path', () => {
         const fileName = 'npm-module-example-v1.0.0.tgz'
@@ -15,9 +16,18 @@ describe('Install NPM Modules via Module Manager API', () => {
                 formData.set('start', 'true') //adding a plain input to the form
 
                 // Perform the request
-                cy.apiRequest('POST', bundleApiUrl, formData, authorization, null, (response) => {
+                cy.request({
+                    method: 'POST',
+                    url: fullBundleApiUrl,
+                    body: formData,
+                    headers: {
+                        Authorization: authorization,
+                    },
+                }).then((response) => {
                     expect(response.status).to.eq(200)
-                    expect(response.response).to.contains('successful')
+                    const bodyString = Cypress.Blob.arrayBufferToBinaryString(response.body)
+                    const body = JSON.parse(bodyString)
+                    expect(body.message).to.contains('successful')
                 })
             })
     })

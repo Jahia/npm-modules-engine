@@ -1,9 +1,8 @@
 import { BasePage } from './base.page'
 import 'cypress-file-upload'
 
-class ManageModulesPage extends BasePage {
+export class ManageModulesPage extends BasePage {
     elements = {
-        manageModuleIframeSrc: '/cms/adminframe/default/en/settings.manageModules.html?redirect=false',
         moduleFileUpload: '#moduleFileUpload',
         btnUpload: '#btnUpload',
         alertText: '.alert',
@@ -11,13 +10,11 @@ class ManageModulesPage extends BasePage {
         resultTable: '.card',
     }
 
-    goTo() {
-        cy.goTo(this.elements.manageModuleIframeSrc)
-        cy.get('.btn-primary').click()
-        return this
+    static visit(): void {
+        cy.visit('/cms/adminframe/default/en/settings.manageModules.html')
     }
 
-    uploadModule(fileName: string) {
+    uploadModule(fileName: string): ManageModulesPage {
         cy.fixture(fileName, 'binary')
             .then((binary) => {
                 Cypress.Blob.binaryStringToBlob(binary)
@@ -35,7 +32,7 @@ class ManageModulesPage extends BasePage {
         return this
     }
 
-    assertAlert(alertMessage) {
+    assertAlert(alertMessage: string): void {
         cy.get(this.elements.alertText)
             .invoke('text')
             .then((text) => {
@@ -43,10 +40,8 @@ class ManageModulesPage extends BasePage {
             })
     }
 
-    assertModuleInResults(moduleName) {
+    assertModuleInResults(moduleName: string): void {
         cy.get(this.elements.dataTablesFilter).type(moduleName)
         expect(cy.get(this.elements.resultTable).contains(moduleName))
     }
 }
-
-export const manageModules = new ManageModulesPage()
