@@ -451,7 +451,8 @@ N/A
 **Named params**
 
 - `primaryNodeType` : The component nodetype
-- `addMixins` : an array of mixin types to add to the component. If only one mixin is being added a string may be passed instead of an array
+- `mixins` : an array of mixin types to add to the component. If only one mixin is being added a string may be passed
+  instead of an array
 - `properties` : object holding the properties values
 - `view` : The view used to display the node. Overrides the view defined on the node itself (layout tab in edit mode), which is used when this attribute is not set.
 - `templateType` : The output type to use. By default, inherited from parent fragment, or HTML. (defaults to 'html')
@@ -463,8 +464,11 @@ N/A
 
 ```handlebars
 Renders an area : {{renderComponent name="area-test" primaryNodeType="jnt:absoluteArea"}}
-Renders a navigation menu : {{renderComponent name="navMenu" primaryNodeType="jnt:navMenu" properties=(obj j:maxDepth="2" j:baselineNode="home" j:menuItemView="menuElement")}}
-Render a goto edit button: {{renderComponent name="link-to-edit-mode" primaryNodeType="jnt:gotoEdit" addMixins=(arr "jmix:requiredPermissions") properties=(obj j:requireLoggedUser="false" j:requirePrivilegedUser="false"  j:requiredPermissionNames=(arr "jContentAccess"))}}
+Renders a navigation menu : {{renderComponent name="navMenu" primaryNodeType="jnt:navMenu"
+                                              properties=(obj j:maxDepth="2" j:baselineNode="home" j:menuItemView="menuElement")}}
+Render a goto edit button: {{renderComponent name="link-to-edit-mode" primaryNodeType="jnt:gotoEdit"
+                                             mixins=(arr "jmix:requiredPermissions")
+                                             properties=(obj j:requireLoggedUser="false" j:requirePrivilegedUser="false"  j:requiredPermissionNames=(arr "jContentAccess"))}}
 ```
 
 #### [{{renderInfo}}](../../../../../../../../../javascript/handlebars/helpers/render/renderInfo.js)
