@@ -1,7 +1,5 @@
 package org.jahia.modules.npm.modules.engine;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.osgi.BundleUtils;
@@ -22,7 +20,6 @@ import org.springframework.core.io.Resource;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  * Listener to execute scripts at activate/desactivate time
@@ -111,17 +108,7 @@ public class NpmModuleListener implements BundleListener {
 
     private void enableBundle(Bundle bundle) {
         try {
-            URL url = bundle.getResource("package.json");
-            if (url != null) {
-                String content = IOUtils.toString(url);
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?,?> json = mapper.readValue(content, Map.class);
-                Map<?,?> jahia = (Map<?, ?>) json.get("jahia");
-                if (jahia != null && jahia.containsKey("server")) {
-                    String script = (String) jahia.get("server");
-                    engine.enableBundle(bundle, script);
-                }
-            }
+            engine.enableBundle(bundle);
         } catch (Exception e) {
             logger.error("Cannot enable bundle {}", bundle.getSymbolicName(), e);
         }
