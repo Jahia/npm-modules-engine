@@ -1,7 +1,5 @@
 package org.jahia.modules.npm.modules.engine;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.osgi.BundleUtils;
@@ -22,7 +20,6 @@ import org.springframework.core.io.Resource;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  * Listener to execute scripts at activate/desactivate time
@@ -43,7 +40,7 @@ public class NpmModuleListener implements BundleListener {
     public void activate(BundleContext context) {
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.ACTIVE) {
-                enableBundle(bundle);
+                engine.enableBundle(bundle);
             }
         }
         context.addBundleListener(this);
@@ -55,7 +52,7 @@ public class NpmModuleListener implements BundleListener {
 
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.ACTIVE) {
-                disableBundle(bundle);
+                engine.disableBundle(bundle);
             }
         }
     }
@@ -68,9 +65,9 @@ public class NpmModuleListener implements BundleListener {
             if (event.getType() == BundleEvent.RESOLVED) {
                 copySources(bundle);
             } else if (event.getType() == BundleEvent.STARTED) {
-                enableBundle(bundle);
+                engine.enableBundle(bundle);
             } else if (event.getType() == BundleEvent.STOPPED) {
-                disableBundle(bundle);
+                engine.disableBundle(bundle);
             }
         } catch (Exception e) {
             logger.error("Cannot handle event", e);
@@ -109,29 +106,4 @@ public class NpmModuleListener implements BundleListener {
         }
     }
 
-    private void enableBundle(Bundle bundle) {
-        try {
-            URL url = bundle.getResource("package.json");
-            if (url != null) {
-                String content = IOUtils.toString(url);
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?,?> json = mapper.readValue(content, Map.class);
-                Map<?,?> jahia = (Map<?, ?>) json.get("jahia");
-                if (jahia != null && jahia.containsKey("server")) {
-                    String script = (String) jahia.get("server");
-                    engine.enableBundle(bundle, script);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Cannot enable bundle {}", bundle.getSymbolicName(), e);
-        }
-    }
-
-    private void disableBundle(Bundle bundle) {
-        try {
-            engine.disableBundle(bundle);
-        } catch (Exception e) {
-            logger.error("Cannot disable bundle {}", bundle.getSymbolicName(), e);
-        }
-    }
 }
