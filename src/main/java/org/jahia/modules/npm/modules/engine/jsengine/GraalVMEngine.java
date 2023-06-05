@@ -48,6 +48,8 @@ public class GraalVMEngine {
 
     private final Collection<Registrar> registrars = new ArrayList<>();
 
+    private BundleContext bundleContext;
+
     @Reference(service = JSGlobalVariableFactory.class, policy = ReferencePolicy.STATIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void bindVariable(JSGlobalVariableFactory global) {
         globals.add(global);
@@ -59,10 +61,32 @@ public class GraalVMEngine {
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void addRegistrar(Registrar registrar) {
+        logger.info("New registrar {} added, will process all deployed bundles...", registrar.getClass().getName());
+        doWithContext(contextProvider -> {
+            for (Bundle bundle : bundleContext.getBundles()) {
+                if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() && bundle.getState() == Bundle.ACTIVE) {
+                    registrar.register(contextProvider.getRegistry(), bundle, this);
+                }
+            }
+        });
         registrars.add(registrar);
     }
 
     public void removeRegistrar(Registrar registrar) {
+        logger.info("Registrar {} removed, will process all deployed bundles...", registrar.getClass().getName());
+        try {
+            doWithContext(contextProvider -> {
+                for (Bundle bundle : bundleContext.getBundles()) {
+                    if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() && bundle.getState() == Bundle.ACTIVE) {
+                        registrar.unregister(contextProvider.getRegistry(), bundle);
+                    }
+                }
+            });
+        } catch (GraalVMException gvme) {
+            if (!gvme.getMessage().contains("Pool not open")) {
+                logger.error("Error with context pool", gvme);
+            }
+        }
         registrars.remove(registrar);
     }
 
@@ -70,6 +94,9 @@ public class GraalVMEngine {
         initScripts.put(bundle, getGraalSource(bundle, script));
         version.incrementAndGet();
         doWithContext(contextProvider -> {
+            if (registrars.size() == 0) {
+                logger.warn("No registrars registered, registration will be delayed to when they are available");
+            }
             for (Registrar registrar : registrars) {
                 registrar.register(contextProvider.getRegistry(), bundle, this);
             }
@@ -90,6 +117,7 @@ public class GraalVMEngine {
 
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
+        this.bundleContext = bundleContext;
         try {
             initScripts.put(bundleContext.getBundle(), getGraalSource(bundleContext.getBundle(), "META-INF/js/main.js"));
         } catch (IOException e) {
