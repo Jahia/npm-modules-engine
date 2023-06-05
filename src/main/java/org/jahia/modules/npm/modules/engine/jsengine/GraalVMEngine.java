@@ -1,5 +1,6 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -22,6 +23,7 @@ import pl.touk.throwing.ThrowingSupplier;
 
 import javax.jcr.RepositoryException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -64,7 +66,9 @@ public class GraalVMEngine {
         logger.info("New registrar {} added, will process all deployed bundles...", registrar.getClass().getName());
         doWithContext(contextProvider -> {
             for (Bundle bundle : bundleContext.getBundles()) {
-                if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() && bundle.getState() == Bundle.ACTIVE) {
+                if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
+                        bundle.getState() == Bundle.ACTIVE &&
+                        isScriptBundle(bundle)) {
                     registrar.register(contextProvider.getRegistry(), bundle, this);
                 }
             }
@@ -77,14 +81,18 @@ public class GraalVMEngine {
         try {
             doWithContext(contextProvider -> {
                 for (Bundle bundle : bundleContext.getBundles()) {
-                    if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() && bundle.getState() == Bundle.ACTIVE) {
+                    if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
+                            bundle.getState() == Bundle.ACTIVE &&
+                            isScriptBundle(bundle)) {
                         registrar.unregister(contextProvider.getRegistry(), bundle);
                     }
                 }
             });
         } catch (GraalVMException gvme) {
-            if (!gvme.getMessage().contains("Pool not open")) {
-                logger.error("Error with context pool", gvme);
+            if (gvme.getCause() != null && gvme.getCause() instanceof IllegalStateException && gvme.getCause().getMessage().equals("Pool not open")) {
+                // we can ignore this case it happens normally during a module shutdown.
+            } else {
+                throw gvme;
             }
         }
         registrars.remove(registrar);
@@ -270,5 +278,23 @@ public class GraalVMEngine {
             logger.info("ContextPoolFactory.destroyObject");
             p.getObject().close();
         }
+    }
+
+    private boolean isScriptBundle(Bundle bundle) {
+        try {
+            URL url = bundle.getResource("package.json");
+            if (url != null) {
+                String content = IOUtils.toString(url);
+                ObjectMapper mapper = new ObjectMapper();
+                Map<?, ?> json = mapper.readValue(content, Map.class);
+                Map<?, ?> jahia = (Map<?, ?>) json.get("jahia");
+                if (jahia != null && jahia.containsKey("server")) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error accessing bundle resource package.json {}", bundle.getSymbolicName(), e);
+        }
+        return false;
     }
 }
