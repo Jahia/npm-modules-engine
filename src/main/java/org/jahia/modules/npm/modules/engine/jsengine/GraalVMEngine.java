@@ -98,19 +98,23 @@ public class GraalVMEngine {
         registrars.remove(registrar);
     }
 
-    public void enableBundle(Bundle bundle) throws IOException {
+    public void enableBundle(Bundle bundle) {
         String script = getBundleScript(bundle);
         if (script != null) {
-            initScripts.put(bundle, getGraalSource(bundle, script));
-            version.incrementAndGet();
-            doWithContext(contextProvider -> {
-                if (registrars.size() == 0) {
-                    logger.warn("No registrars registered, registration will be delayed to when they are available");
-                }
-                for (Registrar registrar : registrars) {
-                    registrar.register(contextProvider.getRegistry(), bundle, this);
-                }
-            });
+            try {
+                initScripts.put(bundle, getGraalSource(bundle, script));
+                version.incrementAndGet();
+                doWithContext(contextProvider -> {
+                    if (registrars.size() == 0) {
+                        logger.warn("No registrars registered, registration will be delayed to when they are available");
+                    }
+                    for (Registrar registrar : registrars) {
+                        registrar.register(contextProvider.getRegistry(), bundle, this);
+                    }
+                });
+            } catch (IOException ioe) {
+                logger.error("Error enabling bundle {}", bundle.getSymbolicName(), ioe);
+            }
         }
     }
 

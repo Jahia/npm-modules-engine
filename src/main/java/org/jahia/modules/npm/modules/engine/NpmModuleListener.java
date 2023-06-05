@@ -40,7 +40,7 @@ public class NpmModuleListener implements BundleListener {
     public void activate(BundleContext context) {
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.ACTIVE) {
-                enableBundle(bundle);
+                engine.enableBundle(bundle);
             }
         }
         context.addBundleListener(this);
@@ -52,7 +52,7 @@ public class NpmModuleListener implements BundleListener {
 
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.ACTIVE) {
-                disableBundle(bundle);
+                engine.disableBundle(bundle);
             }
         }
     }
@@ -65,9 +65,9 @@ public class NpmModuleListener implements BundleListener {
             if (event.getType() == BundleEvent.RESOLVED) {
                 copySources(bundle);
             } else if (event.getType() == BundleEvent.STARTED) {
-                enableBundle(bundle);
+                engine.enableBundle(bundle);
             } else if (event.getType() == BundleEvent.STOPPED) {
-                disableBundle(bundle);
+                engine.disableBundle(bundle);
             }
         } catch (Exception e) {
             logger.error("Cannot handle event", e);
@@ -106,19 +106,4 @@ public class NpmModuleListener implements BundleListener {
         }
     }
 
-    private void enableBundle(Bundle bundle) {
-        try {
-            engine.enableBundle(bundle);
-        } catch (Exception e) {
-            logger.error("Cannot enable bundle {}", bundle.getSymbolicName(), e);
-        }
-    }
-
-    private void disableBundle(Bundle bundle) {
-        try {
-            engine.disableBundle(bundle);
-        } catch (Exception e) {
-            logger.error("Cannot disable bundle {}", bundle.getSymbolicName(), e);
-        }
-    }
 }
