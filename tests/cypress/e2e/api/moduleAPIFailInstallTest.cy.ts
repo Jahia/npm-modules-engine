@@ -1,13 +1,12 @@
 describe('Install wrong formats NPM Modules via Module Manager API', () => {
     const bundleApiUrl = '/modules/api/bundles'
-    const fullBundleApiUrl = 'http://localhost:8080' + bundleApiUrl
     const authorization = `Basic ${btoa(Cypress.env('JAHIA_USERNAME') + ':' + Cypress.env('JAHIA_PASSWORD'))}`
 
     it('Should be Unauthorized', () => {
         // Perform the request
         cy.request({
             method: 'POST',
-            url: fullBundleApiUrl,
+            url: bundleApiUrl,
             failOnStatusCode: false,
         }).then((response) => {
             expect(response.status).to.eq(401)
@@ -22,7 +21,7 @@ describe('Install wrong formats NPM Modules via Module Manager API', () => {
 
         cy.request({
             method: 'POST',
-            url: fullBundleApiUrl,
+            url: bundleApiUrl,
             body: formData,
             headers: {
                 Authorization: authorization,
@@ -48,7 +47,7 @@ describe('Install wrong formats NPM Modules via Module Manager API', () => {
                 formData.set('start', 'true') //adding a plain input to the form
                 cy.request({
                     method: 'POST',
-                    url: fullBundleApiUrl,
+                    url: bundleApiUrl,
                     body: formData,
                     headers: {
                         Authorization: authorization,
