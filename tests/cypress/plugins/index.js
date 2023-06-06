@@ -14,5 +14,7 @@ module.exports = (on, config) => {
     //https://github.com/archfz/cypress-terminal-report
     installLogsPrinter(on);
     on("file:preprocessor", cypressTypeScriptPreprocessor);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('@jahia/cypress/dist/plugins/registerPlugins').registerPlugins(on, config)
     return config;
 };
