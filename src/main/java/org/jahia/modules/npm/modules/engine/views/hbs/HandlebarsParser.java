@@ -26,9 +26,14 @@ public class HandlebarsParser implements ViewParser {
     @Override
     public JSView parseView(Bundle bundle, String viewPath) {
         if (viewPath.endsWith(".hbs")) {
+            JahiaTemplatesPackage module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
+            if (module == null) {
+                logger.warn("Unable to register view '{}', because module '{}' not found", viewPath, bundle.getSymbolicName());
+                return null;
+            }
+
             String[] parts = StringUtils.split(viewPath, "/");
             String[] viewNameParts = StringUtils.split(StringUtils.substringAfterLast(viewPath, "/"), ".");
-            JahiaTemplatesPackage module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
 
             //todo: bad replace from _ to :
             JSFileView fileView = new JSFileView("handlebars", viewPath, viewNameParts.length > 2 ? viewNameParts[1] : "default", module, parts[1].replace('_', ':'), parts[2]);
