@@ -15,7 +15,6 @@ export default defineConfig({
     },
     screenshotsFolder: './results/screenshots',
     videosFolder: './results/videos',
-    _comment: 'Migrated to cypress 12 with the ticket: BACKLOG-20983',
     viewportWidth: 1366,
     viewportHeight: 768,
     e2e: {
