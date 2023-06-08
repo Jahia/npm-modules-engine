@@ -62,10 +62,9 @@ public class NpmProtocolConnection extends URLConnection {
                 client = HttpClient.newHttpClient();
             }
 
-            HttpRequest request = HttpRequest.newBuilder(finalUrl.toURI())
-                    .build();
-
-            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<InputStream> response = client.send(
+                    HttpRequest.newBuilder(finalUrl.toURI()).build(),
+                    HttpResponse.BodyHandlers.ofInputStream());
             TarUtils.unTar(new GZIPInputStream(response.body()), outputDir);
         } catch (URISyntaxException | InterruptedException e) {
             throw new IOException(e.getMessage(), e);
