@@ -9,9 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarOutputStream;
@@ -42,7 +43,27 @@ public class NpmProtocolConnection extends URLConnection {
         connect();
 
         File outputDir = Files.createTempDirectory("npm.").toFile();
-        TarUtils.unTar(new GZIPInputStream(wrappedUrl.openStream()), outputDir);
+
+        URL finalUrl = wrappedUrl;
+        HttpClient client;
+        try {
+            if (wrappedUrl.getUserInfo() != null) {
+                String user = wrappedUrl.getUserInfo().split(":")[0];
+                String password = wrappedUrl.getUserInfo().split(":")[1];
+                finalUrl = new URL(wrappedUrl.toString().replace(user + ":" + password + "@", ""));
+                client = HttpClient.newBuilder().authenticator(new BasicAuthenticator(user, password)).build();
+            } else {
+                client = HttpClient.newHttpClient();
+            }
+
+            HttpRequest request = HttpRequest.newBuilder(finalUrl.toURI())
+                    .build();
+
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            TarUtils.unTar(new GZIPInputStream(response.body()), outputDir);
+        } catch (URISyntaxException | InterruptedException e) {
+            throw new IOException(e.getMessage(), e);
+        }
 
         Properties instructions = new Properties();
 
@@ -97,5 +118,20 @@ public class NpmProtocolConnection extends URLConnection {
         }
 
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
+    }
+
+    static class BasicAuthenticator extends java.net.Authenticator {
+        private final String username;
+        private final String password;
+
+        BasicAuthenticator(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        protected java.net.PasswordAuthentication getPasswordAuthentication() {
+            return new java.net.PasswordAuthentication(username, password.toCharArray());
+        }
     }
 }
