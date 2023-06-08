@@ -55,7 +55,7 @@ public class NpmProtocolConnection extends URLConnection {
                 client = HttpClient.newBuilder().authenticator(new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new java.net.PasswordAuthentication(user, password.toCharArray());;
+                        return new java.net.PasswordAuthentication(user, password.toCharArray());
                     }
                 }).build();
             } else {
