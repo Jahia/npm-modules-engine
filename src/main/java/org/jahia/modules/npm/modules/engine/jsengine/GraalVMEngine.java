@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,6 +53,8 @@ public class GraalVMEngine {
 
     private BundleContext bundleContext;
 
+    private final AtomicBoolean active = new AtomicBoolean(false);
+
     @Reference(service = JSGlobalVariableFactory.class, policy = ReferencePolicy.STATIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void bindVariable(JSGlobalVariableFactory global) {
         globals.add(global);
@@ -63,40 +66,21 @@ public class GraalVMEngine {
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
     public void addRegistrar(Registrar registrar) {
-        logger.info("New registrar {} added, will process all deployed bundles...", registrar.getClass().getName());
-        doWithContext(contextProvider -> {
-            for (Bundle bundle : bundleContext.getBundles()) {
-                if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
-                        bundle.getState() == Bundle.ACTIVE &&
-                        getBundleScript(bundle) != null) {
-                    registrar.register(contextProvider.getRegistry(), bundle, this);
-                }
-            }
-        });
+        logger.debug("Adding registrar {}", registrar);
         registrars.add(registrar);
+        if (active.get()) {
+            registerRegistrarForAllBundles(registrar);
+        }
     }
 
     public void removeRegistrar(Registrar registrar) {
-        logger.info("Registrar {} removed, will process all deployed bundles...", registrar.getClass().getName());
-        try {
-            doWithContext(contextProvider -> {
-                for (Bundle bundle : bundleContext.getBundles()) {
-                    if (bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
-                            bundle.getState() == Bundle.ACTIVE &&
-                            getBundleScript(bundle) != null) {
-                        registrar.unregister(contextProvider.getRegistry(), bundle);
-                    }
-                }
-            });
-        } catch (GraalVMException gvme) {
-            if (gvme.getCause() != null && gvme.getCause() instanceof IllegalStateException && gvme.getCause().getMessage().equals("Pool not open")) {
-                // we can ignore this case it happens normally during a module shutdown.
-            } else {
-                throw gvme;
-            }
+        if (active.get()) {
+            unregisterRegistrarForAllBundles(registrar);
         }
+        logger.debug("Removing registrar {}", registrar);
         registrars.remove(registrar);
     }
+
 
     public void enableBundle(Bundle bundle) {
         String script = getBundleScript(bundle);
@@ -106,7 +90,7 @@ public class GraalVMEngine {
                 version.incrementAndGet();
                 doWithContext(contextProvider -> {
                     if (registrars.size() == 0) {
-                        logger.warn("No registrars registered, registration will be delayed to when they are available");
+                        logger.debug("No registrars registered, registration will be delayed to when they are available");
                     }
                     for (Registrar registrar : registrars) {
                         registrar.register(contextProvider.getRegistry(), bundle, this);
@@ -132,6 +116,7 @@ public class GraalVMEngine {
 
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
+        logger.debug("GraalVMEngine.activate");
         this.bundleContext = bundleContext;
         try {
             initScripts.put(bundleContext.getBundle(), getGraalSource(bundleContext.getBundle(), "META-INF/js/main.js"));
@@ -144,19 +129,27 @@ public class GraalVMEngine {
         builder.allowExperimentalOptions(experimental);
         for (Map.Entry<String, ?> entry : props.entrySet()) {
             if (entry.getKey().startsWith("polyglot.")) {
-                String opt = StringUtils.substringAfter(entry.getKey(),"polyglot.");
+                String opt = StringUtils.substringAfter(entry.getKey(), "polyglot.");
                 builder.option(opt, entry.getValue().toString());
             }
         }
         sharedEngine = builder.build();
-
-        GenericObjectPoolConfig<ContextProvider> config = new GenericObjectPoolConfig<>();
-        config.setTestOnBorrow(true);
-        pool = new GenericObjectPool<>(new ContextPoolFactory(), config);
+        initializePool();
+        // register registrars
+        for (Registrar registrar : registrars) {
+            registerRegistrarForAllBundles(registrar);
+        }
+        active.set(true);
     }
 
     @Deactivate
     public void deactivate() {
+        logger.debug("GraalVMEngine.deactivate");
+        active.set(false);
+        // unregister registrars
+        for (Registrar registrar : registrars) {
+            unregisterRegistrarForAllBundles(registrar);
+        }
         pool.close();
         sharedEngine.close();
     }
@@ -238,11 +231,55 @@ public class GraalVMEngine {
         return null;
     }
 
+    private void initializePool() {
+        GenericObjectPoolConfig<ContextProvider> config = new GenericObjectPoolConfig<>();
+        config.setTestOnBorrow(true);
+        pool = new GenericObjectPool<>(new ContextPoolFactory(), config);
+    }
+
+    private String getBundleScript(Bundle bundle) {
+        URL url = bundle.getResource("package.json");
+        if (url != null) {
+            try {
+                String content = IOUtils.toString(url);
+                ObjectMapper mapper = new ObjectMapper();
+                Map<?, ?> json = mapper.readValue(content, Map.class);
+                Map<?, ?> jahia = (Map<?, ?>) json.get("jahia");
+                if (jahia != null && jahia.containsKey("server")) {
+                    return (String) jahia.get("server");
+                }
+            } catch (IOException ioe) {
+                logger.error("Error accessing bundle {} package.json file", bundle.getSymbolicName(), ioe);
+            }
+        }
+        return null;
+    }
+
+    private void processBundles(Registrar registrar, Consumer<Bundle> action) {
+        logger.debug("Processing bundles for registrar {}...", registrar.getClass().getName());
+        Arrays.stream(bundleContext.getBundles())
+                .filter(bundle -> bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
+                        bundle.getState() == Bundle.ACTIVE &&
+                        getBundleScript(bundle) != null)
+                .forEach(action);
+    }
+
+    private void registerRegistrarForAllBundles(Registrar registrar) {
+        doWithContext(contextProvider -> {
+            processBundles(registrar, bundle -> registrar.register(contextProvider.getRegistry(), bundle, this));
+        });
+    }
+
+    private void unregisterRegistrarForAllBundles(Registrar registrar) {
+        doWithContext(contextProvider -> {
+            processBundles(registrar, bundle -> registrar.unregister(contextProvider.getRegistry(), bundle));
+        });
+    }
 
     class ContextPoolFactory extends BasePooledObjectFactory<ContextProvider> {
         @Override
         public ContextProvider create() throws Exception {
-            logger.info("ContextPoolFactory.create");
+            logger.debug("ContextPoolFactory.create");
             Context context = Context.newBuilder(JS)
                     .allowHostClassLookup(s -> true)
                     .allowHostAccess(HostAccess.ALL)
@@ -282,26 +319,9 @@ public class GraalVMEngine {
 
         @Override
         public void destroyObject(PooledObject<ContextProvider> p) throws Exception {
-            logger.info("ContextPoolFactory.destroyObject");
+            logger.debug("ContextPoolFactory.destroyObject");
             p.getObject().close();
         }
     }
 
-    private String getBundleScript(Bundle bundle) {
-        URL url = bundle.getResource("package.json");
-        if (url != null) {
-            try {
-                String content = IOUtils.toString(url);
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?, ?> json = mapper.readValue(content, Map.class);
-                Map<?, ?> jahia = (Map<?, ?>) json.get("jahia");
-                if (jahia != null && jahia.containsKey("server")) {
-                    return (String) jahia.get("server");
-                }
-            } catch (IOException ioe) {
-                logger.error("Error accessing bundle {} package.json file", bundle.getSymbolicName(), ioe);
-            }
-        }
-        return null;
-    }
 }
