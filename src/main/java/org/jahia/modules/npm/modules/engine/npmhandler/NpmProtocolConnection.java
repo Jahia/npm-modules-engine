@@ -51,7 +51,13 @@ public class NpmProtocolConnection extends URLConnection {
                 String user = wrappedUrl.getUserInfo().split(":")[0];
                 String password = wrappedUrl.getUserInfo().split(":")[1];
                 finalUrl = new URL(wrappedUrl.toString().replace(user + ":" + password + "@", ""));
-                client = HttpClient.newBuilder().authenticator(new BasicAuthenticator(user, password)).build();
+
+                client = HttpClient.newBuilder().authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new java.net.PasswordAuthentication(user, password.toCharArray());;
+                    }
+                }).build();
             } else {
                 client = HttpClient.newHttpClient();
             }
@@ -118,20 +124,5 @@ public class NpmProtocolConnection extends URLConnection {
         }
 
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
-    }
-
-    static class BasicAuthenticator extends java.net.Authenticator {
-        private final String username;
-        private final String password;
-
-        BasicAuthenticator(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-
-        @Override
-        protected java.net.PasswordAuthentication getPasswordAuthentication() {
-            return new java.net.PasswordAuthentication(username, password.toCharArray());
-        }
     }
 }
