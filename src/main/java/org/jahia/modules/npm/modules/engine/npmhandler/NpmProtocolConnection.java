@@ -44,32 +44,38 @@ public class NpmProtocolConnection extends URLConnection {
 
         File outputDir = Files.createTempDirectory("npm.").toFile();
 
-        URL finalUrl = wrappedUrl;
-        HttpClient client;
-        try {
-            if (wrappedUrl.getUserInfo() != null) {
-                String user = wrappedUrl.getUserInfo().split(":")[0];
-                String password = wrappedUrl.getUserInfo().split(":")[1];
-                finalUrl = new URL(wrappedUrl.toString().replace(user + ":" + password + "@", ""));
+        InputStream inputStream;
+        if ("http".equals(wrappedUrl.getProtocol()) || "https".equals(wrappedUrl.getProtocol())) {
+            URL finalUrl = wrappedUrl;
+            HttpClient client;
+            try {
+                if (wrappedUrl.getUserInfo() != null) {
+                    String user = wrappedUrl.getUserInfo().split(":")[0];
+                    String password = wrappedUrl.getUserInfo().split(":")[1];
+                    finalUrl = new URL(wrappedUrl.toString().replace(user + ":" + password + "@", ""));
 
-                client = HttpClient.newBuilder().authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new java.net.PasswordAuthentication(user, password.toCharArray());
-                    }
-                }).build();
-            } else {
-                client = HttpClient.newHttpClient();
+                    client = HttpClient.newBuilder().authenticator(new Authenticator() {
+                        @Override
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new java.net.PasswordAuthentication(user, password.toCharArray());
+                        }
+                    }).build();
+                } else {
+                    client = HttpClient.newHttpClient();
+                }
+
+                HttpResponse<InputStream> response = client.send(
+                        HttpRequest.newBuilder(finalUrl.toURI()).build(),
+                        HttpResponse.BodyHandlers.ofInputStream());
+                inputStream = response.body();
+            } catch (URISyntaxException | InterruptedException e) {
+                throw new IOException(e.getMessage(), e);
             }
-
-            HttpResponse<InputStream> response = client.send(
-                    HttpRequest.newBuilder(finalUrl.toURI()).build(),
-                    HttpResponse.BodyHandlers.ofInputStream());
-            TarUtils.unTar(new GZIPInputStream(response.body()), outputDir);
-        } catch (URISyntaxException | InterruptedException e) {
-            throw new IOException(e.getMessage(), e);
+        } else {
+            inputStream = wrappedUrl.openStream();
         }
 
+        TarUtils.unTar(new GZIPInputStream(inputStream), outputDir);
         Properties instructions = new Properties();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
