@@ -63,6 +63,8 @@ These additional helpers are available :
 
 #### [{{obj}}](../../../../../../../../../javascript/handlebars/helpers/util/obj.js)
 
+#### [{{arr}}](../../../../../../../../../javascript/handlebars/helpers/util/arr.js)
+
 Creates a JS object based on hash options
 
 **Named params**
@@ -136,7 +138,7 @@ current context, instead of being displayed.
 {{jcrGetNode path="/sites/digitall" varName="siteNode"}}
 ```
 
-#### [{{jcrGetIdentifer}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetIdentifier.js)
+#### [{{jcrGetIdentifier}}](../../../../../../../../../javascript/handlebars/helpers/jcr/jcrGetIdentifier.js)
 
 Get the identifier of a node
 
@@ -154,9 +156,9 @@ If no node identification optional named parameter is passed the currentResource
 **Example**
 
 ```handlebars
-{{jcrGetIdentifer path="/sites/digitall"}}
+{{jcrGetIdentifier path="/sites/digitall"}}
 <!-- results in: '095fb1d8-b42a-4f5c-9794-35b6b46a2a96' -->
-{{jcrGetIdentifer}}
+{{jcrGetIdentifier}}
 <!-- results in: '095fb1d8-b42a-4f5c-9794-35b6b46a2a96' if current resource is also "/sites/digitall" node -->
 ```
 
@@ -204,12 +206,12 @@ If no node identification optional named parameter is passed the currentResource
 ```handlebars
 {{jcrGetNode path="/sites/digitall" varName="siteObject"}}
 ..
-{{jcrGetName siteObject}}
+{{jcrGetName node=siteObject}}
 <!-- results in: 'digitall' -->
 
 {{jcrGetNode varName="siteObject"}}
 ..
-{{jcrGetName siteObject}}
+{{jcrGetName node=siteObject}}
 <!-- results in: 'digitall' if current resource is also "/sites/digitall" node -->
 ```
 
@@ -263,7 +265,7 @@ If no node identification optional named parameter is passed the currentResource
 
 ```handlebars
 Get property on current resource : {{jcrGetProperty "prop1"}}
-Get property by absolute path : {{jcrGetProperty "prop1" path=(jcrGetPath currentResource) }}
+Get property by absolute path : {{jcrGetProperty "prop1" path=(jcrGetPath resource=currentResource) }}
 relative path: {{jcrGetProperty "prop1" relPath="."}}
 resource : {{jcrGetProperty  "prop1" resource=currentResource}}
 node : {{jcrGetProperty "prop1" node=(jcrGetNode) }}
@@ -303,9 +305,9 @@ N/A
 ```handlebars
 {{#gql varName="result"}}
     {
-        jcr {
-            nodeByPath(path:"{{jcrGetPath currentResource}}") {
-                children {
+    jcr {
+    nodeByPath(path:"{{jcrGetPath}}") {
+    children {
                     nodes {
                         path
                     }

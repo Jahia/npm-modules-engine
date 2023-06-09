@@ -27,25 +27,32 @@ The GraalVM engine provides context to execute Javascript code. More details on 
 
 ### Java helpers
 
-NPM module comes with a list of Java helpers, available from javascript code. All helpers are described [here](./src/main/java/org/jahia/modules/npm/modules/engine/helpers/README.md)
+NPM module comes with a list of Java helpers, available from javascript code. All helpers are
+described [here](./src/main/java/org/jahia/modules/npm/modules/engine/helpers/README.md)
 
 ## NPM Modules
 
 ### Content
 
-A NPM module can contain views, definitions, and other standard jahia extensions. 
+A NPM module can contain views, definitions, and other standard jahia extensions.
 
-How to include views in a module is described [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/README.md).
+How to include views in a module is
+described [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/README.md).
+
+You can find a reference documentation of all the available out of the box Handle bar
+helpers [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/handlebars.md)
 
 Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
 They follow the same format as in a standard jahia module.
 
-Other extensions are supported with the help of [registrars](./src/main/java/org/jahia/modules/npm/modules/engine/registrars/README.md).
+Other extensions are supported with the help
+of [registrars](./src/main/java/org/jahia/modules/npm/modules/engine/registrars/README.md).
 
 ### Deployment
 
-NPM modules must be packaged with `npm pack` and must contain a `package.json` file, containing all package information. 
-The `package.json` file must contain a `jahia` section with a `server` entry. This entry points to the initialization script of the module, which will be responsible of registering the extensions.
+NPM modules must be packaged with `npm pack` and must contain a `package.json` file, containing all package information.
+The `package.json` file must contain a `jahia` section with a `server` entry. This entry points to the initialization
+script of the module, which will be responsible of registering the extensions.
 
 ```json
 {
