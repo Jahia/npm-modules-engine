@@ -128,11 +128,15 @@ public class RenderHelper {
         });
     }
 
-    private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) throws RepositoryException {
-        if(StringUtils.isNotEmpty(boundComponentRelativePath)) {
-            String boundComponentPath = renderContext.getMainResource().getNodePath().concat("/").concat(boundComponentRelativePath);
-            JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
-            currentNode.setProperty("j:bindedComponent", boundComponent);
+    private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
+        try {
+            if(currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
+                String boundComponentPath = renderContext.getMainResource().getNodePath().concat("/").concat(boundComponentRelativePath);
+                JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
+                currentNode.setProperty("j:bindedComponent", boundComponent);
+            }
+        } catch (RepositoryException e) {
+            logger.error("Error while getting bound component: {}", e.getMessage());
         }
     }
 
