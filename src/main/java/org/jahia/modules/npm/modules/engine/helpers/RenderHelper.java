@@ -1,9 +1,11 @@
 package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.JCRTemplate;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
@@ -104,6 +106,7 @@ public class RenderHelper {
                 }
             }
 
+            handleBoundComponent(node, renderContext, session, (String) definition.get("boundComponentRelativePath"));
             String view = (String) definition.get("view");
             String templateType = (String) definition.get("templateType");
             String contextConfiguration = (String) definition.get("contextConfiguration");
@@ -123,6 +126,18 @@ public class RenderHelper {
                 throw new RepositoryException(e);
             }
         });
+    }
+
+    private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
+        try {
+            if(currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
+                String boundComponentPath = renderContext.getMainResource().getNodePath().concat("/").concat(boundComponentRelativePath);
+                JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
+                currentNode.setProperty("j:bindedComponent", boundComponent);
+            }
+        } catch (RepositoryException e) {
+            logger.error("Error while getting bound component: {}", e.getMessage());
+        }
     }
 
     public String renderSimpleComponent(String name, String type, RenderContext renderContext) throws RepositoryException {
