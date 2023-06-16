@@ -462,7 +462,8 @@ N/A
 - `name` : name of the temporary node, if needed (defaults to 'temp-node')
 - `path` : path of the temporary node, if needed (defaults to '/')
 - `boundComponentRelativePath` : Relative path of the component which is bound to the component which is rendered. If this property is 
-  set, the bound component will be retrieved by its path and will be added to the j:bindedComponent property of the current node
+  set, the bound component will be retrieved by its path and will be added to the j:bindedComponent property of the current node.
+Use '/' to bind to the main resource.
 
 **Example**
 

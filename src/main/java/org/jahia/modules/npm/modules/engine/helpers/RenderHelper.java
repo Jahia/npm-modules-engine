@@ -131,7 +131,7 @@ public class RenderHelper {
     private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
         try {
             if(currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
-                String boundComponentPath = renderContext.getMainResource().getNodePath().concat("/").concat(boundComponentRelativePath);
+                String boundComponentPath = renderContext.getMainResource().getNodePath().concat(boundComponentRelativePath);
                 JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
                 currentNode.setProperty("j:bindedComponent", boundComponent);
             }
