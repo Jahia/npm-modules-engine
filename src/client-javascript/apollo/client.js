@@ -15,8 +15,8 @@ export function isObject(item) {
 
 /**
  * Deep merge two objects.
- * @param target
- * @param ...sources
+ * @param target target object
+ * @param source source object
  */
 export function mergeDeep(target, source) {
     if (isObject(target) && isObject(source)) {
@@ -25,6 +25,7 @@ export function mergeDeep(target, source) {
                 if (!target[key]) {
                     Object.assign(target, {[key]: {}});
                 }
+
                 mergeDeep(target[key], source[key]);
             } else {
                 Object.assign(target, {[key]: source[key]});
