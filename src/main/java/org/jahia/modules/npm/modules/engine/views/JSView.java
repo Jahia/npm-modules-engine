@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine.views;
 
 import org.graalvm.polyglot.Value;
@@ -34,7 +49,7 @@ public class JSView implements View, Comparable<View> {
         registryKey = jsValue.get("key").toString();
         key = jsValue.get("templateName") != null ? jsValue.get("templateName").toString() : "default";
 
-        Bundle bundle = ((Value)jsValue.get("bundle")).asHostObject();
+        Bundle bundle = ((Value) jsValue.get("bundle")).asHostObject();
         module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
 
         target = jsValue.get("target").toString();
@@ -50,7 +65,7 @@ public class JSView implements View, Comparable<View> {
         path = getModule().getBundleKey() + "/" + getRegistryKey();
     }
 
-    public Map<String,Object> getValue(ContextProvider contextProvider) {
+    public Map<String, Object> getValue(ContextProvider contextProvider) {
         return contextProvider.getRegistry().get("view", getRegistryKey());
     }
 

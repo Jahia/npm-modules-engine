@@ -6,8 +6,12 @@ import {print} from 'graphql';
 export const getSsrLink = renderContext => new ApolloLink(
     operation => {
         let {operationName, variables, query} = operation;
-        /* eslint-disable-next-line */
-        let res = gql.executeQuerySync({query:print(query), operationName, variables: JSON.stringify(variables), renderContext: renderContext});
+        let res = gql.executeQuerySync({
+            query: print(query),
+            operationName,
+            variables: JSON.stringify(variables),
+            renderContext: renderContext
+        });
         return Observable.of(res);
     }
 );

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine.graphql;
 
 import graphql.annotations.annotationTypes.GraphQLDescription;
@@ -52,23 +67,6 @@ public class GqlNpmHelper {
         this.renderService = renderService;
     }
 
-
-
-//
-//    @GraphQLField
-//    public String renderNode(
-//            @GraphQLName("path") String path,
-//            @GraphQLName("view") @GraphQLDescription("Name of the view") String view,
-//            @GraphQLName("templateType") @GraphQLDescription("Template type") String templateType,
-//            @GraphQLName("contextConfiguration") @GraphQLDescription("Rendering context configuration") String contextConfiguration,
-//            DataFetchingEnvironment environment) throws RepositoryException, RenderException {
-//        RenderContext renderContext = getRenderContext(environment);
-//
-//        JCRNodeWrapper node = jcrSessionFactory.getCurrentUserSession(renderContext.getWorkspace(), renderContext.getMainResource().getLocale()).getNode(path);
-//        Resource resource = new Resource(node, templateType != null ? templateType : "html", view, contextConfiguration != null ? contextConfiguration : "module");
-//        return renderService.render(resource, getRenderContext(environment));
-//    }
-//
 //    @GraphQLField
 //    public String renderModule(
 //            @GraphQLName("path") String path,
@@ -78,32 +76,13 @@ public class GqlNpmHelper {
 //            DataFetchingEnvironment environment) throws IllegalAccessException, InvocationTargetException, JspException {
 //        return renderTag(new ModuleTag(), getAttr(path, view, templateType, contextConfiguration), environment);
 //    }
-//
-//    @GraphQLField
-//    public String renderInclude(
-//            @GraphQLName("path") String path,
-//            @GraphQLName("view") @GraphQLDescription("Name of the view") String view,
-//            @GraphQLName("templateType") @GraphQLDescription("Template type") String templateType,
-//            @GraphQLName("contextConfiguration") @GraphQLDescription("Rendering context configuration") String contextConfiguration,
-//            DataFetchingEnvironment environment) throws IllegalAccessException, InvocationTargetException, JspException {
-//        return renderTag(new IncludeTag(), getAttr(path, view, templateType, contextConfiguration), environment);
-//    }
-//
-//    @GraphQLField
-//    public String renderOption(
-//            @GraphQLName("path") String path,
-//            @GraphQLName("view") @GraphQLDescription("Name of the view") String view,
-//            @GraphQLName("templateType") @GraphQLDescription("Template type") String templateType,
-//            @GraphQLName("contextConfiguration") @GraphQLDescription("Rendering context configuration") String contextConfiguration,
-//            DataFetchingEnvironment environment) throws IllegalAccessException, InvocationTargetException, JspException {
-//        return renderTag(new OptionTag(), getAttr(path, view, templateType, contextConfiguration), environment);
-//    }
 
+    @GraphQLDescription("Render a compoment according to the parameters")
     @GraphQLField
     public SimpleRenderedNode getRenderedComponent(
-            @GraphQLName("mainResourcePath") String mainResourcePath,
-            @GraphQLName("path") String path,
-            @GraphQLName("node") GqlJcrNodeInput input,
+            @GraphQLName("mainResourcePath") @GraphQLDescription("Main resource path") String mainResourcePath,
+            @GraphQLName("path") @GraphQLDescription("Path of the node") String path,
+            @GraphQLName("node") @GraphQLDescription("Input containing the primary node type, the name, the properties and other fields of a JCR Node of a node to render") GqlJcrNodeInput input,
             @GraphQLName("view") @GraphQLDescription("Name of the view") String view,
             @GraphQLName("templateType") @GraphQLDescription("Template type") String templateType,
             @GraphQLName("contextConfiguration") @GraphQLDescription("Rendering context configuration") String contextConfiguration,
@@ -112,8 +91,7 @@ public class GqlNpmHelper {
             DataFetchingEnvironment environment
     ) {
         try {
-
-            String id = "cache" + (Objects.hash(mainResourcePath, path, view, templateType, input.getName(), input.getPrimaryNodeType(), contextConfiguration, isEditMode, language));
+            String id = "cache" + Objects.hash(mainResourcePath, path, view, templateType, input.getName(), input.getPrimaryNodeType(), contextConfiguration, isEditMode, language);
             return new SimpleRenderedNode(id, jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, LanguageCodeConverters.languageCodeToLocale(language),
                     session -> getRenderedComponent(mainResourcePath, path, input, view, templateType, contextConfiguration, isEditMode, environment, session)
             ));
@@ -123,48 +101,12 @@ public class GqlNpmHelper {
         return null;
     }
 
-//    private String renderTag(TagSupport tag, Map<String, Object> attr, DataFetchingEnvironment environment) throws IllegalAccessException, InvocationTargetException, JspException {
-//        RenderContext renderContext = getRenderContext(environment);
-//        BeanUtils.populate(tag, attr);
-//
-//        renderContext.setServletPath(Render.getRenderServletPath());
-//        if (attr.containsKey("path")) {
-//            try {
-//                renderContext.setSite(JCRSessionFactory.getInstance().getCurrentUserSession().getNode((String) attr.get("path")).getResolveSite());
-//            } catch (RepositoryException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        MockPageContext pageContext = new MockPageContext(renderContext);
-//        tag.setPageContext(pageContext);
-//        tag.doStartTag();
-//        tag.doEndTag();
-//        return pageContext.getTargetWriter().getBuffer().toString();
-//    }
-//
-//    private Map<String, Object> getAttr(String path, String view, String templateType, String contextConfiguration) {
-//        Map<String,Object> attr = new HashMap<>();
-//        attr.put("path", path);
-//        attr.put("template", view);
-//        attr.put("templateType", templateType);
-//        attr.put("contextConfiguration", contextConfiguration);
-//        return attr;
-//    }
-
     private String getRenderedComponent(String mainResourcePath, String path, GqlJcrNodeInput input, String view, String templateType, String contextConfiguration, Boolean isEditMode, DataFetchingEnvironment environment, JCRSessionWrapper session) throws RepositoryException {
         JCRNodeWrapper main = session.getNode(mainResourcePath);
-        if (path == null) {
-            path = "/";
-        }
-        JCRNodeWrapper parent = session.getNode(path);
 
-        String name = input.getName();
-        if (name == null) {
-            name = "temp-node";
-        }
+        JCRNodeWrapper parent = session.getNode(path != null ? path : "/");
 
-        JCRNodeWrapper node = parent.addNode(name, input.getPrimaryNodeType());
+        JCRNodeWrapper node = parent.addNode(input.getName() != null ? input.getName() : "temp-node", input.getPrimaryNodeType());
         Collection<GqlJcrPropertyInput> properties = input.getProperties();
         if (properties != null) {
             for (GqlJcrPropertyInput property : properties) {
@@ -181,16 +123,7 @@ public class GqlNpmHelper {
 
         Resource r = new Resource(node, templateType, view, contextConfiguration);
 
-        RenderContext renderContext = getRenderContext(environment);
-        renderContext.setServletPath(Render.getRenderServletPath());
-        renderContext.setSite(main.getResolveSite());
-        renderContext.setMainResource(new Resource(main, templateType, null, contextConfiguration));
-        if (isEditMode != null) {
-            renderContext.setEditMode(isEditMode);
-            if (isEditMode) {
-                renderContext.setEditModeConfig((EditConfiguration) SpringContextSingleton.getBean("editmode"));
-            }
-        }
+        RenderContext renderContext = getRenderContext(environment, main, templateType, contextConfiguration, isEditMode);
         try {
             return renderService.render(r, renderContext);
         } catch (RenderException e) {
@@ -198,7 +131,7 @@ public class GqlNpmHelper {
         }
     }
 
-    private RenderContext getRenderContext(DataFetchingEnvironment environment) {
+    private RenderContext getRenderContext(DataFetchingEnvironment environment, JCRNodeWrapper main, String templateType, String contextConfiguration, Boolean isEditMode) throws RepositoryException {
         HttpServletRequest request = ContextUtil.getHttpServletRequest(environment.getContext());
         HttpServletResponse response = ContextUtil.getHttpServletResponse(environment.getContext());
         if (request == null || response == null) {
@@ -209,7 +142,17 @@ public class GqlNpmHelper {
             request = (HttpServletRequest) ((HttpServletRequestWrapper) request).getRequest();
         }
 
-        return new RenderContext(request, response, JCRSessionFactory.getInstance().getCurrentUser());
+        RenderContext renderContext = new RenderContext(request, response, JCRSessionFactory.getInstance().getCurrentUser());
+        renderContext.setServletPath(Render.getRenderServletPath());
+        renderContext.setSite(main.getResolveSite());
+        renderContext.setMainResource(new Resource(main, templateType, null, contextConfiguration));
+        if (isEditMode != null) {
+            renderContext.setEditMode(isEditMode);
+            if (isEditMode) {
+                renderContext.setEditModeConfig((EditConfiguration) SpringContextSingleton.getBean("editmode"));
+            }
+        }
+        return renderContext;
     }
 
     @GraphQLDescription("Rendering result for a node")
@@ -223,7 +166,7 @@ public class GqlNpmHelper {
         }
 
         @GraphQLField
-        @GraphQLDescription("Rendering output")
+        @GraphQLDescription("Id of of the rendering node")
         public String getId() {
             return id;
         }
@@ -233,8 +176,5 @@ public class GqlNpmHelper {
         public String getOutput() {
             return output;
         }
-
-
     }
-
 }

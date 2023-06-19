@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine.jsengine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +39,7 @@ import pl.touk.throwing.ThrowingSupplier;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -81,7 +97,6 @@ public class GraalVMEngine {
         registrars.remove(registrar);
     }
 
-
     public void enableBundle(Bundle bundle) {
         String script = getBundleScript(bundle);
         if (script != null) {
@@ -89,7 +104,7 @@ public class GraalVMEngine {
                 initScripts.put(bundle, getGraalSource(bundle, script));
                 version.incrementAndGet();
                 doWithContext(contextProvider -> {
-                    if (registrars.size() == 0) {
+                    if (registrars.isEmpty()) {
                         logger.debug("No registrars registered, registration will be delayed to when they are available");
                     }
                     for (Registrar registrar : registrars) {
@@ -196,7 +211,7 @@ public class GraalVMEngine {
     private Source getGraalSource(Bundle bundle, String script) throws IOException {
         String resource = loadResource(bundle, script);
         if (resource == null) {
-            throw new IOException("Cannot get resource "+ bundle.getSymbolicName() +" / " + script);
+            throw new IOException("Cannot get resource " + bundle.getSymbolicName() + " / " + script);
         }
         return Source.newBuilder(JS, resource, bundle.getSymbolicName() + "/" + script).build();
     }
@@ -211,7 +226,7 @@ public class GraalVMEngine {
             JCRNodeWrapper sources = session.getNode(sourcePath);
             if (sources.hasNode(path)) {
                 try {
-                    return IOUtils.toString(sources.getNode(path).getFileContent().downloadFile());
+                    return IOUtils.toString(sources.getNode(path).getFileContent().downloadFile(), Charset.defaultCharset());
                 } catch (IOException e) {
                     throw new RepositoryException(e);
                 }
@@ -224,7 +239,7 @@ public class GraalVMEngine {
         try {
             return Optional
                     .ofNullable(getSourceFile(bundle, path))
-                    .orElseGet(ThrowingSupplier.unchecked(() -> bundle.getResource(path) != null ? IOUtils.toString(bundle.getResource(path)) : null));
+                    .orElseGet(ThrowingSupplier.unchecked(() -> bundle.getResource(path) != null ? IOUtils.toString(bundle.getResource(path), Charset.defaultCharset()) : null));
         } catch (Exception e) {
             logger.error("Cannot get resource", e);
         }
@@ -323,5 +338,4 @@ public class GraalVMEngine {
             p.getObject().close();
         }
     }
-
 }

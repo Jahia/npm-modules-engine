@@ -1,8 +1,8 @@
 ## GraphQL extension
 
-This package provide extension required for JS template rendering. 
+This package provides required extension for JS template rendering. 
 
-They could actually be moved to core graphql module.
+They could actually be moved to the graphql core module.
 
 ### Get rendered component
 

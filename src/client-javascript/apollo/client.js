@@ -15,8 +15,8 @@ export function isObject(item) {
 
 /**
  * Deep merge two objects.
- * @param target
- * @param ...sources
+ * @param target target object
+ * @param source source object
  */
 export function mergeDeep(target, source) {
     if (isObject(target) && isObject(source)) {

@@ -2,8 +2,6 @@ const path = require('path');
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = (env, argv) => {
-    let _argv = argv || {};
-
     let config = {
         entry: {
             main: path.resolve(__dirname, 'src/javascript/index')
@@ -27,8 +25,6 @@ module.exports = (env, argv) => {
                 {
                     test: /\.js$/,
                     include:[
-                        // path.resolve(__dirname, "node_modules/log-utils"),
-                        // path.resolve(__dirname, "node_modules/logging-helpers"),
                         path.resolve(__dirname, "node_modules/create-frame"),
                         path.resolve(__dirname, "node_modules/handlebars-helpers")
                     ],
