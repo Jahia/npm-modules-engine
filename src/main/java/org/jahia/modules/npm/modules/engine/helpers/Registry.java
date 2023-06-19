@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
@@ -22,37 +37,6 @@ public class Registry {
     public List<Map<String, Object>> find(Map<String, Object> filter) {
         Collection<Map<String, Object>> result = registryMap.values();
 
-        if (filter.containsKey("target")) {
-            /*
-             *             result = result
-             *                 .filter(item => {
-             *                     return item.targets && item.targets
-             *                         .map(t => t.id)
-             *                         .includes(filters.target);
-             *                 })
-             *                 .sort((a, b) => {
-             *                     const foundA = a.targets && a.targets.find(t => t.id === filters.target);
-             *                     const foundB = b.targets && b.targets.find(t => t.id === filters.target);
-             *                     const priorityA = foundA && Number(foundA.priority);
-             *                     const priorityB = foundB && Number(foundB.priority);
-             *
-             *                     if (isNaN(priorityA) && isNaN(priorityB)) {
-             *                         return 0;
-             *                     }
-             *
-             *                     if (isNaN(priorityA)) {
-             *                         return -1;
-             *                     }
-             *
-             *                     if (isNaN(priorityB)) {
-             *                         return 1;
-             *                     }
-             *
-             *                     return priorityA - priorityB;
-             *                 });
-             */
-        }
-
         return result.stream()
                 .filter(item -> filter.entrySet().stream().allMatch(f -> f.getValue().equals(item.get(f.getKey()))))
                 .collect(Collectors.toList());
@@ -67,9 +51,6 @@ public class Registry {
 
     public void addOrReplace(String type, String key, Map<String, Object>... arguments) {
         Map<String, Object> object = composeServices(arguments);
-        if (object.get("targets") != null) {
-            //
-        }
 
         object.put("key", key);
         object.put("type", type);

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +51,7 @@ public class SourcesFilter extends AbstractServletFilter {
 
     @Activate
     public void activate() {
-        setUrlPatterns(new String[] {"/modules/*"});
+        setUrlPatterns(new String[]{"/modules/*"});
     }
 
     @Override
@@ -51,7 +66,7 @@ public class SourcesFilter extends AbstractServletFilter {
 
         String uri = httpRequest.getRequestURI();
         if (uri.endsWith(".css")) {
-            String moduleName = StringUtils.substringBetween(uri, NpmModuleListener.MODULES,"/");
+            String moduleName = StringUtils.substringBetween(uri, NpmModuleListener.MODULES, "/");
             String path = StringUtils.substringAfter(uri, NpmModuleListener.MODULES + moduleName);
             JahiaTemplatesPackage pack = modulesService.getTemplatePackageById(moduleName);
             if (pack != null) {
@@ -77,7 +92,6 @@ public class SourcesFilter extends AbstractServletFilter {
 
         filterChain.doFilter(httpRequest, servletResponse);
     }
-
 
     @Override
     public void destroy() {

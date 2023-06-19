@@ -12,6 +12,7 @@ export class BasePage {
      * waits for the body inside the iframe to appear
      * returns the body of the iframe
      * @param iframeSrc - src attribute of the iframe
+     * @param timeout - Time to wait for iframe
      */
     getIframeBody(iframeSrc: string, timeout = 60000): Cypress.Chainable {
         // get the iframe > document > body
@@ -30,10 +31,11 @@ export class BasePage {
 
     /**
      * waits for an element inside the body to appear
-     * returns the elemen
+     * returns the element
      * useful when it's an element that appear after the iframe is loaded. like a temporary notification
      * @param iframeSrc - src attribute of the iframe
      * @param elementSelector - the element's locator
+     * @param timeout - Time to wait for iframe
      */
     getIframeElement(iframeSrc: string, elementSelector: string, timeout = 60000): Cypress.Chainable {
         return cy

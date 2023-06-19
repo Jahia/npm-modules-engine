@@ -4,7 +4,6 @@ import 'cypress-file-upload'
 class HandlebarsTestPage extends BasePage {
     elements = {
         handlebarsTestPage: '/cms/editframe//default/en/sites/mySite/home.html?redirect=false',
-        // handlebarsTestPage: '/cms/render/default/en/sites/mySite/home.html',
         subViewTestProp: '.headerContent > :nth-child(1)',
         npmViewIsWorkingDiv: "[data-testid*='npm-view']",
         handlebarsHelper118: "[data-testid*='helper-118']",

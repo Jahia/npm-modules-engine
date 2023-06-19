@@ -1,7 +1,23 @@
+/*
+ * Copyright (C) 2002-2023 Jahia Solutions Group SA. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jahia.modules.npm.modules.engine.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.graalvm.polyglot.Value;
+import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.Promise;
 import org.jahia.osgi.BundleUtils;
@@ -55,7 +71,7 @@ public class GQLHelper {
         PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
         permissionService.addScopes(Collections.singleton("graphql"), null);
 
-        RenderContext renderContext = (RenderContext)  parameters.get("renderContext");
+        RenderContext renderContext = (RenderContext) parameters.get("renderContext");
         HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
             public String getParameter(String name) {
                 if (params.containsKey(name)) {
@@ -64,16 +80,13 @@ public class GQLHelper {
                 return super.getParameter(name);
             }
         };
-        System.out.println(params);
         servlet.service(req, new HttpServletResponseMock(out));
-        System.out.println(out);
-        Value js = context.getContext().eval("js", "(" + out + ")");
-        return js;
+        return context.getContext().eval("js", "(" + out + ")");
     }
 
     @Inject
     @OSGiService(service = HttpServlet.class,
-        filter = "(component.name=graphql.kickstart.servlet.OsgiGraphQLHttpServlet)")
+            filter = "(component.name=graphql.kickstart.servlet.OsgiGraphQLHttpServlet)")
     public void setServlet(HttpServlet servlet) {
         this.servlet = servlet;
     }
