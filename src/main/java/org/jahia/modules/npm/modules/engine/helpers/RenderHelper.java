@@ -64,7 +64,7 @@ public class RenderHelper {
     }
 
     public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
-        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), null, renderContext.getMainResource().getLocale(), session -> {
+        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), renderContext.getMainResource().getLocale(), session -> {
             String path = (String) definition.get("path");
 
             if (path == null) {
