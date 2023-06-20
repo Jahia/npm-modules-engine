@@ -102,39 +102,35 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     }
 
     private Collection<JSView> parseBundleFolder(Bundle bundle) {
-        Enumeration<String> nodeTypesPaths = bundle.getEntryPaths("views");
-        if (nodeTypesPaths != null) {
-            Set<JSView> views = new HashSet<>();
+        return parseComponentsFolder(bundle);
+    }
 
-            while (nodeTypesPaths.hasMoreElements()) {
-                String nodeTypePath = nodeTypesPaths.nextElement();
+    private Set<JSView> parseComponentsFolder(Bundle bundle) {
+        Enumeration<String> namespaces = bundle.getEntryPaths("components");
+        Set<JSView> views = new HashSet<>();
+        if (namespaces != null) {
+            while (namespaces.hasMoreElements()) {
+                String namespace = namespaces.nextElement();
+                views.addAll(parseNamespace(bundle, namespace));
+            }
+        }
+        return views;
+    }
 
-                Enumeration<String> templateTypePaths = bundle.getEntryPaths(nodeTypePath);
-                if (templateTypePaths != null) {
-                    while (templateTypePaths.hasMoreElements()) {
-                        String templateTypePath = templateTypePaths.nextElement();
-
-                        Enumeration<String> viewPaths = bundle.getEntryPaths(templateTypePath);
-                        if (viewPaths != null) {
-                            while (viewPaths.hasMoreElements()) {
-                                String viewPath = viewPaths.nextElement();
-                                for (ViewParser parser : parsers) {
-                                    if (parser.canHandle(viewPath)) {
-                                        JSView view = parser.parseView(bundle, viewPath);
-                                        if (view != null) {
-                                            views.add(view);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+    private Set<JSView> parseNamespace(Bundle bundle, String namespace) {
+        Enumeration<String> componentsName = bundle.getEntryPaths(namespace);
+        Set<JSView> views = new HashSet<>();
+        while (componentsName.hasMoreElements()) {
+            String componentName = componentsName.nextElement();
+            Enumeration<String> filePaths = bundle.getEntryPaths(componentName);
+            if (filePaths != null) {
+                while (filePaths.hasMoreElements()) {
+                    String filePath = filePaths.nextElement();
+                    parsers.stream().filter(parser -> parser.canHandle(filePath)).findFirst().ifPresent(viewParser -> views.add(viewParser.parseView(bundle, filePath)));
                 }
             }
-            return views;
         }
-
-        return Collections.emptySet();
+        return views;
     }
 
     @Override
@@ -173,7 +169,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     }
 
     private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
-        return (JSView) nodeTypeList.stream().flatMap(t -> getViewsSet(t, renderContext.getSite(), resource.getTemplateType()).stream())
+        return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, renderContext.getSite(), resource.getTemplateType()).stream())
                 .filter(v -> v.getKey().equals(resource.getResolvedTemplate()))
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
