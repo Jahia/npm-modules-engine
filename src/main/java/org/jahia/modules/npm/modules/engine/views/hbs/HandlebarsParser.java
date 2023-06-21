@@ -48,10 +48,12 @@ public class HandlebarsParser implements ViewParser {
             }
 
             String[] parts = StringUtils.split(viewPath, "/");
-            String[] viewNameParts = StringUtils.split(StringUtils.substringAfterLast(viewPath, "/"), ".");
+            String templateType = isHTMLTemplateType(parts) ? "html" : parts[3];
+            String pageName = StringUtils.substringAfterLast(viewPath, "/");
+            String[] viewNameParts = StringUtils.split(pageName, ".");
 
-            //todo: bad replace from _ to :
-            JSFileView fileView = new JSFileView("handlebars", viewPath, viewNameParts.length > 2 ? viewNameParts[1] : "default", module, parts[1].replace('_', ':'), parts[2]);
+            String nodeType = parts[1] + ":" + viewNameParts[0];
+            JSFileView fileView = new JSFileView("handlebars", viewPath, viewNameParts.length > 2 ? viewNameParts[1] : "default", module, nodeType, templateType);
             fileView.setProperties(new Properties());
 
             URL props = bundle.getResource(StringUtils.substringBeforeLast(viewPath, ".hbs") + ".properties");
@@ -67,5 +69,16 @@ public class HandlebarsParser implements ViewParser {
             return fileView;
         }
         return null;
+    }
+
+    /**
+     * If the parts length is equal to 5, the template is located under /components/<namespace>/<component>
+     * which is the folder for the HTML template type
+     *
+     * @param parts of the path
+     * @return true if the template is in the folder dedicated to the HTML template type
+     */
+    private boolean isHTMLTemplateType(String[] parts) {
+        return parts.length == 4;
     }
 }

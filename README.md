@@ -42,7 +42,12 @@ described [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/READ
 You can find a reference documentation of all the available out of the box Handle bar
 helpers [here](./src/main/java/org/jahia/modules/npm/modules/engine/views/handlebars.md)
 
-Definitions file (`definitions.cnd`) and import (`import.xml`) are placed directly in the root folder of the module.
+Definitions file (`definitions.cnd`) can be placed under the root folder.
+It's also possible to have a definition file per node type under the folder of this node type.
+The file name should match the node type name. For example the `jnt:test` node type would be declared in
+`/components/jnt/test/test.cnd`
+
+Import file (`import.xml`) are placed directly in the root folder of the module.
 They follow the same format as in a standard jahia module.
 
 Other extensions are supported with the help
