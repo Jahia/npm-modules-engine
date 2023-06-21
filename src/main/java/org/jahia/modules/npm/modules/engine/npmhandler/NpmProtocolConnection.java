@@ -67,7 +67,9 @@ public class NpmProtocolConnection extends URLConnection {
         File f = new File(outputDir, "package");
         Collection<File> files = FileUtils.listFiles(f, null, true);
         try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
+            Set<ZipEntry> processedImages = new HashSet<>();
             for (File file : files) {
+                boolean toCopyFile = true;
                 String path = f.toURI().relativize(file.toURI()).getPath();
 
                 if (path.equals("package.json")) {
@@ -93,13 +95,30 @@ public class NpmProtocolConnection extends URLConnection {
                         extensions.add(StringUtils.substringAfterLast(file.getName(), "."));
                     }
                 }
+
                 if (path.equals("definitions.cnd") || path.equals("import.xml")) {
                     jos.putNextEntry(new ZipEntry("META-INF/" + path));
+                } else if (path.startsWith("components") && path.endsWith(".png")) {
+                    String[] parts = StringUtils.split(path, "/");
+                    String nodeTypeName = parts[2];
+                    if (file.getName().equals(nodeTypeName + ".icon.png")) {
+                        jos.putNextEntry(new ZipEntry("icons/" + parts[1] + "_" + nodeTypeName + ".png"));
+                    } else {
+                        ZipEntry entry = new ZipEntry("images/" + file.getName());
+                        if (!processedImages.contains(entry)) {
+                            jos.putNextEntry(entry);
+                            processedImages.add(entry);
+                        } else {
+                            toCopyFile = false;
+                        }
+                    }
                 } else {
                     jos.putNextEntry(new ZipEntry(path));
                 }
-                try (FileInputStream input = new FileInputStream(file)) {
-                    IOUtils.copy(input, jos);
+                if (toCopyFile) {
+                    try (FileInputStream input = new FileInputStream(file)) {
+                        IOUtils.copy(input, jos);
+                    }
                 }
             }
         } catch (Exception e) {
