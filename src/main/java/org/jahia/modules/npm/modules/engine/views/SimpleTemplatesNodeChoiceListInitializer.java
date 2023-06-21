@@ -107,9 +107,9 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
             props.put("defaultProperty", true);
         }
 
-        String iconName = StringUtils.substringAfterLast(view.getPath(), "/").replace(".hbs", ".png");
-        if (view.getModule().getBundle().findEntries("images", iconName, false) != null) {
-            props.put("image", Jahia.getContextPath() + "/modules/" + view.getModule().getBundle().getSymbolicName() + "/images/" + iconName);
+        String imageName = StringUtils.substringAfterLast(view.getPath(), "/").replace(".hbs", ".png");
+        if (view.getModule().getBundle().findEntries("images", imageName, false) != null) {
+            props.put("image", Jahia.getContextPath() + "/modules/" + view.getModule().getBundle().getSymbolicName() + "/images/" + imageName);
         }
         return props;
     }

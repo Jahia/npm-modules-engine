@@ -69,7 +69,7 @@ public class NpmProtocolConnection extends URLConnection {
         try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
             Set<ZipEntry> processedImages = new HashSet<>();
             for (File file : files) {
-                boolean toCopyFile = true;
+                boolean shouldCopyFile = true;
                 String path = f.toURI().relativize(file.toURI()).getPath();
 
                 if (path.equals("package.json")) {
@@ -109,13 +109,14 @@ public class NpmProtocolConnection extends URLConnection {
                             jos.putNextEntry(entry);
                             processedImages.add(entry);
                         } else {
-                            toCopyFile = false;
+                            shouldCopyFile = false;
+                            logger.warn("File with the name {} already copied into the /images folder, the current file won't be copied", file.getName());
                         }
                     }
                 } else {
                     jos.putNextEntry(new ZipEntry(path));
                 }
-                if (toCopyFile) {
+                if (shouldCopyFile) {
                     try (FileInputStream input = new FileInputStream(file)) {
                         IOUtils.copy(input, jos);
                     }
