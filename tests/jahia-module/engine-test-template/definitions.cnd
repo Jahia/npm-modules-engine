@@ -1,0 +1,6 @@
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+<etest = 'http://www.acme.org/engine-test-template/nt/1.0'>
+<etestmix = 'http://www.acme.org/engine-test-template/mix/1.0'>
+
+[etestmix:testType] > jmix:droppableContent, jmix:accessControllableContent mixin
