@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 
@@ -68,7 +69,7 @@ public class NpmProtocolConnection extends URLConnection {
         Collection<File> files = FileUtils.listFiles(f, null, true);
         try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
             Set<ZipEntry> processedImages = new HashSet<>();
-            for (File file : files) {
+            for (File file : getFilesWithMergedDefinitions(files)) {
                 boolean shouldCopyFile = true;
                 String path = f.toURI().relativize(file.toURI()).getPath();
 
@@ -96,7 +97,9 @@ public class NpmProtocolConnection extends URLConnection {
                     }
                 }
 
-                if (path.equals("definitions.cnd") || path.equals("import.xml")) {
+                if (path.equals("/tmp/definitions.cnd")) {
+                    jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
+                } else if (path.equals("import.xml")) {
                     jos.putNextEntry(new ZipEntry("META-INF/" + path));
                 } else if (path.startsWith("components") && path.endsWith(".png")) {
                     String[] parts = StringUtils.split(path, "/");
@@ -132,5 +135,53 @@ public class NpmProtocolConnection extends URLConnection {
         }
 
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
+    }
+
+    private Collection<File> getFilesWithMergedDefinitions(Collection<File> files) {
+        Collection<File> definitionsFiles = files.stream().filter(file -> file.getName().endsWith(".cnd")).collect(Collectors.toList());
+        Set<String> namespaces = new HashSet<>();
+        StringBuilder lines = new StringBuilder();
+
+        definitionsFiles.forEach(definition -> {
+            try (BufferedReader reader = new BufferedReader(new FileReader(definition.getPath()))) {
+                String line = reader.readLine();
+
+                while (line != null) {
+                    if (line.startsWith("<")) {
+                        namespaces.add(line);
+                    } else if (line.isBlank()) {
+                        lines.append(System.getProperty("line.separator"));
+                    } else {
+                        lines.append(line);
+                    }
+                    line = reader.readLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            lines.append(System.getProperty("line.separator"));
+        });
+
+        Collection<File> filesWithoutDefinitions = files.stream().filter(file -> !file.getName().endsWith(".cnd")).collect(Collectors.toList());
+        filesWithoutDefinitions.add(buildDefinitionFile(namespaces, lines.toString()));
+        return filesWithoutDefinitions;
+    }
+
+    private File buildDefinitionFile(Set<String> namespaces, String lines) {
+        File mergedDefinitions = new File("definitions.cnd");
+        try (FileWriter writer = new FileWriter(mergedDefinitions);
+             BufferedWriter bw = new BufferedWriter(writer)) {
+
+            String mergedNamespaces = namespaces.stream().reduce("", (partialString, element) -> partialString + element + System.getProperty("line.separator"));
+            bw.write(mergedNamespaces);
+            bw.write(lines);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Generated definition file: {} {}", mergedNamespaces, lines);
+            }
+        } catch (IOException e) {
+            logger.error("Error while generating definitions.cnd file", e);
+        }
+        return mergedDefinitions;
+
     }
 }
