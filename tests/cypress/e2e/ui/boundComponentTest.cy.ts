@@ -1,8 +1,7 @@
 import { API } from '../../utils/API'
 import { addNode, createSite, deleteSite, enableModule } from '@jahia/cypress'
 
-//TODO BACKLOG-21196 remove the skip
-describe.skip('Check on bound components', () => {
+describe('Check on bound components', () => {
     const siteKey = 'siteForBoundComponentTest'
 
     const addSimplePage = (parentPathOrId: string, pageName: string, pageTitle: string, language: string, template) => {
