@@ -126,7 +126,12 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
             if (filePaths != null) {
                 while (filePaths.hasMoreElements()) {
                     String filePath = filePaths.nextElement();
-                    parsers.stream().filter(parser -> parser.canHandle(filePath)).findFirst().ifPresent(viewParser -> views.add(viewParser.parseView(bundle, filePath)));
+                    parsers.stream().filter(parser -> parser.canHandle(filePath)).findFirst().ifPresent(viewParser -> {
+                        JSView view = viewParser.parseView(bundle, filePath);
+                        if (view != null) {
+                            views.add(view);
+                        }
+                    });
                 }
             }
         }
