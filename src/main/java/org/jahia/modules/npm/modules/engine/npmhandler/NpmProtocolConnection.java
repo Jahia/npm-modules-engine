@@ -66,18 +66,20 @@ public class NpmProtocolConnection extends URLConnection {
         Collection<String> extensions = new HashSet<>();
 
         File mergedDefinitionFile = null;
-        File f = new File(outputDir, "package");
-        Collection<File> files = FileUtils.listFiles(f, null, true);
+        File packageDir = new File(outputDir, "package");
+        Collection<File> files = FileUtils.listFiles(packageDir, null, true);
         try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
             Set<ZipEntry> processedImages = new HashSet<>();
+            // first we get all the files that are not definitions
             List<File> filesWithMergedDefinitions = files.stream().filter(file -> !file.getName().endsWith(".cnd")).collect(Collectors.toList());
-            mergedDefinitionFile = getMergedDefinitionFile(files);
+            // now we retrieve the merged definition file
+            mergedDefinitionFile = getMergedDefinitionFile(files, packageDir);
             if (mergedDefinitionFile != null) {
                 filesWithMergedDefinitions.add(mergedDefinitionFile);
             }
             for (File file : filesWithMergedDefinitions) {
                 boolean shouldCopyFile = true;
-                String path = f.toURI().relativize(file.toURI()).getPath();
+                String path = packageDir.toURI().relativize(file.toURI()).getPath();
 
                 if (path.equals("package.json")) {
                     ObjectMapper mapper = new ObjectMapper();
@@ -146,12 +148,18 @@ public class NpmProtocolConnection extends URLConnection {
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
     }
 
-    private File getMergedDefinitionFile(Collection<File> npmFiles) {
+    private File getMergedDefinitionFile(Collection<File> npmFiles, File packageDir) {
         List<File> definitionsFiles = npmFiles.stream().filter(file -> file.getName().endsWith(".cnd")).collect(Collectors.toList());
         Set<String> namespaces = new HashSet<>();
         StringBuilder lines = new StringBuilder();
 
         definitionsFiles.forEach(definitionFile -> {
+            lines.append(System.getProperty("line.separator"));
+            lines.append("// From ");
+            String definitionFilePath = packageDir.toURI().relativize(definitionFile.toURI()).getPath();
+            lines.append(definitionFilePath);
+            lines.append(" : ");
+            lines.append(System.getProperty("line.separator"));
             try (BufferedReader reader = new BufferedReader(new FileReader(definitionFile.getPath()))) {
                 String line = reader.readLine();
 
@@ -162,6 +170,7 @@ public class NpmProtocolConnection extends URLConnection {
                         lines.append(System.getProperty("line.separator"));
                     } else {
                         lines.append(line);
+                        lines.append(System.getProperty("line.separator"));
                     }
                     line = reader.readLine();
                 }
