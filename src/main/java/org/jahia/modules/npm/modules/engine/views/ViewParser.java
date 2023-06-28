@@ -20,5 +20,12 @@ import org.osgi.framework.Bundle;
 public interface ViewParser {
     boolean canHandle(String viewPath);
 
+    /**
+     * Transform and parse the given file into a JSView for Jahia rendering system.
+     *
+     * @param bundle the bundle containing the view
+     * @param viewPath the file path to the view file
+     * @return null in case of issue with bundle like bad definitions installed or any other issue parsing the view.
+     */
     JSView parseView(Bundle bundle, String viewPath);
 }
