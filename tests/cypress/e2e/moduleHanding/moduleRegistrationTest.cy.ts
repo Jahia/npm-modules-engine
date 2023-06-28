@@ -1,10 +1,17 @@
 import { API } from '../../utils/API'
-import { addNode, createSite, deleteSite, enableModule } from '@jahia/cypress'
+import { addNode, createSite, deleteSite, getNodeTypes } from '@jahia/cypress'
 
 describe('Check that components of a module are correctly registered', () => {
     const siteKey = 'registrationTestSite'
 
-    const addSimplePage = (parentPathOrId: string, pageName: string, pageTitle: string, language: string, template) => {
+    const addSimplePage = (
+        parentPathOrId: string,
+        pageName: string,
+        pageTitle: string,
+        language: string,
+        template,
+        children = [],
+    ) => {
         const variables = {
             parentPathOrId: parentPathOrId,
             name: pageName,
@@ -14,28 +21,11 @@ describe('Check that components of a module are correctly registered', () => {
                 { name: 'jcr:title', value: pageTitle, language: language },
                 { name: 'j:templateName', type: 'STRING', value: template },
             ],
-            children: [
-                {
-                    name: 'events',
-                    primaryNodeType: 'jnt:contentList',
-                },
-            ],
+            children: children,
         }
         return addNode(variables)
     }
 
-    const addEvent = (name: string, title: string, startDate: Date, endDate?: Date) => {
-        addNode({
-            parentPathOrId: `/sites/${siteKey}/home/events/events`,
-            name: name,
-            primaryNodeType: 'jnt:event',
-            properties: [
-                { name: 'jcr:title', value: title, language: 'en' },
-                { name: 'startDate', type: 'DATE', value: startDate },
-                { name: 'endDate', type: 'DATE', value: endDate },
-            ],
-        })
-    }
     before(() => {
         const fileName = 'engine-test-template-v1.0.0.tgz'
         API.installBundle(fileName).then((response) => {
@@ -53,30 +43,81 @@ describe('Check that components of a module are correctly registered', () => {
         })
     })
 
-    const validateCountOfEventInCalendar = () => {
-        cy.get('span[class*="fc-event-title"]:contains("2")').should('exist')
-    }
-
-    it('Verify calendar is correctly bound to events', function () {
+    it('Verify templates are registered', function () {
         cy.login()
 
-        addSimplePage(`/sites/${siteKey}/home`, 'events', 'Events page', 'en', 'events').then(() => {
-            const today = new Date()
-            const tomorrow = new Date()
-            tomorrow.setDate(tomorrow.getDate() + 1)
+        addSimplePage(`/sites/${siteKey}/home`, 'simple', 'Simple page', 'en', 'home', [
+            {
+                name: 'pagecontent',
+                primaryNodeType: 'jnt:contentList',
+            },
+        ]).then(() => {
+            addNode({
+                parentPathOrId: `/sites/${siteKey}/home/simple/pagecontent`,
+                name: 'simple-text',
+                primaryNodeType: 'jnt:text',
+                properties: [{ name: 'text', value: 'Main content text', language: 'en' }],
+            })
+            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/simple.html`)
+            cy.contains('Main content text')
+        })
+        addSimplePage(`/sites/${siteKey}/home`, 'two-columns', 'Two columns', 'en', '2-columns', [
+            {
+                name: 'main',
+                primaryNodeType: 'jnt:contentList',
+            },
+            {
+                name: 'right-column',
+                primaryNodeType: 'jnt:contentList',
+            },
+        ]).then(() => {
+            addNode({
+                parentPathOrId: `/sites/${siteKey}/home/two-columns/main`,
+                name: 'simple-text',
+                primaryNodeType: 'jnt:text',
+                properties: [{ name: 'text', value: 'Main content text', language: 'en' }],
+            })
+            addNode({
+                parentPathOrId: `/sites/${siteKey}/home/two-columns/right-column`,
+                name: 'right-text',
+                primaryNodeType: 'jnt:text',
+                properties: [{ name: 'text', value: 'Right text', language: 'en' }],
+            })
+            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/two-columns.html`)
 
-            addEvent('event-a', 'The first event', today, tomorrow)
-            addEvent('event-b', 'The second event', today)
-            cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/events.html`)
-
-            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/events.html`)
-            validateCountOfEventInCalendar()
+            cy.contains('Main content text')
+            cy.contains('Right text')
         })
         cy.logout()
     })
 
+    it('Verify nodeTypes and icons are registered', function () {
+        cy.login()
+        getNodeTypes({ includeTypes: ['etest:withTestMixin', 'etest:simple'] })
+            .its('data.jcr.nodeTypes.nodes')
+            .then((nodes) => {
+                const simpleType = nodes.find((node) => node.name === 'etest:simple')
+                expect(
+                    simpleType.properties.filter((property) => property.name === 'prop1' || property.name === 'prop2')
+                        .length,
+                ).to.eq(2)
+                expect(simpleType.icon).to.eq('/modules/engine-test-template/icons/etest_simple')
+                const withTestMixinType = nodes.find((node) => node.name === 'etest:withTestMixin')
+                expect(
+                    withTestMixinType.properties.filter(
+                        (property) => property.name === 'prop1' || property.name === 'prop2',
+                    ).length,
+                ).to.eq(2)
+                expect(
+                    withTestMixinType.supertypes.filter((superType) => superType.name === 'etestmix:testType').length,
+                ).to.eq(1)
+                expect(withTestMixinType.icon).to.eq('/modules/engine-test-template/icons/etest_withTestMixin')
+            })
+        cy.logout()
+    })
+
     after('Clean', () => {
-        API.uninstallBundle('templates-web-blue', '1.0.0')
         deleteSite(siteKey)
+        API.uninstallBundle('engine-test-template', '1.0.0')
     })
 })
