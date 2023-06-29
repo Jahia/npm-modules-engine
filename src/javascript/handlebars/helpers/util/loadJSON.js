@@ -15,7 +15,7 @@ export default function (path, varName, options) {
             resourcePath = templateViewFolder + '/' + path;
         }
 
-        this[varName] = JSON.parse(osgi.loadResource(currentView.bundle, resourcePath));
+        this[varName] = JSON.parse(osgi.loadResource(currentView.bundle, resourcePath, false));
     }
     return '';
 }

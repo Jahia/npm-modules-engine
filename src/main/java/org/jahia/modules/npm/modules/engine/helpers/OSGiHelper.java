@@ -20,12 +20,16 @@ import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
+import org.jahia.services.render.RenderException;
 import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 public class OSGiHelper {
+    private static final Logger logger = LoggerFactory.getLogger(OSGiHelper.class);
 
     private final ContextProvider contextProvider;
 
@@ -49,7 +53,13 @@ public class OSGiHelper {
         return null;
     }
 
-    public String loadResource(Bundle bundle, String path) {
-        return GraalVMEngine.loadResource(bundle, path);
+    public String loadResource(Bundle bundle, String path, boolean optional) throws RenderException {
+        String result = GraalVMEngine.loadResource(bundle, path);
+        if (!optional && result == null) {
+            // todo (BACKLOG-21263) handle exception correctly in NPM views
+            //throw new RenderException(String.format("Unable to load resource: %s from bundle: %s", path, bundle.getSymbolicName()));
+            logger.error("Unable to load resource: {} from bundle: {}", path, bundle.getSymbolicName());
+        }
+        return result;
     }
 }
