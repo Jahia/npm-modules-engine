@@ -48,7 +48,7 @@ export default () => {
                 ns: view.bundle.getSymbolicName(),
                 lng: locale.getLanguage()
             };
-            return template({currentResource, renderContext, i18next: i18nextValues});
+            return template({currentResource, renderContext, i18next: i18nextValues, view});
         }
     });
 };
