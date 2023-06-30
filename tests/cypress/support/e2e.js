@@ -17,5 +17,7 @@
 
 import "./commands";
 import "@cypress/code-coverage/support";
+import 'cypress-wait-until'
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('@jahia/cypress/dist/support/registerSupport').registerSupport()

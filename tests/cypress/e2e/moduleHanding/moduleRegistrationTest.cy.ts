@@ -1,30 +1,9 @@
 import { API } from '../../utils/API'
-import { addNode, createSite, deleteSite, getNodeTypes } from '@jahia/cypress'
+import { addNode, createSite, deleteSite, getNodeTypes, publishAndWaitJobEnding } from '@jahia/cypress'
+import { addSimplePage } from '../../utils/Utils'
 
 describe('Check that components of a module are correctly registered', () => {
     const siteKey = 'registrationTestSite'
-
-    const addSimplePage = (
-        parentPathOrId: string,
-        pageName: string,
-        pageTitle: string,
-        language: string,
-        template,
-        children = [],
-    ) => {
-        const variables = {
-            parentPathOrId: parentPathOrId,
-            name: pageName,
-            title: pageTitle,
-            primaryNodeType: 'jnt:page',
-            properties: [
-                { name: 'jcr:title', value: pageTitle, language: language },
-                { name: 'j:templateName', type: 'STRING', value: template },
-            ],
-            children: children,
-        }
-        return addNode(variables)
-    }
 
     before(() => {
         const fileName = 'engine-test-template-v1.0.0.tgz'
@@ -58,7 +37,8 @@ describe('Check that components of a module are correctly registered', () => {
                 primaryNodeType: 'jnt:text',
                 properties: [{ name: 'text', value: 'Main content text', language: 'en' }],
             })
-            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/simple.html`)
+            publishAndWaitJobEnding(`/sites/${siteKey}/home/simple`, ['en'])
+            cy.visit(`/sites/${siteKey}/home/simple.html`)
             cy.contains('Main content text')
         })
         addSimplePage(`/sites/${siteKey}/home`, 'two-columns', 'Two columns', 'en', '2-columns', [
@@ -83,7 +63,9 @@ describe('Check that components of a module are correctly registered', () => {
                 primaryNodeType: 'jnt:text',
                 properties: [{ name: 'text', value: 'Right text', language: 'en' }],
             })
-            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/two-columns.html`)
+            publishAndWaitJobEnding(`/sites/${siteKey}/home/two-columns`, ['en'])
+
+            cy.visit(`sites/${siteKey}/home/two-columns.html`)
 
             cy.contains('Main content text')
             cy.contains('Right text')
