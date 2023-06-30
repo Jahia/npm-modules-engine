@@ -1,28 +1,9 @@
 import { API } from '../../utils/API'
 import { addNode, createSite, deleteSite, enableModule } from '@jahia/cypress'
+import { addSimplePage } from '../../utils/Utils'
 
 describe('Check on bound components', () => {
     const siteKey = 'siteForBoundComponentTest'
-
-    const addSimplePage = (parentPathOrId: string, pageName: string, pageTitle: string, language: string, template) => {
-        const variables = {
-            parentPathOrId: parentPathOrId,
-            name: pageName,
-            title: pageTitle,
-            primaryNodeType: 'jnt:page',
-            properties: [
-                { name: 'jcr:title', value: pageTitle, language: language },
-                { name: 'j:templateName', type: 'STRING', value: template },
-            ],
-            children: [
-                {
-                    name: 'events',
-                    primaryNodeType: 'jnt:contentList',
-                },
-            ],
-        }
-        return addNode(variables)
-    }
 
     const addEvent = (name: string, title: string, startDate: Date, endDate?: Date) => {
         addNode({
@@ -62,7 +43,12 @@ describe('Check on bound components', () => {
     it('Verify calendar is correctly bound to events', function () {
         cy.login()
 
-        addSimplePage(`/sites/${siteKey}/home`, 'events', 'Events page', 'en', 'events').then(() => {
+        addSimplePage(`/sites/${siteKey}/home`, 'events', 'Events page', 'en', 'events', [
+            {
+                name: 'events',
+                primaryNodeType: 'jnt:contentList',
+            },
+        ]).then(() => {
             const today = new Date()
             const tomorrow = new Date()
             tomorrow.setDate(tomorrow.getDate() + 1)

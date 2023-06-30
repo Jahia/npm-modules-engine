@@ -1,0 +1,30 @@
+{
+  "name": "engine-test-template",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode=development",
+    "pwd": "dotenv -- echo $HOST",
+    "doDeploy": "dotenv docker cp engine-test-template-v1.0.0.tgz ${JAHIA_DOCKER_NAME}:/var/jahia/modules",
+    "deploy": "dotenv yarn doDeploy",
+    "watch": "yarn build --env deploy=true --watch",
+    "doRemoteDeploy": "curl -s --user ${JAHIA_USER} --form bundle=@./engine-test-template-v1.0.0.tgz --form start=true ${JAHIA_HOST}/modules/api/bundles",
+    "remoteDeploy": "dotenv yarn doDeploy",
+    "remoteWatch": "yarn build --env remoteDeploy=true --watch"
+  },
+  "jahia": {
+    "module-type": "templatesSet",
+    "server": "dist/main.js"
+  },
+  "devDependencies": {
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^4.0.0",
+    "extra-watch-webpack-plugin": "^1.0.3",
+    "handlebars-loader": "^1.7.1",
+    "webpack": "^4.0.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.6"
+  }
+}
