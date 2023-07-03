@@ -1,0 +1,15 @@
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+
+[jnt:test] > jnt:content, jmix:basicContent
+ - prop1 (string)
+ + * (jmix:droppableContent)
+
+[jmix:yourHandlebarTemplate] mixin
+ extends = jnt:content
+ itemtype = layout
+ - value (string, textarea)
+
+[jnt:yourHandlebarTemplate] > jnt:content, jmix:basicContent
+ - value (string, textarea)
+ + * (jmix:droppableContent)

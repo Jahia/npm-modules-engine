@@ -41,6 +41,7 @@ jobs:
       - uses: jahia/jahia-modules-action/build@v2
         with:
           module_id: npm-modules-engine
+          tests_module_type: 'npm'
           mvn_settings_filepath: '.github/maven.settings.xml'
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}

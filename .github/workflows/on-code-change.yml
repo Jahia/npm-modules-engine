@@ -34,9 +34,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'      
-      - uses: jahia/jahia-modules-action/build@v2
+      - uses: jahia/jahia-modules-action/build-npm@npm-test-module
         with:
           module_id: npm-modules-engine
+          tests_module_type: 'npm'
           mvn_settings_filepath: '.github/maven.settings.xml'
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}

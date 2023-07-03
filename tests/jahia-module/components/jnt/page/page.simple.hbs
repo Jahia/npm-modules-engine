@@ -1,0 +1,20 @@
+<html>
+    <head></head>
+    <body>
+        {{addResources type="css" resources="styles.css"}}
+        <div class="page">
+            <div class="header">
+                <div class="headerContent">{{renderComponent name="header" primaryNodeType="jnt:absoluteArea"}}</div>
+                <div class="headerLogin">{{renderComponent name="login" primaryNodeType="jnt:loginForm"}}</div>
+            </div>
+            <div class="nav"> {{renderComponent name="navMenu" primaryNodeType="npmExample:navMenu" properties=(obj j:maxDepth="2")}}</div>
+            <div class="main">
+                <div class="article">{{renderComponent name="pagecontent" primaryNodeType="jnt:area"}}</div>
+                <div class="aside">{{renderComponent name="aside" primaryNodeType="jnt:area"}}</div>
+            </div>
+            <div class="footer">
+                <div class="footerContent">{{renderComponent name="footer" primaryNodeType="jnt:absoluteArea"}}</div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+<npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
+
+[npmExample:navMenu] > jnt:content, mix:title, jmix:navMenuComponent
+ orderable
+ - j:baselineNode (string,choicelist) nofulltext < 'home', 'currentPage'
+ - j:maxDepth (long) = 2 mandatory
+ - j:startLevel (long) = 0
+ - j:menuItemView (string,choicelist[templates='jmix:navMenuItem,menuItem',resourceBundle,image]) = menuElement nofulltext
