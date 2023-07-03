@@ -34,7 +34,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'      
-      - uses: jahia/jahia-modules-action/build-npm@npm-test-module
+      - uses: jahia/jahia-modules-action/build@npm-test-module
         with:
           module_id: npm-modules-engine
           tests_module_type: 'npm'
