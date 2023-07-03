@@ -27,3 +27,4 @@ src/main/resources/META-INF/js
 /tests/artifacts
 /tests/build-dependencies
 /tests/node_modules
+yarn-error.log

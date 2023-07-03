@@ -37,7 +37,7 @@ export default () => {
 
     registry.add('view', 'handlebars', {
         render: (currentResource, renderContext, view) => {
-            const templateStr = osgi.loadResource(view.bundle, view.templateFile);
+            const templateStr = osgi.loadResource(view.bundle, view.templateFile, false);
             const template = Handlebars.compile(templateStr);
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
 
@@ -48,7 +48,7 @@ export default () => {
                 ns: view.bundle.getSymbolicName(),
                 lng: locale.getLanguage()
             };
-            return template({currentResource, renderContext, i18next: i18nextValues});
+            return template({currentResource, renderContext, i18next: i18nextValues, view});
         }
     });
 };
