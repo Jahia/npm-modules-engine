@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/integration-tests@@npm-test-module
+      - uses: jahia/jahia-modules-action/integration-tests@npm-test-module
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine
