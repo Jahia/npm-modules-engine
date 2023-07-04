@@ -43,17 +43,24 @@ echo "$(date +'%d %B %Y - %k:%M') == Warming up the environement =="
 curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script="@./run-artifacts/${MANIFEST};type=text/yaml"
 echo "$(date +'%d %B %Y - %k:%M') == Environment warmup complete =="
 
-# If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
-cd ./artifacts
-for file in *-SNAPSHOT.jar
-do
-  echo "$(date +'%d %B %Y - %k:%M') == Submitting module from: $file =="
-  curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installAndStartBundle":"'"$file"'"}]' --form file=@$file
-  echo "$(date +'%d %B %Y - %k:%M') == Module submitted =="
-done
-cd ..
+if [[ -d artifacts/ && $MANIFEST == *"build"* ]]; then
+  # If we're building the module (and manifest name contains build), then we'll end up pushing that module individually
+  # The artifacts folder is created by the build stage, when running in snapshot the docker container is not going to contain that folder
+  cd artifacts/
+  echo "$(date +'%d %B %Y - %k:%M') == Content of the artifacts/ folder"
+  ls -lah
+  echo "$(date +'%d %B %Y - %k:%M') [MODULE_INSTALL] == Will start submitting files"
+  for file in $(ls -1 *-SNAPSHOT.jar | sort -n)
+  do
+    echo "$(date +'%d %B %Y - %k:%M') [MODULE_INSTALL] == Submitting module from: $file =="
+    curl -u root:${SUPER_USER_PASSWORD} -X POST ${JAHIA_URL}/modules/api/provisioning --form script='[{"installAndStartBundle":"'"$file"'", "forceUpdate":true}]' --form file=@$file
+    echo
+    echo "$(date +'%d %B %Y - %k:%M') [MODULE_INSTALL] == Module submitted =="
+  done
+  cd ..
+fi
 
-# Provisioning NPM modules
+# Provisioning NPM modules TODO:consider remove now that CI is working correctly for NPM Jahia test module
 cd ./assets
 for file in *.tgz
 do
