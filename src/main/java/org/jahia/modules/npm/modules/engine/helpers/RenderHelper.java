@@ -135,7 +135,7 @@ public class RenderHelper {
             }
 
             Resource r = new Resource(node, templateType, view, contextConfiguration);
-
+            r.getModuleParams().put("toCacheWithParentFragment", true);
             try {
                 return renderService.render(r, renderContext);
             } catch (RenderException e) {
