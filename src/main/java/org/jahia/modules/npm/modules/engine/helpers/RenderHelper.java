@@ -149,6 +149,7 @@ public class RenderHelper {
             if (currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
                 String boundComponentPath = renderContext.getMainResource().getNodePath().concat(boundComponentRelativePath);
                 JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
+                renderContext.getMainResource().getDependencies().add(boundComponent.getPath());
                 currentNode.setProperty("j:bindedComponent", boundComponent);
             }
         } catch (RepositoryException e) {
