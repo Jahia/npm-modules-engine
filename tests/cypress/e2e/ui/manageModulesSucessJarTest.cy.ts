@@ -1,6 +1,6 @@
 import { ManageModulesPage } from '../../page-object/manageModules.page'
 
-describe('Install TGZ bundle success path', () => {
+describe('Install JAR bundle success path', () => {
     it('Install jar bundle via UI success path', function () {
         cy.login()
         const manageModules = new ManageModulesPage()
