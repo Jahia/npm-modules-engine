@@ -1,8 +1,0 @@
-<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
-<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
-<etest = 'http://www.acme.org/engine-test-template/nt/1.0'>
-
-[etest:simple] > jnt:content, jmix:basicContent
- - prop1 (string)
- - prop2 (string)
- + * (jmix:droppableContent)

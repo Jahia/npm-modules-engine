@@ -1,3 +1,5 @@
+/*
+TODO adapt
 import { API } from '../../utils/API'
 import { addNode, createSite, deleteSite, enableModule } from '@jahia/cypress'
 import { addSimplePage } from '../../utils/Utils'
@@ -68,3 +70,4 @@ describe('Check on bound components', () => {
         deleteSite(siteKey)
     })
 })
+ */

@@ -3,4 +3,7 @@
 <npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
-[npmExampleMix:npmExampleComponent] > jmix:droppableContent, jmix:accessControllableContent mixin
+[npmExample:test] > jnt:content, npmExampleMix:npmExampleComponent
+ - prop1 (string)
+ - prop2 (string)
+ + * (jmix:droppableContent)
