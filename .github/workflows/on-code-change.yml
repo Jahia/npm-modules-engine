@@ -34,7 +34,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'      
-      - uses: jahia/jahia-modules-action/build@npm-test-module
+      - uses: jahia/jahia-modules-action/build@v2
         with:
           module_id: npm-modules-engine
           tests_module_type: 'npm'
@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/integration-tests@npm-test-module
+      - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine
