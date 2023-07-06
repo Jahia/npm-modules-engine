@@ -36,7 +36,8 @@ describe('Check that components of a module are correctly registered', () => {
                         .length,
                 ).to.eq(2)
                 expect(
-                    simpleType.supertypes.filter((superType) => superType.name === 'npmExampleMix:npmExampleComponent').length,
+                    simpleType.supertypes.filter((superType) => superType.name === 'npmExampleMix:npmExampleComponent')
+                        .length,
                 ).to.eq(1)
                 expect(simpleType.icon).to.eq('/modules/npm-module-example/icons/npmExample_test')
             })
