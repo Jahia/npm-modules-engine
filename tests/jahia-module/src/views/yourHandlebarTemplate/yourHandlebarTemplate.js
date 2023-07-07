@@ -1,6 +1,6 @@
 import {registry} from '@jahia/server-helpers';
 
-export default ({
+export default {
     render: (currentResource, renderContext) => {
         const hbs = registry.get('module', 'handlebars');
         console.log('handlebars = ', hbs);
@@ -9,4 +9,4 @@ export default ({
         const template = Handlebars.compile(templateStr);
         return template({currentResource, renderContext});
     }
-});
+}

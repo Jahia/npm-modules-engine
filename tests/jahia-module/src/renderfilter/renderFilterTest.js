@@ -6,4 +6,4 @@ export default {
         console.log(renderContext, resource, chain);
         return previousOut.replace('toto', 'tutu');
     }
-};
+}

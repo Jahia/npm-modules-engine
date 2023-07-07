@@ -28,28 +28,28 @@ module.exports = env => {
                     'definitions.cnd',
                     'import.xml',
                     'package.json'
-                ]
+                ],
             })
         ],
         devtool: 'inline-source-map'
-    };
+    }
 
     if (env.deploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
                 onBuildEnd: {
                     scripts: ['yarn pack && yarn deploy']
-                }
+                },
             })
-        );
+        )
     } else if (env.remoteDeploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
                 onBuildEnd: {
                     scripts: ['yarn pack && yarn remoteDeploy']
-                }
+                },
             })
-        );
+        )
     }
 
     return config;
