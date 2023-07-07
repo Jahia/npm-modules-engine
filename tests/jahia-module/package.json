@@ -17,6 +17,7 @@
   "jahia": {
     "module-type": "templatesSet",
     "server": "dist/main.js",
+    "Jahia-Depends": "calendar,event",
     "maven": {
       "groupId": "org.jahia.modules.npm",
       "distributionManagement": {
