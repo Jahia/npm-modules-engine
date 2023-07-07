@@ -1,3 +1,25 @@
-<div class="navbar">
-    {{renderNavMenu baseNode=(jcrGetProperty "j:baselineNode") maxDepth=(jcrGetProperty "j:maxDepth") startLevel=(jcrGetProperty "j:startLevel")}}
+{{#*inline "menuEntry"}}
+<li class="{{menuEntryCss this @first @last}}">
+  {{{this.render}}}
+  {{#if this.children}}
+  <div class="navBar">
+  <ul class="inner-box level_{{level}}">
+    {{#each this.children}}
+      {{> menuEntry}}
+    {{/each}}
+  </ul>
+  </div>
+  {{/if}}
+</li>
+{{/inline}}
+
+{{jcrGetProperty 'j:baselineNode' varName='baseNode'}}
+{{jcrGetProperty 'j:maxDepth' varName='maxDepth'}}
+{{jcrGetProperty 'j:startLevel' varName='startLevel'}}
+<div class="navBar">
+  <ul class="navmenu level_0">
+  {{#each (buildNavMenu baseNode=baseNode maxDepth=maxDepth startLevel=startLevel)}}
+    {{> menuEntry}}
+  {{/each}}
+  </ul>
 </div>

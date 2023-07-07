@@ -1,5 +1,6 @@
 import {getMenuItemsChildren, getPageAncestors} from './navMenu.utils';
 import {render} from '@jahia/server-helpers';
+import Handlebars from 'handlebars';
 const getBaseNode = (baseline, renderContext, workspace) => {
     const mainResourceNode = renderContext.getMainResource().getNode();
     const pageAncestors = getPageAncestors(workspace, mainResourceNode.getPath(), ['jnt:page']);

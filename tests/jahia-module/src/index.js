@@ -1,7 +1,7 @@
 import {registry} from '@jahia/server-helpers';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
-import navMenuHelper from './nav/navMenu.helper';
+import {menuEntryCss} from './helpers/menuEntryCss';
 
 registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTemplate, {
     target: 'jnt:yourHandlebarTemplate',
@@ -15,5 +15,4 @@ registry.add('render-filter', 'test', renderFilterTest, {
 });
 
 const Handlebars = registry.get('module', 'handlebars');
-Handlebars.exports.registerHelper('renderNavMenu', navMenuHelper);
-
+Handlebars.exports.registerHelper('menuEntryCss', menuEntryCss);
