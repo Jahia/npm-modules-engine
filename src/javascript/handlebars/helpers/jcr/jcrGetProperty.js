@@ -18,7 +18,8 @@ export default function (name, options) {
             return jcrValue.getNode().getUrl();
         }
 
-        return new SafeString(jcrValue.getString());
+        // In case result is stored in a variable we don't safe it, otherwise we do to prevent direct display of it
+        return options.hash.varName ? jcrValue.getString() : new SafeString(jcrValue.getString());
     }
 
     const node = getNode(options.hash, options.data.root.currentResource.getNode());

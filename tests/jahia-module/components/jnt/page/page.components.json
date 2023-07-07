@@ -1,0 +1,10 @@
+{
+  "navMenu": {
+    "nodeType": "npmExample:navMenu",
+    "properties": {
+      "j:maxDepth":"10",
+      "j:baselineNode":"home",
+      "j:menuItemView":"menuElement"
+    }
+  }
+}

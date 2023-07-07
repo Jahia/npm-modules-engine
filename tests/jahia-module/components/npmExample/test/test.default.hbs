@@ -1,0 +1,85 @@
+{{addResources type="css" resources="news.css"}}
+{{#gql}}
+    {
+        jcr {
+            nodeByPath(path:"{{jcrGetPath resource=currentResource}}") {
+                name
+                properties {
+                    name
+                    value
+                }
+                children {
+                    nodes {
+                        name
+                        path
+                    }
+                }
+                site {
+                    path
+                }
+            }
+            nodesByQuery(query:"select * from [jnt:news]", limit:2) {
+                nodes {
+                    path
+                }
+            }
+        }
+    }
+{{/gql}}
+
+<div data-testid="npm-view">NPM view working</div>
+<hr/>
+
+<h3>Handlebars</h3>
+    <div data-testid="helper-118">i118 helper {{i18n 'greeting'}}</div>
+    <div data-testid="helper-plus">PLUS helper: {{plus 1 9}}</div>
+    <div data-testid="helper-sum">SUM helper: {{sum "[1, 2, 3, 4, 5]"}}</div>
+    <div data-testid="helper-append">APPEND helper: {{append item.stem ".html"}}</div>
+    <div data-testid="helper-obj">OBJ helper : {{obj param1='value1' param2='value2'}}</div>
+    <div data-testid="helper-arr">ARR helper : {{arr 'value1' 'value2' 'value3'}}</div>
+<hr/>
+
+<h3>GraphQL</h3>
+    <div data-testid="gql-info-test" style="padding: 10px; margin:10px; border: 1px solid">
+        <ul>
+            {{#each gql.jcr.nodeByPath.properties}}
+                <li data-testid={{name}}>{{name}}={{value}}</li>
+            {{/each}}
+        </ul>
+    </div>
+<hr/>
+
+<h3>Prop1</h3>
+    <div data-testid="prop1-simplified">Get property with implicit current resource : {{jcrGetProperty "prop1"}}</div>
+    <div data-testid="prop1-absolute-path">Get property by absolute path : {{jcrGetProperty "prop1" path=(jcrGetPath resource=currentResource)}}</div>
+    <div data-testid="prop1-relative-path">Relative path: {{jcrGetProperty "prop1" relPath="."}}</div>
+    <div data-testid="prop1-Resource">Resource : {{jcrGetProperty "prop1" resource=currentResource }}</div>
+    <div data-testid="prop1-node">Node : {{jcrGetProperty "prop1" node=(jcrGetNode resource=currentResource) }}</div>
+    <div data-testid="prop1-uuid">uuid : {{jcrGetProperty "prop1" identifier=(jcrGetIdentifier resource=currentResource) }}</div>
+    <div data-testid="prop1-renderer">With renderer : {{jcrGetProperty "prop1"relPath="." renderer='flagcountry' varName='flagObj'}} {{flagObj}}</div>
+<hr/>
+
+<h3>Components</h3>
+    Render a simple predefined richtext component :
+    <div data-testid="component-bigText" style="padding: 10px; margin:10px; border: 1px solid">
+    {{renderComponent name="text" primaryNodeType="jnt:bigText" properties=(obj text="Rich text here")}}
+    </div>
+    Render a text child node :
+    <div data-testid="component-text-child-node" style="padding: 10px; margin:10px; border: 1px solid">
+    {{renderModule path="simpletext" nodeTypes="jnt:text"}}
+    </div>
+<hr/>
+
+<h3>loadJSON</h3>
+    Load an absolute JSON file : <strong>/test.globalComponents.json</strong>
+    {{loadJSON '/test.globalComponents.json' 'globalComponents'}}
+    <div data-testid="loadJSON-absolute">
+        global component loaded: {{globalComponents.absolute.properties.[j:prop]}}
+    </div>
+
+    Load a view relative JSON file : <strong>test.components.json</strong>
+    {{loadJSON 'test.components.json' 'components'}}
+    <div data-testid="loadJSON-viewRelative">
+        view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
+    </div>
+<hr/>

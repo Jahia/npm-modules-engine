@@ -1,0 +1,5 @@
+- installBundle:
+    - 'mvn:org.jahia.modules/calendar/3.2.0'
+    - 'mvn:org.jahia.modules/event/3.1.0'
+  autoStart: true
+  uninstallPreviousVersion: true

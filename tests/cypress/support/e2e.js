@@ -18,6 +18,20 @@
 import "./commands";
 import "@cypress/code-coverage/support";
 import 'cypress-wait-until'
+import {createSite, deleteSite} from "@jahia/cypress";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('@jahia/cypress/dist/support/registerSupport').registerSupport()
+
+before('Create NPM test site', () => {
+    createSite('npmTestSite', {
+        languages: 'en',
+        templateSet: 'npm-module-example',
+        locale: 'en',
+        serverName: 'localhost',
+    });
+})
+
+after('Clean', () => {
+    deleteSite('npmTestSite');
+})
