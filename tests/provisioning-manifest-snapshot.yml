@@ -1,6 +1,6 @@
 - include: 'provisioning.yml'
 - installBundle:
-    - 'mvn:org.jahia.modules/site-settings-seo/4.3.0-SNAPSHOT'
+    - 'mvn:org.jahia.modules/npm-modules-engine'
     - 'npm:mvn:org.jahia.modules.npm/npm-module-example/1.0.0-SNAPSHOT/tgz'
   autoStart: true
   uninstallPreviousVersion: true
