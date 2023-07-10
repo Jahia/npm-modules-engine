@@ -37,16 +37,16 @@ module.exports = env => {
     if (env.deploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
-                onBuildEnd: {
-                    scripts: ['yarn pack && yarn deploy']
+                onDoneWatch: {
+                    scripts: ['yarn pack --out %s-v%v.tgz && yarn deploy']
                 },
             })
         )
     } else if (env.remoteDeploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
-                onBuildEnd: {
-                    scripts: ['yarn pack && yarn remoteDeploy']
+                onDoneWatch: {
+                    scripts: ['yarn pack --out %s-v%v.tgz && yarn remoteDeploy']
                 },
             })
         )
