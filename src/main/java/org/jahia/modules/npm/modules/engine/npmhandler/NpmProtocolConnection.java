@@ -45,7 +45,12 @@ public class NpmProtocolConnection extends URLConnection {
 
     public NpmProtocolConnection(URL url) throws MalformedURLException {
         super(url);
-        wrappedUrl = new URL(this.url.toString().substring("npm://".length()));
+        String urlStr = this.url.toString();
+        if (urlStr.startsWith("npm://")) {
+            wrappedUrl = new URL(urlStr.substring("npm://".length()));
+        } else {
+            wrappedUrl = new URL(urlStr.substring("npm:".length()));
+        }
     }
 
     @Override
