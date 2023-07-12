@@ -1,4 +1,4 @@
-import { addNode, enableModule } from '@jahia/cypress'
+import { addNode, enableModule, publishAndWaitJobEnding } from '@jahia/cypress'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('Check on bound components', () => {
@@ -21,14 +21,12 @@ describe('Check on bound components', () => {
         enableModule('event', siteKey)
     })
 
-    const validateCountOfEventInCalendar = () => {
-        cy.get('span[class*="fc-event-title"]:contains("2")').should('exist')
+    const validateNumberOfEventInCalendar = (expectedNumber: number) => {
+        cy.get(`span[class*="fc-event-title"]:contains("${expectedNumber}")`).should('exist')
     }
 
-    it('Verify existing .jsp component like: calendar is correctly bound to events', function () {
-        cy.login()
-
-        addSimplePage(`/sites/${siteKey}/home`, 'events', 'Events page', 'en', 'events', [
+    const addEventPageAndEvents = (thenFunction: () => void) => {
+        return addSimplePage(`/sites/${siteKey}/home`, 'events', 'Events page', 'en', 'events', [
             {
                 name: 'events',
                 primaryNodeType: 'jnt:contentList',
@@ -40,9 +38,38 @@ describe('Check on bound components', () => {
 
             addEvent('event-a', 'The first event', today, tomorrow)
             addEvent('event-b', 'The second event', today)
+            if (thenFunction) {
+                thenFunction()
+            }
+        })
+    }
+    it('Verify existing .jsp component like: calendar is correctly bound to events', function () {
+        cy.login()
+        addEventPageAndEvents(() => {
             cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/events.html`)
             cy.visit(`/cms/render/default/en/sites/${siteKey}/home/events.html`)
-            validateCountOfEventInCalendar()
+            validateNumberOfEventInCalendar(2)
+        })
+        cy.logout()
+    })
+
+    it('Verify that the calendar is correctly refreshed once a new event is added', function () {
+        cy.login()
+        addEventPageAndEvents(() => {
+            publishAndWaitJobEnding(`/sites/${siteKey}/home/events`)
+            cy.visit(`/sites/${siteKey}/home/events.html`, { failOnStatusCode: false })
+
+            const inTwoDays = new Date()
+            inTwoDays.setDate(inTwoDays.getDate() + 2)
+            addEvent('event-c', 'The third event', inTwoDays)
+
+            publishAndWaitJobEnding(`/sites/${siteKey}/home/events`)
+
+            cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/events.html`)
+            cy.visit(`/sites/${siteKey}/home/events.html`, { failOnStatusCode: false })
+
+            validateNumberOfEventInCalendar(2)
+            validateNumberOfEventInCalendar(1)
         })
         cy.logout()
     })
