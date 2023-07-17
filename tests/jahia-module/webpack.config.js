@@ -28,28 +28,20 @@ module.exports = env => {
                     'definitions.cnd',
                     'import.xml',
                     'package.json'
-                ],
+                ]
             })
         ],
         devtool: 'inline-source-map'
-    }
+    };
 
     if (env.deploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
                 onDoneWatch: {
-                    scripts: ['yarn pack --out %s-v%v.tgz && yarn deploy']
-                },
+                    scripts: ['yarn jahia-deploy pack']
+                }
             })
-        )
-    } else if (env.remoteDeploy) {
-        config.plugins.push(
-            new WebpackShellPluginNext({
-                onDoneWatch: {
-                    scripts: ['yarn pack --out %s-v%v.tgz && yarn remoteDeploy']
-                },
-            })
-        )
+        );
     }
 
     return config;

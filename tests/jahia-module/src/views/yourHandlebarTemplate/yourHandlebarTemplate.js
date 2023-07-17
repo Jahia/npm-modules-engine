@@ -9,4 +9,4 @@ export default {
         const template = Handlebars.compile(templateStr);
         return template({currentResource, renderContext});
     }
-}
+};
