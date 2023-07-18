@@ -19,7 +19,7 @@ jobs:
     name: Integration Tests
     runs-on: self-hosted
     steps:
-      - uses: jahia/jahia-modules-action/helper@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/helper@BACKLOG-21215-yarn3
       - uses: actions/checkout@v3
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
-      - uses: jahia/jahia-modules-action/integration-tests@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/integration-tests@BACKLOG-21215-yarn3
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine

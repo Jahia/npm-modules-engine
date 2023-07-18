@@ -45,7 +45,7 @@ jobs:
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
           mvn_settings_filepath: '.github/maven.settings.xml'
 
-      - uses: jahia/jahia-modules-action/update-signature@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/update-signature@BACKLOG-21215-yarn3
         with:
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}

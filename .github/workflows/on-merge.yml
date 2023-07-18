@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/update-signature@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/update-signature@BACKLOG-21215-yarn3
         with:
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
@@ -38,7 +38,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      - uses: jahia/jahia-modules-action/build@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/build@BACKLOG-21215-yarn3
         with:
           module_id: npm-modules-engine
           tests_module_type: 'npm'
@@ -52,7 +52,7 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 45
     steps:
-      - uses: jahia/jahia-modules-action/helper@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/helper@BACKLOG-21215-yarn3
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
           version: '1.29.2'
@@ -60,7 +60,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/integration-tests@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/integration-tests@BACKLOG-21215-yarn3
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine
@@ -110,7 +110,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      - uses: jahia/jahia-modules-action/publish@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/publish@BACKLOG-21215-yarn3
         with:
           tests_module_type: 'npm'
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
