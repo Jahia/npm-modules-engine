@@ -33,7 +33,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GH_SSH_PRIVATE_KEY_JAHIACI }}
 
-      - uses: jahia/jahia-modules-action/release@BRANCH-21215-yarn3
+      - uses: jahia/jahia-modules-action/release@BACKLOG-21215-yarn3
         name: Release Module
         with:
           github_slug: Jahia/npm-modules-engine
