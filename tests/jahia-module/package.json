@@ -1,62 +1,62 @@
 {
-  "name": "npm-module-example",
-  "version": "1.0.0",
-  "license": "MIT",
-  "scripts": {
-    "build": "webpack --mode=development",
-    "pwd": "dotenv -- echo $HOST",
-    "doDeploy": "dotenv docker cp npm-module-example-v1.0.0.tgz ${JAHIA_DOCKER_NAME}:/var/jahia/modules",
-    "deploy": "dotenv yarn doDeploy",
-    "watch": "yarn build --env deploy=true --watch",
-    "doRemoteDeploy": "curl -s --user ${JAHIA_USER} --form bundle=@./npm-module-example-v1.0.0.tgz --form start=true ${JAHIA_HOST}/modules/api/bundles",
-    "remoteDeploy": "dotenv yarn doRemoteDeploy",
-    "remoteWatch": "yarn build --env remoteDeploy=true --watch",
-    "lint": "eslint --ext js,jsx,json .",
-    "lint:fix": "eslint --ext js,jsx,json --fix ."
-  },
-  "jahia": {
-    "module-type": "templatesSet",
-    "server": "dist/main.js",
-    "Jahia-Depends": "calendar,event",
-    "maven": {
-      "groupId": "org.jahia.modules.npm",
-      "distributionManagement": {
-        "repository": {
-          "id": "jahia-releases",
-          "url": "https://devtools.jahia.com/nexus/content/repositories/jahia-releases"
-        },
-        "snapshotRepository": {
-          "id": "jahia-snapshots",
-          "url": "https://devtools.jahia.com/nexus/content/repositories/jahia-snapshots"
+    "name": "npm-module-example",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "build": "webpack --mode=development",
+        "pwd": "dotenv -- echo $HOST",
+        "doDeploy": "dotenv docker cp npm-module-example-v1.0.0.tgz ${JAHIA_DOCKER_NAME}:/var/jahia/modules",
+        "deploy": "dotenv yarn doDeploy",
+        "watch": "yarn build --env deploy=true --watch",
+        "doRemoteDeploy": "curl -s --user ${JAHIA_USER} --form bundle=@./npm-module-example-v1.0.0.tgz --form start=true ${JAHIA_HOST}/modules/api/bundles",
+        "remoteDeploy": "dotenv yarn doRemoteDeploy",
+        "remoteWatch": "yarn build --env remoteDeploy=true --watch",
+        "lint": "eslint --ext js,jsx,json .",
+        "lint:fix": "eslint --ext js,jsx,json --fix ."
+    },
+    "jahia": {
+        "module-type": "templatesSet",
+        "server": "dist/main.js",
+        "Jahia-Depends": "calendar,event",
+        "maven": {
+            "groupId": "org.jahia.modules.npm",
+            "distributionManagement": {
+                "repository": {
+                    "id": "jahia-releases",
+                    "url": "https://devtools.jahia.com/nexus/content/repositories/jahia-releases"
+                },
+                "snapshotRepository": {
+                    "id": "jahia-snapshots",
+                    "url": "https://devtools.jahia.com/nexus/content/repositories/jahia-snapshots"
+                }
+            }
         }
-      }
-    }
-  },
-  "devDependencies": {
-    "@babel/core": "^7.22.5",
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.21.5",
-    "@jahia/eslint-config": "^2.1.0",
-    "dotenv-cli": "^7.2.1",
-    "eslint": "^8.43.0",
-    "eslint-plugin-jest": "^27.2.1",
-    "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "extra-watch-webpack-plugin": "^1.0.3",
-    "handlebars-loader": "^1.7.3",
-    "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-node-externals": "^3.0.0",
-    "webpack-shell-plugin-next": "^2.3.1"
-  },
-  "resolutions": {
-    "minimist": "^1.2.6"
-  },
-  "dependencies": {
-    "@jahia/data-helper": "^1.0.3",
-    "handlebars": "^4.7.7"
-  },
-  "packageManager": "yarn@1.22.19"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.22.5",
+        "@babel/preset-env": "^7.21.5",
+        "@babel/preset-react": "^7.0.0",
+        "@babel/preset-typescript": "^7.21.5",
+        "@jahia/eslint-config": "^2.1.0",
+        "dotenv-cli": "^7.2.1",
+        "eslint": "^8.43.0",
+        "eslint-plugin-jest": "^27.2.1",
+        "eslint-plugin-json": "^3.1.0",
+        "eslint-plugin-react": "^7.32.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "extra-watch-webpack-plugin": "^1.0.3",
+        "handlebars-loader": "^1.7.3",
+        "webpack": "^5.88.1",
+        "webpack-cli": "^5.1.4",
+        "webpack-node-externals": "^3.0.0",
+        "webpack-shell-plugin-next": "^2.3.1"
+    },
+    "resolutions": {
+        "minimist": "^1.2.6"
+    },
+    "dependencies": {
+        "@jahia/data-helper": "^1.0.3",
+        "handlebars": "^4.7.7"
+    },
+    "packageManager": "yarn@1.22.19"
 }
