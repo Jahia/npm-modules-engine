@@ -1,5 +1,5 @@
+/*  eslint-disable @typescript-eslint/no-explicit-any */
 import { addNode } from '@jahia/cypress'
-
 export const addSimplePage = (
     parentPathOrId: string,
     pageName: string,

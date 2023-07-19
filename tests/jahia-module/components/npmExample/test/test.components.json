@@ -1,7 +1,7 @@
 {
-  "viewRelative": {
-    "properties": {
-      "j:prop": "This is a view relative component"
+    "viewRelative": {
+        "properties": {
+            "j:prop": "This is a view relative component"
+        }
     }
-  }
 }

@@ -1,18 +1,18 @@
-const path = require('path');
-const WebpackShellPluginNext = require('webpack-shell-plugin-next');
-const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+const path = require('path')
+const WebpackShellPluginNext = require('webpack-shell-plugin-next')
+const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin')
 
-module.exports = env => {
+module.exports = (env) => {
     const config = {
         entry: {
-            main: path.resolve(__dirname, 'src/index')
+            main: path.resolve(__dirname, 'src/index'),
         },
         output: {
-            path: path.resolve(__dirname, 'dist')
+            path: path.resolve(__dirname, 'dist'),
         },
-        externalsPresets: {node: true},
+        externalsPresets: { node: true },
         externals: {
-            '@jahia/server-helpers': 'jahiaHelpers'
+            '@jahia/server-helpers': 'jahiaHelpers',
         },
         plugins: [
             new ExtraWatchWebpackPlugin({
@@ -27,30 +27,30 @@ module.exports = env => {
                     'resources/**/*.properties',
                     'definitions.cnd',
                     'import.xml',
-                    'package.json'
+                    'package.json',
                 ],
-            })
+            }),
         ],
-        devtool: 'inline-source-map'
+        devtool: 'inline-source-map',
     }
 
     if (env.deploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
                 onBuildEnd: {
-                    scripts: ['yarn pack && yarn deploy']
+                    scripts: ['yarn pack && yarn deploy'],
                 },
-            })
+            }),
         )
     } else if (env.remoteDeploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
                 onBuildEnd: {
-                    scripts: ['yarn pack && yarn remoteDeploy']
+                    scripts: ['yarn pack && yarn remoteDeploy'],
                 },
-            })
+            }),
         )
     }
 
-    return config;
-};
+    return config
+}
