@@ -14,6 +14,7 @@
  *     + - page B B A
  **/
 import { addSimplePage } from '../../utils/Utils'
+import { addNode } from '@jahia/cypress'
 
 const menuUrl = (depth, lvl = 0, page = '', base = 'home') =>
     `/cms/render/default/en/sites/npmTestSite/home${page}.navmenu.html?maxDepth=${depth}&baseline=${base}&startLevel=${lvl}`
@@ -30,7 +31,32 @@ describe('navMenu helper test parameters', () => {
         addSimplePage('/sites/npmTestSite/home/pageB/pageBA', 'pageBAA', 'Page B A A', 'en', 'navmenu')
         addSimplePage('/sites/npmTestSite/home/pageB', 'pageBB', 'Page B B', 'en', 'navmenu')
         addSimplePage('/sites/npmTestSite/home/pageB/pageBB', 'pageBBA', 'Page B B A', 'en', 'navmenu')
+        // Add menu items
+        const externalLink = {
+            parentPathOrId: '/sites/npmTestSite/home/',
+            name: 'externalLink',
+            primaryNodeType: 'jnt:externalLink',
+            properties: [{ name: 'j:url', value: 'https://www.jahia.com', language: 'en' }],
+        }
+        addNode(externalLink)
     })
+
+    it('should have a navMenu item (jmix:navMenuItem) part of the menu', () => {
+        cy.login()
+        cy.request(menuUrl(1)).then((resp) => {
+            const tree = JSON.parse(resp.body)
+            expect(tree.filter((menu) => menu.render === '<a href="https://www.jahia.com" >externalLink</a>')).to.exist
+        })
+    })
+
+    it('should have the dedicated view (menuComponent) for pages', () => {
+        cy.login()
+        cy.request(menuUrl(1)).then((resp) => {
+            const tree = JSON.parse(resp.body)
+            expect(tree.filter((menu) => menu.render === '/sites/npmTestSite/home/pageA')).to.exist
+        })
+    })
+
     it('should display the selected depth of items', () => {
         cy.login()
         cy.request(menuUrl(1)).then((resp) => {
