@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '11.0.19'
       - uses: jahia/jahia-modules-action/build@BACKLOG-21215-yarn3
         with:
           module_id: ${{ env.MODULE_ID }}
