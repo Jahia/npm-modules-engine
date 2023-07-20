@@ -1,4 +1,4 @@
-import {registry} from '@jahia/server-helpers';
+import { registry } from '@jahia/server-helpers'
 
 export default {
     render: (currentResource, renderContext) => {

@@ -15,10 +15,11 @@
 
 // Import commands.js using ES2015 syntax:
 
-import "./commands";
-import "@cypress/code-coverage/support";
+import './commands'
+import '@cypress/code-coverage/support'
 import 'cypress-wait-until'
-import {createSite, deleteSite} from "@jahia/cypress";
+import { addNode, createSite, deleteSite } from '@jahia/cypress'
+import { addSimplePage } from '../utils/Utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('@jahia/cypress/dist/support/registerSupport').registerSupport()
@@ -29,9 +30,22 @@ before('Create NPM test site', () => {
         templateSet: 'npm-module-example',
         locale: 'en',
         serverName: 'localhost',
-    });
+    })
+
+    addSimplePage(`/sites/npmTestSite/home`, 'testPage', 'testPage', 'en', 'simple', [
+        {
+            name: 'pagecontent',
+            primaryNodeType: 'jnt:contentList',
+        },
+    ]).then(() => {
+        addNode({
+            parentPathOrId: `/sites/npmTestSite/home/testPage/pagecontent`,
+            name: 'test',
+            primaryNodeType: 'npmExample:test',
+        })
+    })
 })
 
 after('Clean', () => {
-    deleteSite('npmTestSite');
+    deleteSite('npmTestSite')
 })

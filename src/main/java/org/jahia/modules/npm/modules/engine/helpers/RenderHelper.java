@@ -135,7 +135,8 @@ public class RenderHelper {
             }
 
             Resource r = new Resource(node, templateType, view, contextConfiguration);
-
+            // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
+            r.getModuleParams().put("toCacheWithParentFragment", true);
             try {
                 return renderService.render(r, renderContext);
             } catch (RenderException e) {
@@ -149,6 +150,7 @@ public class RenderHelper {
             if (currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
                 String boundComponentPath = renderContext.getMainResource().getNodePath().concat(boundComponentRelativePath);
                 JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
+                renderContext.getMainResource().getDependencies().add(boundComponent.getPath());
                 currentNode.setProperty("j:bindedComponent", boundComponent);
             }
         } catch (RepositoryException e) {

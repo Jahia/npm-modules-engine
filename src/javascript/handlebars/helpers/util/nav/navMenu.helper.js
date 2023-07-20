@@ -66,7 +66,7 @@ const buildMenu = (node, navMenuLevel, config) => {
                     config.currentResource.getDependencies().add(menuItem.getCanonicalPath());
                     menuEntry.render = render.renderModule({
                         path: menuItem.getPath(),
-                        view: 'menuElement'
+                        view: config.menuEntryComponent || 'menuElement'
                     }, config.renderContext);
                 }
 
@@ -99,6 +99,7 @@ export default options => {
 
     const maxDepth = parseInt(options.hash.maxDepth, 10);
     const baseNode = getBaseNode(options.hash.baseNode, renderContext, workspace);
+    const menuEntryComponent = options.hash.menuEntryComponent;
     const startLevelValue = options.hash.startLevel ? parseInt(options.hash.startLevel, 10) : 0;
 
     return buildMenu(baseNode, 1, {
@@ -108,6 +109,7 @@ export default options => {
         workspace,
         menuName,
         startLevelValue,
-        maxDepth
+        maxDepth,
+        menuEntryComponent
     });
 };
