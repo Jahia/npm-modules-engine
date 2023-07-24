@@ -17,7 +17,7 @@ jobs:
         jahia_image: ["jahia/jahia-npm-alpha-dev:8-SNAPSHOT"]
     timeout-minutes: 45
     steps:
-      - uses: jahia/jahia-modules-action/helper@BACKLOG-21215-yarn3
+      - uses: jahia/jahia-modules-action/helper@v2
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
           version: '1.29.2'
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/integration-tests@BACKLOG-21215-yarn3
+      - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine

@@ -33,14 +33,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11.0.19'
-      - uses: jahia/jahia-modules-action/build@BACKLOG-21215-yarn3
+      - uses: jahia/jahia-modules-action/build@v2
         with:
           module_id: ${{ env.MODULE_ID }}
           tests_module_type: 'npm'
           mvn_settings_filepath: '.github/maven.settings.xml'
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-      - uses: jahia/jahia-modules-action/sonar-analysis@BACKLOG-21215-yarn3
+      - uses: jahia/jahia-modules-action/sonar-analysis@v2
         with:
           primary_release_branch: ${{ matrix.supported_branches }}
           build_artifacts: ''
