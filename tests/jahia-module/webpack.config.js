@@ -27,29 +27,21 @@ module.exports = (env) => {
                     'resources/**/*.properties',
                     'definitions.cnd',
                     'import.xml',
-                    'package.json',
-                ],
-            }),
+                    'package.json'
+                ]
+            })
         ],
-        devtool: 'inline-source-map',
-    }
+        devtool: 'inline-source-map'
+    };
 
     if (env.deploy) {
         config.plugins.push(
             new WebpackShellPluginNext({
-                onBuildEnd: {
-                    scripts: ['yarn pack && yarn deploy'],
-                },
-            }),
-        )
-    } else if (env.remoteDeploy) {
-        config.plugins.push(
-            new WebpackShellPluginNext({
-                onBuildEnd: {
-                    scripts: ['yarn pack && yarn remoteDeploy'],
-                },
-            }),
-        )
+                onDoneWatch: {
+                    scripts: ['yarn jahia-deploy pack']
+                }
+            })
+        );
     }
 
     return config

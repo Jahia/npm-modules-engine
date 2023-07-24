@@ -4,17 +4,13 @@ module.exports = {
         es2021: true
     },
     extends: '@jahia',
-    plugins: [
-        "json"
-    ],
+    plugins: ['json'],
     overrides: [
         {
             env: {
                 node: true
             },
-            files: [
-                '.eslintrc.{js,cjs}'
-            ],
+            files: ['.eslintrc.{js,cjs}'],
             parserOptions: {
                 sourceType: 'script'
             }
@@ -26,6 +22,7 @@ module.exports = {
     },
     ignorePatterns: ['dist'],
     rules: {
-        "react/boolean-prop-naming": [1, { "rule": "^(is|has)[A-Z]([A-Za-z0-9]?)+" }]
-    }
+        'react/boolean-prop-naming': [1, {rule: '^(is|has)[A-Z]([A-Za-z0-9]?)+'}]
+    },
+    root: true
 };

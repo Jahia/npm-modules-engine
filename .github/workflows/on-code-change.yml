@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: Jahia/jahia-modules-action/static-analysis@v2
+      - uses: jahia/jahia-modules-action/static-analysis@v2
         with:
           node_version: 18
           auditci_level: critical

@@ -1,2 +1,6 @@
 .env
 .idea
+.env.example
+.eslintrc.cjs
+babel.config.cjs
+*.tgz

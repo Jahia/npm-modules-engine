@@ -81,5 +81,5 @@
     "url": "https://github.com/Jahia/sandbox/issues"
   },
   "homepage": "https://github.com/Jahia/sandbox#readme",
-  "dependencies": {}
+  "packageManager": "yarn@1.22.19"
 }

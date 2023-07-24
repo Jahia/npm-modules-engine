@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'      
+          java-version: '11.0.19'
       - uses: jahia/jahia-modules-action/build@v2
         with:
           module_id: npm-modules-engine
@@ -109,7 +109,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'      
+          java-version: '11.0.19'
       - uses: jahia/jahia-modules-action/publish@v2
         with:
           tests_module_type: 'npm'
