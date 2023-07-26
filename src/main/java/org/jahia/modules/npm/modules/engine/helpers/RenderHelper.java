@@ -17,12 +17,15 @@ package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jahia.api.Constants;
+import org.jahia.modules.graphql.provider.dxm.node.NodeHelper;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.JCRTemplate;
+import org.jahia.services.content.nodetypes.ExtendedNodeDefinition;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
@@ -39,6 +42,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -104,23 +108,7 @@ public class RenderHelper {
                     }
                 }
             }
-            Map<String, ?> properties = (Map<String, ?>) definition.get("properties");
-            if (properties != null) {
-                for (Map.Entry<String, ?> entry : properties.entrySet()) {
-                    ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(entry.getKey());
-                    if (epd != null && epd.isMultiple()) {
-                        if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 0) {
-                            List<?> values = (List<?>) entry.getValue();
-                            List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
-                            node.setProperty(entry.getKey(), stringList.toArray(new String[stringList.size()]));
-                        } else {
-                            node.setProperty(entry.getKey(), ((String) entry.getValue()).split(" "));
-                        }
-                    } else {
-                        node.setProperty(entry.getKey(), (String) entry.getValue());
-                    }
-                }
-            }
+            processProperties(node, (Map<String, ?>) definition.get("properties"));
 
             handleBoundComponent(node, renderContext, session, (String) definition.get("boundComponentRelativePath"));
             String view = (String) definition.get("view");
@@ -143,6 +131,67 @@ public class RenderHelper {
                 throw new RepositoryException(e);
             }
         });
+    }
+
+    private void processProperties(JCRNodeWrapper node, Map<String, ?> properties) throws RepositoryException {
+        if (properties != null) {
+            for (Map.Entry<String, ?> entry : properties.entrySet()) {
+                ExtendedPropertyDefinition propertyDefinition = node.getApplicablePropertyDefinition(entry.getKey());
+                if (propertyDefinition != null) {
+                    processSimpleProperty(node, entry, propertyDefinition.isMultiple());
+                } else if (entry.getValue() instanceof Map) {
+                    processChildNode(node, entry.getKey(), (Map<String, ?>) entry.getValue());
+                } else if (entry.getValue() instanceof List) {
+                    processChildNodeList(node, entry);
+                }
+            }
+        }
+    }
+
+    private void processSimpleProperty(JCRNodeWrapper node, Map.Entry<String, ?> entry, boolean multiple) throws RepositoryException {
+        if (multiple) {
+            if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 0) {
+                List<?> values = (List<?>) entry.getValue();
+                List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
+                node.setProperty(entry.getKey(), stringList.toArray(new String[stringList.size()]));
+            } else {
+                node.setProperty(entry.getKey(), ((String) entry.getValue()).split(" "));
+            }
+        } else {
+            node.setProperty(entry.getKey(), (String) entry.getValue());
+        }
+    }
+
+    private void processChildNode(JCRNodeWrapper node, String childKey, Map<String, ?> childProperties) throws RepositoryException {
+        String primaryNodeType = (String) childProperties.get(Constants.JCR_PRIMARYTYPE);
+        childProperties.remove(Constants.JCR_PRIMARYTYPE);
+        ExtendedNodeDefinition nodeDefinition = node.getApplicableChildNodeDefinition(childKey, primaryNodeType);
+        if (nodeDefinition != null) {
+            JCRNodeWrapper child = node.addNode(childKey, primaryNodeType);
+            processProperties(child, childProperties);
+        }
+    }
+
+    private void processI18nNodes(JCRNodeWrapper node, List<?> children, String key) {
+        children.stream().forEach(child -> {
+            Map<String, ?> childrenProperties = (Map<String, ?>) child;
+            String language = (String) childrenProperties.get("language");
+            childrenProperties.remove("language");
+            try {
+                for (Map.Entry<String, ?> p : childrenProperties.entrySet()) {
+                    node.getOrCreateI18N(new Locale(language)).setProperty(p.getKey(), (String) p.getValue());
+                }
+            } catch (RepositoryException e) {
+                logger.error("Error while processing {} for parent {}", key, node.getPath(), e);
+            }
+        });
+    }
+
+    private void processChildNodeList(JCRNodeWrapper node, Map.Entry<String, ?> entry) {
+        List<?> children = (List<?>) entry.getValue();
+        if (entry.getKey().equals("i18n")) {
+            processI18nNodes(node, children, entry.getKey());
+        }
     }
 
     private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
