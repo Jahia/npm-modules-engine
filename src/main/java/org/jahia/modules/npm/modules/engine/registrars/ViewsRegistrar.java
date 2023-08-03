@@ -140,16 +140,10 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
 
     @Override
     public Script resolveScript(Resource resource, RenderContext renderContext) throws TemplateNotFoundException {
-        String oldTemplate = resource.getTemplate();
         try {
-                if ("default".equals(resource.getTemplate()) && resource.getNode().hasProperty("j:templateName")) {
-                    resource.setTemplate(resource.getNode().getProperty("j:templateName").getString());
-                }
             return new JSScript(resolveView(resource, renderContext), graalVMEngine);
         } catch (RepositoryException e) {
             throw new TemplateNotFoundException(e);
-        } finally {
-            resource.setTemplate(oldTemplate);
         }
     }
 

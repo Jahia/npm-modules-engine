@@ -84,7 +84,8 @@ public class RenderHelper {
     }
 
     public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
-        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), renderContext.getMainResource().getLocale(), session -> {
+        Locale currentLocale = renderContext.getMainResource().getLocale();
+        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), currentLocale, session -> {
             String path = (String) definition.get("path");
 
             if (path == null) {
@@ -92,23 +93,13 @@ public class RenderHelper {
             }
             JCRNodeWrapper parent = session.getNode(path);
 
-            String name = (String) definition.get("name");
-            if (name == null) {
-                name = "temp-node";
+            JCRNodeWrapper node;
+            if (definition.get("content") != null) {
+                node = transformJSONNodeToJCRNode((Map<String, ?>) definition.get("content"), parent, currentLocale);
+            } else {
+                // TODO: to be removed to only allow usage with JSON node (content param).
+                node = transformJSONNodeToJCRNode(definition, parent, currentLocale);
             }
-
-            JCRNodeWrapper node = parent.addNode(name, (String) definition.get("primaryNodeType"));
-            if (definition.containsKey("mixins")) {
-                Object mixins = definition.get("mixins");
-                if (mixins instanceof String) {
-                    node.addMixin((String) mixins);
-                } else if (mixins instanceof List<?>) {
-                    for (Object mixinName : (List<?>) mixins) {
-                        node.addMixin(mixinName.toString());
-                    }
-                }
-            }
-            processProperties(node, (Map<String, ?>) definition.get("properties"));
 
             handleBoundComponent(node, renderContext, session, (String) definition.get("boundComponentRelativePath"));
             String view = (String) definition.get("view");
@@ -133,64 +124,70 @@ public class RenderHelper {
         });
     }
 
-    private void processProperties(JCRNodeWrapper node, Map<String, ?> properties) throws RepositoryException {
+    private JCRNodeWrapper transformJSONNodeToJCRNode(Map<String, ?> jsonNode, JCRNodeWrapper parent, Locale currentLocale) throws RepositoryException {
+        // TODO: stop support primaryNodeType
+        String nodeType = jsonNode.containsKey("nodeType") ? (String) jsonNode.get("nodeType") : (String) jsonNode.get("primaryNodeType");
+        // TODO: make name mandatory and stop using temp-node
+        String name = jsonNode.containsKey("name") ? (String) jsonNode.get("name") : "temp-node";
+        JCRNodeWrapper node = parent.addNode(name, nodeType);
+
+        // handle mixins
+        if (jsonNode.containsKey("mixins")) {
+            Object mixins = jsonNode.get("mixins");
+            if (mixins instanceof String) {
+                node.addMixin((String) mixins);
+            } else if (mixins instanceof List<?>) {
+                for (Object mixinName : (List<?>) mixins) {
+                    node.addMixin(mixinName.toString());
+                }
+            }
+        }
+
+        // handle properties
+        Map<String, ?> properties = (Map<String, ?>) jsonNode.get("properties");
         if (properties != null) {
             for (Map.Entry<String, ?> entry : properties.entrySet()) {
-                ExtendedPropertyDefinition propertyDefinition = node.getApplicablePropertyDefinition(entry.getKey());
-                if (propertyDefinition != null) {
-                    processSimpleProperty(node, entry, propertyDefinition.isMultiple());
-                } else if (entry.getValue() instanceof Map) {
-                    processChildNode(node, entry.getKey(), (Map<String, ?>) entry.getValue());
-                } else if (entry.getValue() instanceof List) {
-                    processChildNodeList(node, entry);
+                setProperty(node, entry.getKey(), entry.getValue());
+            }
+        }
+
+        // handle i18n properties
+        Map<String, ?> i18nProperties = (Map<String, ?>) jsonNode.get("i18nProperties");
+        if (i18nProperties != null) {
+            for (Map.Entry<String, ?> entry : i18nProperties.entrySet()) {
+                Locale locale = new Locale(entry.getKey());
+                if (currentLocale.equals(locale)) {
+                    Map<String, ?> localeProperties = (Map<String, ?>) entry.getValue();
+                    for (Map.Entry<String, ?> localeProperty : localeProperties.entrySet()) {
+                        setProperty(node, localeProperty.getKey(), localeProperty.getValue());
+                    }
                 }
             }
         }
+
+        // handle children
+        List<Map<String, ?>> children = (List<Map<String, ?>>) jsonNode.get("children");
+        if (children != null) {
+            for (Map<String, ?> child : children) {
+                transformJSONNodeToJCRNode(child, node, currentLocale);
+            }
+        }
+
+        return node;
     }
 
-    private void processSimpleProperty(JCRNodeWrapper node, Map.Entry<String, ?> entry, boolean multiple) throws RepositoryException {
-        if (multiple) {
-            if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 0) {
-                List<?> values = (List<?>) entry.getValue();
+    private void setProperty(JCRNodeWrapper node, String propertyName, Object value) throws RepositoryException {
+        ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(propertyName);
+        if (epd != null && epd.isMultiple()) {
+            if (value instanceof List && ((List) value).size() > 0) {
+                List<?> values = (List<?>) value;
                 List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
-                node.setProperty(entry.getKey(), stringList.toArray(new String[stringList.size()]));
+                node.setProperty(propertyName, stringList.toArray(new String[stringList.size()]));
             } else {
-                node.setProperty(entry.getKey(), ((String) entry.getValue()).split(" "));
+                node.setProperty(propertyName, ((String) value).split(" "));
             }
         } else {
-            node.setProperty(entry.getKey(), (String) entry.getValue());
-        }
-    }
-
-    private void processChildNode(JCRNodeWrapper node, String childKey, Map<String, ?> childProperties) throws RepositoryException {
-        String primaryNodeType = (String) childProperties.get(Constants.JCR_PRIMARYTYPE);
-        childProperties.remove(Constants.JCR_PRIMARYTYPE);
-        ExtendedNodeDefinition nodeDefinition = node.getApplicableChildNodeDefinition(childKey, primaryNodeType);
-        if (nodeDefinition != null) {
-            JCRNodeWrapper child = node.addNode(childKey, primaryNodeType);
-            processProperties(child, childProperties);
-        }
-    }
-
-    private void processI18nNodes(JCRNodeWrapper node, List<?> children, String key) {
-        children.stream().forEach(child -> {
-            Map<String, ?> childrenProperties = (Map<String, ?>) child;
-            String language = (String) childrenProperties.get("language");
-            childrenProperties.remove("language");
-            try {
-                for (Map.Entry<String, ?> p : childrenProperties.entrySet()) {
-                    node.getOrCreateI18N(new Locale(language)).setProperty(p.getKey(), (String) p.getValue());
-                }
-            } catch (RepositoryException e) {
-                logger.error("Error while processing {} for parent {}", key, node.getPath(), e);
-            }
-        });
-    }
-
-    private void processChildNodeList(JCRNodeWrapper node, Map.Entry<String, ?> entry) {
-        List<?> children = (List<?>) entry.getValue();
-        if (entry.getKey().equals("i18n")) {
-            processI18nNodes(node, children, entry.getKey());
+            node.setProperty(propertyName, (String) value);
         }
     }
 
