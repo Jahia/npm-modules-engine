@@ -17,15 +17,12 @@ package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jahia.api.Constants;
-import org.jahia.modules.graphql.provider.dxm.node.NodeHelper;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.JCRTemplate;
-import org.jahia.services.content.nodetypes.ExtendedNodeDefinition;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
