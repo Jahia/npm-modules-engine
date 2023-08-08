@@ -39,6 +39,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,8 @@ public class RenderHelper {
     }
 
     public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
-        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), renderContext.getMainResource().getLocale(), session -> {
+        Locale currentLocale = renderContext.getMainResource().getLocale();
+        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), currentLocale, session -> {
             String path = (String) definition.get("path");
 
             if (path == null) {
@@ -88,38 +90,12 @@ public class RenderHelper {
             }
             JCRNodeWrapper parent = session.getNode(path);
 
-            String name = (String) definition.get("name");
-            if (name == null) {
-                name = "temp-node";
-            }
-
-            JCRNodeWrapper node = parent.addNode(name, (String) definition.get("primaryNodeType"));
-            if (definition.containsKey("mixins")) {
-                Object mixins = definition.get("mixins");
-                if (mixins instanceof String) {
-                    node.addMixin((String) mixins);
-                } else if (mixins instanceof List<?>) {
-                    for (Object mixinName : (List<?>) mixins) {
-                        node.addMixin(mixinName.toString());
-                    }
-                }
-            }
-            Map<String, ?> properties = (Map<String, ?>) definition.get("properties");
-            if (properties != null) {
-                for (Map.Entry<String, ?> entry : properties.entrySet()) {
-                    ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(entry.getKey());
-                    if (epd != null && epd.isMultiple()) {
-                        if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 0) {
-                            List<?> values = (List<?>) entry.getValue();
-                            List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
-                            node.setProperty(entry.getKey(), stringList.toArray(new String[stringList.size()]));
-                        } else {
-                            node.setProperty(entry.getKey(), ((String) entry.getValue()).split(" "));
-                        }
-                    } else {
-                        node.setProperty(entry.getKey(), (String) entry.getValue());
-                    }
-                }
+            JCRNodeWrapper node;
+            if (definition.get("content") != null) {
+                node = transformJSONNodeToJCRNode((Map<String, ?>) definition.get("content"), parent, currentLocale);
+            } else {
+                // TODO: to be removed to only allow usage with JSON node (content param).
+                node = transformJSONNodeToJCRNode(definition, parent, currentLocale);
             }
 
             handleBoundComponent(node, renderContext, session, (String) definition.get("boundComponentRelativePath"));
@@ -143,6 +119,73 @@ public class RenderHelper {
                 throw new RepositoryException(e);
             }
         });
+    }
+
+    private JCRNodeWrapper transformJSONNodeToJCRNode(Map<String, ?> jsonNode, JCRNodeWrapper parent, Locale currentLocale) throws RepositoryException {
+        // TODO: stop support primaryNodeType
+        String nodeType = jsonNode.containsKey("nodeType") ? (String) jsonNode.get("nodeType") : (String) jsonNode.get("primaryNodeType");
+        // TODO: make name mandatory and stop using temp-node
+        String name = jsonNode.containsKey("name") ? (String) jsonNode.get("name") : "temp-node";
+        JCRNodeWrapper node = parent.addNode(name, nodeType);
+
+        // handle mixins
+        if (jsonNode.containsKey("mixins")) {
+            Object mixins = jsonNode.get("mixins");
+            if (mixins instanceof String) {
+                node.addMixin((String) mixins);
+            } else if (mixins instanceof List<?>) {
+                for (Object mixinName : (List<?>) mixins) {
+                    node.addMixin(mixinName.toString());
+                }
+            }
+        }
+
+        // handle properties
+        Map<String, ?> properties = (Map<String, ?>) jsonNode.get("properties");
+        if (properties != null) {
+            for (Map.Entry<String, ?> entry : properties.entrySet()) {
+                setProperty(node, entry.getKey(), entry.getValue());
+            }
+        }
+
+        // handle i18n properties
+        Map<String, ?> i18nProperties = (Map<String, ?>) jsonNode.get("i18nProperties");
+        if (i18nProperties != null) {
+            for (Map.Entry<String, ?> entry : i18nProperties.entrySet()) {
+                Locale locale = new Locale(entry.getKey());
+                if (currentLocale.equals(locale)) {
+                    Map<String, ?> localeProperties = (Map<String, ?>) entry.getValue();
+                    for (Map.Entry<String, ?> localeProperty : localeProperties.entrySet()) {
+                        setProperty(node, localeProperty.getKey(), localeProperty.getValue());
+                    }
+                }
+            }
+        }
+
+        // handle children
+        List<Map<String, ?>> children = (List<Map<String, ?>>) jsonNode.get("children");
+        if (children != null) {
+            for (Map<String, ?> child : children) {
+                transformJSONNodeToJCRNode(child, node, currentLocale);
+            }
+        }
+
+        return node;
+    }
+
+    private void setProperty(JCRNodeWrapper node, String propertyName, Object value) throws RepositoryException {
+        ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(propertyName);
+        if (epd != null && epd.isMultiple()) {
+            if (value instanceof List && ((List) value).size() > 0) {
+                List<?> values = (List<?>) value;
+                List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
+                node.setProperty(propertyName, stringList.toArray(new String[stringList.size()]));
+            } else {
+                node.setProperty(propertyName, ((String) value).split(" "));
+            }
+        } else {
+            node.setProperty(propertyName, (String) value);
+        }
     }
 
     private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
