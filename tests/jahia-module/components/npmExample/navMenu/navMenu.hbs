@@ -13,12 +13,9 @@
 </li>
 {{/inline}}
 
-{{jcrGetProperty 'j:baselineNode' varName='baseNode'}}
-{{jcrGetProperty 'j:maxDepth' varName='maxDepth'}}
-{{jcrGetProperty 'j:startLevel' varName='startLevel'}}
 <div class="navBar">
   <ul class="navmenu level_0">
-  {{#each (buildNavMenu baseNode=baseNode maxDepth=maxDepth startLevel=startLevel)}}
+  {{#each (buildNavMenu baseNode=currentContent.properties.[j:baselineNode] maxDepth=currentContent.properties.[j:maxDepth] startLevel=currentContent.properties.[j:startLevel])}}
     {{> menuEntry}}
   {{/each}}
   </ul>

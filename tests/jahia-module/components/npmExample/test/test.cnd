@@ -1,9 +1,12 @@
+<mix = 'http://www.jcp.org/jcr/mix/1.0'>
 <jnt = 'http://www.jahia.org/jahia/nt/1.0'>
 <jmix = 'http://www.jahia.org/jahia/mix/1.0'>
 <npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
-[npmExample:test] > jnt:content, npmExampleMix:npmExampleComponent
+[npmExample:test] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)
+ - propMultiple (string) multiple
+ - propI18n (string) i18n
  + * (jmix:droppableContent)

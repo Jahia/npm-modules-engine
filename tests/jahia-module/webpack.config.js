@@ -1,18 +1,18 @@
-const path = require('path')
-const WebpackShellPluginNext = require('webpack-shell-plugin-next')
-const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin')
+const path = require('path');
+const WebpackShellPluginNext = require('webpack-shell-plugin-next');
+const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
 
-module.exports = (env) => {
+module.exports = env => {
     const config = {
         entry: {
-            main: path.resolve(__dirname, 'src/index'),
+            main: path.resolve(__dirname, 'src/index')
         },
         output: {
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'dist')
         },
-        externalsPresets: { node: true },
+        externalsPresets: {node: true},
         externals: {
-            '@jahia/server-helpers': 'jahiaHelpers',
+            '@jahia/server-helpers': 'jahiaHelpers'
         },
         plugins: [
             new ExtraWatchWebpackPlugin({
@@ -44,5 +44,5 @@ module.exports = (env) => {
         );
     }
 
-    return config
-}
+    return config;
+};
