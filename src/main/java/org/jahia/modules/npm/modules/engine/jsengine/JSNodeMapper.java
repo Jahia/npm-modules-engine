@@ -1,5 +1,6 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
+import aQute.bnd.maven.support.Repo;
 import org.jahia.services.content.*;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
@@ -40,7 +41,12 @@ public class JSNodeMapper {
     public static Map<String, Object> toJSNode(JCRNodeWrapper node, boolean includeChildren, boolean includeDescendants, boolean includeAllTranslations) throws RepositoryException {
         Map<String, Object> jsNode = new HashMap<>();
         jsNode.put("name", node.getName());
-        jsNode.put("parent", node.getParent().getPath());
+        try {
+            jsNode.put("parent", node.getParent().getPath());
+        } catch (RepositoryException e) {
+            // could happen in case parent is not published for example.
+        }
+
         jsNode.put("path", node.getPath());
         jsNode.put("uuid", node.getIdentifier());
         jsNode.put("nodeType", node.getPrimaryNodeTypeName());

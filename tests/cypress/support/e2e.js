@@ -42,6 +42,11 @@ before('Create NPM test site', () => {
             parentPathOrId: `/sites/npmTestSite/home/testPage/pagecontent`,
             name: 'test',
             primaryNodeType: 'npmExample:test',
+            properties: [
+                { name: 'jcr:title', value: 'NPM test component' },
+                { name: 'prop1', value: 'prop1 value' },
+                { name: 'propMultiple', values: ['value 1', 'value 2', 'value 3'] }
+            ],
         })
     })
 })

@@ -53,7 +53,7 @@
     <div data-testid="currentContent_properties_jcr:title">jcr:title : {{currentContent.properties.[jcr:title]}}</div>
     <div data-testid="currentContent_properties_prop1">prop1 : {{currentContent.properties.prop1}}</div>
     <div data-testid="currentContent_properties_propMultiple">propMultiple : {{currentContent.properties.propMultiple}}</div>
-    <div data-testid="currentContent_properties_propI18n">propMultiple : {{currentContent.properties.propI18n}}</div>
+    <div data-testid="currentContent_properties_propI18n">propI18n : {{currentContent.properties.propI18n}}</div>
     <div data-testid="currentContent_uuid">uuid : {{currentContent.uuid}}</div>
     <div data-testid="currentContent_name">name : {{currentContent.name}}</div>
     <div data-testid="currentContent_path">path : {{currentContent.path}}</div>
@@ -87,15 +87,15 @@
     </div>
 <hr/>
 
-<h3>getNodeAsJSON helper</h3>
-        {{getNodeAsJSON path=gql.jcr.nodeByPath.site.path varName="currentResourceContent"}}
-        <div data-testid="getNodeAsJSON_site">site node transformed to JSNode : {{currentResourceContent.name}}</div>
-        {{getNodeAsJSON path=gql.jcr.nodeByPath.site.path varName="currentResourceContentWithChildren" includeChildren=true}}
-        <div data-testid="getNodeAsJSON_site_withChildren">currentResource transformed to JSNode with children included:</div>
+<h3>getNode helper</h3>
+        {{getNode path=gql.jcr.nodeByPath.site.path varName="currentResourceContent"}}
+        <div data-testid="getNode_site">site node transformed to JSNode : {{currentResourceContent.name}}</div>
+        {{getNode path=gql.jcr.nodeByPath.site.path varName="currentResourceContentWithChildren" includeChildren=true}}
+        <div data-testid="getNode_site_withChildren">currentResource transformed to JSNode with children included:</div>
         {{#each currentResourceContentWithChildren.children}}
             <br>
-            <div>children name: {{name}}</div>
-            <div>children path: {{path}}</div>
-            <div>children nodeType: {{nodeType}}</div>
+            <div data-testid="getNode_site_withChildren_{{name}}_name">children name: {{name}}</div>
+            <div data-testid="getNode_site_withChildren_{{name}}_path">children path: {{path}}</div>
+            <div data-testid="getNode_site_withChildren_{{name}}_nodeType">children nodeType: {{nodeType}}</div>
         {{/each}}
 <hr/>
