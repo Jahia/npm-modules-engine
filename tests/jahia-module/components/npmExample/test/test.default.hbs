@@ -2,7 +2,7 @@
 {{#gql}}
     {
         jcr {
-            nodeByPath(path:"{{currentContent.path}}") {
+            nodeByPath(path:"{{currentNode.path}}") {
                 name
                 properties {
                     name
@@ -49,17 +49,17 @@
     </div>
 <hr/>
 
-<h3>currentContent usages</h3>
-    <div data-testid="currentContent_properties_jcr:title">jcr:title : {{currentContent.properties.[jcr:title]}}</div>
-    <div data-testid="currentContent_properties_prop1">prop1 : {{currentContent.properties.prop1}}</div>
-    <div data-testid="currentContent_properties_propMultiple">propMultiple : {{currentContent.properties.propMultiple}}</div>
-    <div data-testid="currentContent_properties_propI18n">propI18n : {{currentContent.properties.propI18n}}</div>
-    <div data-testid="currentContent_uuid">uuid : {{currentContent.uuid}}</div>
-    <div data-testid="currentContent_name">name : {{currentContent.name}}</div>
-    <div data-testid="currentContent_path">path : {{currentContent.path}}</div>
-    <div data-testid="currentContent_parent">parent : {{currentContent.parent}}</div>
-    <div data-testid="currentContent_nodeType">nodeType : {{currentContent.nodeType}}</div>
-    <div data-testid="currentContent_mixins">mixins : {{currentContent.mixins}}</div>
+<h3>currentNode usages</h3>
+    <div data-testid="currentNode_properties_jcr:title">jcr:title : {{currentNode.properties.[jcr:title]}}</div>
+    <div data-testid="currentNode_properties_prop1">prop1 : {{currentNode.properties.prop1}}</div>
+    <div data-testid="currentNode_properties_propMultiple">propMultiple : {{currentNode.properties.propMultiple}}</div>
+    <div data-testid="currentNode_properties_propI18n">propI18n : {{currentNode.properties.propI18n}}</div>
+    <div data-testid="currentNode_uuid">uuid : {{currentNode.uuid}}</div>
+    <div data-testid="currentNode_name">name : {{currentNode.name}}</div>
+    <div data-testid="currentNode_path">path : {{currentNode.path}}</div>
+    <div data-testid="currentNode_parent">parent : {{currentNode.parent}}</div>
+    <div data-testid="currentNode_nodeType">nodeType : {{currentNode.nodeType}}</div>
+    <div data-testid="currentNode_mixins">mixins : {{currentNode.mixins}}</div>
 <hr/>
 
 <h3>Components</h3>

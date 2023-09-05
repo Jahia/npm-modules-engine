@@ -49,8 +49,8 @@ export default () => {
                 lng: locale.getLanguage()
             };
 
-            const currentContent = render.transformToJsNode(currentResource.getNode(), false, false, false);
-            return template({currentResource, renderContext, i18next: i18nextValues, view, currentContent});
+            const currentNode = render.transformToJsNode(currentResource.getNode(), false, false, false);
+            return template({currentResource, renderContext, i18next: i18nextValues, view, currentNode});
         }
     });
 };
