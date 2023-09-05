@@ -1,1 +1,1 @@
-export {default as getNode} from './getNode';
+export {default as getContent} from './getContent';

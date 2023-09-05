@@ -15,7 +15,7 @@
 
 <div class="navBar">
   <ul class="navmenu level_0">
-  {{#each (buildNavMenu baseNode=currentNode.properties.[j:baselineNode] maxDepth=currentNode.properties.[j:maxDepth] startLevel=currentNode.properties.[j:startLevel])}}
+  {{#each (buildNavMenu baseNode=currentContent.properties.[j:baselineNode] maxDepth=currentContent.properties.[j:maxDepth] startLevel=currentContent.properties.[j:startLevel])}}
     {{> menuEntry}}
   {{/each}}
   </ul>
