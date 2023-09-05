@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/static-analysis@fixYarn
+      - uses: jahia/jahia-modules-action/static-analysis@v2
         with:
           node_version: 18
           auditci_level: critical
@@ -34,7 +34,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11.0.19'
-      - uses: jahia/jahia-modules-action/build@fixYarn
+      - uses: jahia/jahia-modules-action/build@v2
         with:
           module_id: npm-modules-engine
           tests_module_type: 'npm'
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/sonar-analysis@fixYarn
+      - uses: jahia/jahia-modules-action/sonar-analysis@v2
         with:
           primary_release_branch: main
           github_pr_id: ${{github.event.number}}
@@ -64,7 +64,7 @@ jobs:
       fail-fast: false
     timeout-minutes: 45
     steps:
-      - uses: jahia/jahia-modules-action/helper@fixYarn
+      - uses: jahia/jahia-modules-action/helper@v2
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
           version: '1.29.2'
@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/integration-tests@fixYarn
+      - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine
