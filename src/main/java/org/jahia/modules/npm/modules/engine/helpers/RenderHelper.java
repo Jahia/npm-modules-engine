@@ -16,14 +16,13 @@
 package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
+import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
-import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.JCRTemplate;
-import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderException;
 import org.jahia.services.render.RenderService;
@@ -37,9 +36,9 @@ import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -80,37 +79,39 @@ public class RenderHelper {
         return renderTag(new OptionTag(), attr, renderContext);
     }
 
+    public ProxyObject transformToJsNode(JCRNodeWrapper node, boolean includeChildren, boolean includeDescendants, boolean includeAllTranslations) throws RepositoryException {
+        return recursiveProxyMap(JSNodeMapper.toJSNode(node, includeChildren, includeDescendants, includeAllTranslations));
+    }
+
+    private ProxyObject recursiveProxyMap(Map<String, Object> mapToProxy) {
+        for (Map.Entry<String, Object> entry : mapToProxy.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                mapToProxy.put(entry.getKey(), recursiveProxyMap((Map<String, Object>) entry.getValue()));
+            }
+            if (entry.getValue() instanceof Collection) {
+                mapToProxy.put(entry.getKey(), ((Collection) entry.getValue()).stream().map(o -> {
+                    if (o instanceof Map) {
+                        return recursiveProxyMap((Map<String, Object>) o);
+                    }
+                    return o;
+                }).collect(Collectors.toList()));
+            }
+        }
+        return ProxyObject.fromMap(mapToProxy);
+    }
+
     public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
-        Locale currentLocale = renderContext.getMainResource().getLocale();
-        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), currentLocale, session -> {
-            String path = (String) definition.get("path");
+        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
+                renderContext.getMainResource().getLocale(), session -> {
 
-            if (path == null) {
-                path = "/";
-            }
-            JCRNodeWrapper parent = session.getNode(path);
+            JCRNodeWrapper node = definition.containsKey("content") ?
+                    JSNodeMapper.toVirtualNode((Map<String, ?>) definition.get("content"), session, renderContext) :
+                    JSNodeMapper.toVirtualNode(definition, session, renderContext);
 
-            JCRNodeWrapper node;
-            if (definition.get("content") != null) {
-                node = transformJSONNodeToJCRNode((Map<String, ?>) definition.get("content"), parent, currentLocale);
-            } else {
-                // TODO: to be removed to only allow usage with JSON node (content param).
-                node = transformJSONNodeToJCRNode(definition, parent, currentLocale);
-            }
+            String contextConfiguration = definition.containsKey("contextConfiguration") ? (String) definition.get("contextConfiguration") : "module";
+            String templateType = definition.containsKey("templateType") ? (String) definition.get("templateType") : "html";
+            Resource r = new Resource(node, templateType, (String) definition.get("view"), contextConfiguration);
 
-            handleBoundComponent(node, renderContext, session, (String) definition.get("boundComponentRelativePath"));
-            String view = (String) definition.get("view");
-            String templateType = (String) definition.get("templateType");
-            String contextConfiguration = (String) definition.get("contextConfiguration");
-
-            if (contextConfiguration == null) {
-                contextConfiguration = "module";
-            }
-            if (templateType == null) {
-                templateType = "html";
-            }
-
-            Resource r = new Resource(node, templateType, view, contextConfiguration);
             // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
             r.getModuleParams().put("toCacheWithParentFragment", true);
             try {
@@ -119,86 +120,6 @@ public class RenderHelper {
                 throw new RepositoryException(e);
             }
         });
-    }
-
-    private JCRNodeWrapper transformJSONNodeToJCRNode(Map<String, ?> jsonNode, JCRNodeWrapper parent, Locale currentLocale) throws RepositoryException {
-        // TODO: stop support primaryNodeType
-        String nodeType = jsonNode.containsKey("nodeType") ? (String) jsonNode.get("nodeType") : (String) jsonNode.get("primaryNodeType");
-        // TODO: make name mandatory and stop using temp-node
-        String name = jsonNode.containsKey("name") ? (String) jsonNode.get("name") : "temp-node";
-        JCRNodeWrapper node = parent.addNode(name, nodeType);
-
-        // handle mixins
-        if (jsonNode.containsKey("mixins")) {
-            Object mixins = jsonNode.get("mixins");
-            if (mixins instanceof String) {
-                node.addMixin((String) mixins);
-            } else if (mixins instanceof List<?>) {
-                for (Object mixinName : (List<?>) mixins) {
-                    node.addMixin(mixinName.toString());
-                }
-            }
-        }
-
-        // handle properties
-        Map<String, ?> properties = (Map<String, ?>) jsonNode.get("properties");
-        if (properties != null) {
-            for (Map.Entry<String, ?> entry : properties.entrySet()) {
-                setProperty(node, entry.getKey(), entry.getValue());
-            }
-        }
-
-        // handle i18n properties
-        Map<String, ?> i18nProperties = (Map<String, ?>) jsonNode.get("i18nProperties");
-        if (i18nProperties != null) {
-            for (Map.Entry<String, ?> entry : i18nProperties.entrySet()) {
-                Locale locale = new Locale(entry.getKey());
-                if (currentLocale.equals(locale)) {
-                    Map<String, ?> localeProperties = (Map<String, ?>) entry.getValue();
-                    for (Map.Entry<String, ?> localeProperty : localeProperties.entrySet()) {
-                        setProperty(node, localeProperty.getKey(), localeProperty.getValue());
-                    }
-                }
-            }
-        }
-
-        // handle children
-        List<Map<String, ?>> children = (List<Map<String, ?>>) jsonNode.get("children");
-        if (children != null) {
-            for (Map<String, ?> child : children) {
-                transformJSONNodeToJCRNode(child, node, currentLocale);
-            }
-        }
-
-        return node;
-    }
-
-    private void setProperty(JCRNodeWrapper node, String propertyName, Object value) throws RepositoryException {
-        ExtendedPropertyDefinition epd = node.getApplicablePropertyDefinition(propertyName);
-        if (epd != null && epd.isMultiple()) {
-            if (value instanceof List && ((List) value).size() > 0) {
-                List<?> values = (List<?>) value;
-                List<String> stringList = values.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
-                node.setProperty(propertyName, stringList.toArray(new String[stringList.size()]));
-            } else {
-                node.setProperty(propertyName, ((String) value).split(" "));
-            }
-        } else {
-            node.setProperty(propertyName, (String) value);
-        }
-    }
-
-    private void handleBoundComponent(JCRNodeWrapper currentNode, RenderContext renderContext, JCRSessionWrapper session, String boundComponentRelativePath) {
-        try {
-            if (currentNode.isNodeType("jmix:bindedComponent") && StringUtils.isNotEmpty(boundComponentRelativePath)) {
-                String boundComponentPath = renderContext.getMainResource().getNodePath().concat(boundComponentRelativePath);
-                JCRNodeWrapper boundComponent = session.getNode(boundComponentPath);
-                renderContext.getMainResource().getDependencies().add(boundComponent.getPath());
-                currentNode.setProperty("j:bindedComponent", boundComponent);
-            }
-        } catch (RepositoryException e) {
-            logger.error("Error while getting bound component: {}", e.getMessage());
-        }
     }
 
     public String renderSimpleComponent(String name, String type, RenderContext renderContext) throws RepositoryException {

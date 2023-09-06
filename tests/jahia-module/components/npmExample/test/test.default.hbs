@@ -2,7 +2,7 @@
 {{#gql}}
     {
         jcr {
-            nodeByPath(path:"{{jcrGetPath resource=currentResource}}") {
+            nodeByPath(path:"{{currentContent.path}}") {
                 name
                 properties {
                     name
@@ -49,14 +49,21 @@
     </div>
 <hr/>
 
-<h3>Prop1</h3>
-    <div data-testid="prop1-simplified">Get property with implicit current resource : {{jcrGetProperty "prop1"}}</div>
-    <div data-testid="prop1-absolute-path">Get property by absolute path : {{jcrGetProperty "prop1" path=(jcrGetPath resource=currentResource)}}</div>
-    <div data-testid="prop1-relative-path">Relative path: {{jcrGetProperty "prop1" relPath="."}}</div>
-    <div data-testid="prop1-Resource">Resource : {{jcrGetProperty "prop1" resource=currentResource }}</div>
-    <div data-testid="prop1-node">Node : {{jcrGetProperty "prop1" node=(jcrGetNode resource=currentResource) }}</div>
-    <div data-testid="prop1-uuid">uuid : {{jcrGetProperty "prop1" identifier=(jcrGetIdentifier resource=currentResource) }}</div>
-    <div data-testid="prop1-renderer">With renderer : {{jcrGetProperty "prop1"relPath="." renderer='flagcountry' varName='flagObj'}} {{flagObj}}</div>
+<h3>currentContent usages</h3>
+    <div data-testid="currentContent_properties_jcr:title">jcr:title : {{currentContent.properties.[jcr:title]}}</div>
+    <div data-testid="currentContent_properties_prop1">prop1 : {{currentContent.properties.prop1}}</div>
+    <div data-testid="currentContent_properties_propMultiple">propMultiple : {{currentContent.properties.propMultiple}}</div>
+    <div data-testid="currentContent_properties_propI18n">propI18n : {{currentContent.properties.propI18n}}</div>
+    <div data-testid="currentContent_properties_propRichText">
+    <div>richtext : </div>
+    {{{currentContent.properties.propRichText}}}
+    </div>
+    <div data-testid="currentContent_uuid">uuid : {{currentContent.uuid}}</div>
+    <div data-testid="currentContent_name">name : {{currentContent.name}}</div>
+    <div data-testid="currentContent_path">path : {{currentContent.path}}</div>
+    <div data-testid="currentContent_parent">parent : {{currentContent.parent}}</div>
+    <div data-testid="currentContent_nodeType">nodeType : {{currentContent.nodeType}}</div>
+    <div data-testid="currentContent_mixins">mixins : {{currentContent.mixins}}</div>
 <hr/>
 
 <h3>Components</h3>
@@ -82,4 +89,17 @@
     <div data-testid="loadJSON-viewRelative">
         view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
     </div>
+<hr/>
+
+<h3>getContent helper</h3>
+        {{getContent path=gql.jcr.nodeByPath.site.path varName="currentResourceContent"}}
+        <div data-testid="getContent_site">site node transformed to JSNode : {{currentResourceContent.name}}</div>
+        {{getContent path=gql.jcr.nodeByPath.site.path varName="currentResourceContentWithChildren" includeChildren=true}}
+        <div data-testid="getContent_site_withChildren">currentResource transformed to JSNode with children included:</div>
+        {{#each currentResourceContentWithChildren.children}}
+            <br>
+            <div data-testid="getContent_site_withChildren_{{name}}_name">children name: {{name}}</div>
+            <div data-testid="getContent_site_withChildren_{{name}}_path">children path: {{path}}</div>
+            <div data-testid="getContent_site_withChildren_{{name}}_nodeType">children nodeType: {{nodeType}}</div>
+        {{/each}}
 <hr/>

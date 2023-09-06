@@ -1,4 +1,4 @@
-import {osgi, registry} from '@jahia/server-helpers';
+import {osgi, registry, render} from '@jahia/server-helpers';
 import * as helpers from './helpers';
 import Handlebars from 'handlebars';
 import array from 'handlebars-helpers/lib/array';
@@ -48,7 +48,9 @@ export default () => {
                 ns: view.bundle.getSymbolicName(),
                 lng: locale.getLanguage()
             };
-            return template({currentResource, renderContext, i18next: i18nextValues, view});
+
+            const currentContent = render.transformToJsNode(currentResource.getNode(), false, false, false);
+            return template({currentResource, renderContext, i18next: i18nextValues, view, currentContent});
         }
     });
 };
