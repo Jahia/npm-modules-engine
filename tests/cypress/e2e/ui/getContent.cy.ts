@@ -8,6 +8,7 @@ describe('Test on getContent helper', () => {
             'contain',
             '[value 1, value 2, value 3]',
         )
+        cy.get('p[data-testid="propRichTextValue"]').should('contain', 'Hello this is a sample rich text')
         cy.get('div[data-testid="currentContent_name"]').should('contain', 'test')
         cy.get('div[data-testid="currentContent_path"]').should(
             'contain',

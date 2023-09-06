@@ -9,4 +9,5 @@
  - prop2 (string)
  - propMultiple (string) multiple
  - propI18n (string) i18n
+ - propRichText (string, richtext)
  + * (jmix:droppableContent)
