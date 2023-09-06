@@ -30,7 +30,10 @@ describe('Test on getContent helper', () => {
             'contain',
             '/sites/npmTestSite/contents',
         )
-        cy.get('div[data-testid="getContent_site_withChildren_contents_nodeType"]').should('contain', 'jnt:contentFolder')
+        cy.get('div[data-testid="getContent_site_withChildren_contents_nodeType"]').should(
+            'contain',
+            'jnt:contentFolder',
+        )
 
         cy.get('div[data-testid="getContent_site_withChildren_home_name"]').should('contain', 'home')
         cy.get('div[data-testid="getContent_site_withChildren_home_path"]').should('contain', '/sites/npmTestSite/home')
