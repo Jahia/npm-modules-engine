@@ -17,7 +17,7 @@ describe('Template testsuite', () => {
 
     beforeEach('login & visit', () => {
         cy.login()
-        cy.visit('/jahia/jcontent/mySite/en/pages/home')
+        cy.visit(`/jahia/jcontent/${siteKey}/en/pages/home`)
     })
 
     afterEach('logout', () => {
