@@ -49,7 +49,7 @@ describe('Template testsuite', () => {
         setNodeProperty(`/sites/${siteKey}/home/page2`, 'jcr:title', 'Page 2', 'en')
         setNodeProperty(`/sites/${siteKey}/home/page3`, 'jcr:title', 'Page 3', 'en')
         publishAndWaitJobEnding('/sites/' + siteKey)
-        cy.visit('/sites/mySite/home.html')
+        cy.visit(`/sites/${siteKey}/home.html`)
         checkSectionsPresence()
     })
 })
