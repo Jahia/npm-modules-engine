@@ -122,6 +122,58 @@ public class RenderHelper {
         });
     }
 
+    public String createContentButtons(String childName, String[] nodeTypes, boolean editCheck, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
+        // if path exists, do nothing
+        Resource res = (Resource) renderContext.getRequest().getAttribute("currentResource" );
+        if (res.getNode().hasNode(childName)) {
+            return "";
+        }
+
+        if (!editCheck || renderContext.isEditMode()) {
+            Map<String, Object> attr = new HashMap<>();
+            attr.put("path", childName);
+            if (nodeTypes.length > 0) {
+                attr.put("nodeTypes", nodeTypes);
+            }
+            return renderTag(new ModuleTag(), attr, renderContext);
+        }
+        return "";
+    }
+
+    public String render(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
+
+        // handle json node
+        if (attr.get("content") != null) {
+            return renderComponent(attr, renderContext);
+        }
+        // if the child node requested is not available, return an empty string
+        // This make the path parameter mandatory, that's why is passed as a dedicated param.
+        Resource res = (Resource) renderContext.getRequest().getAttribute("currentResource" );
+        String path = (String) attr.get("path");
+        if (path.startsWith("/")) {
+            if (!res.getNode().getSession().nodeExists(path)) {
+                return "";
+            }
+        } else {
+            if (!res.getNode().hasNode(path)) {
+                return "";
+            }
+        }
+
+        String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
+        switch (renderConfig) {
+            case "INCLUDE": {
+                return renderTag(new IncludeTag(), attr, renderContext);
+            }
+            case "OPTION": {
+                return renderTag(new OptionTag(), attr, renderContext);
+            }
+            default: {
+                return renderTag(new ModuleTag(), attr, renderContext);
+            }
+        }
+    }
+
     public String renderSimpleComponent(String name, String type, RenderContext renderContext) throws RepositoryException {
         Map<String, String> definition = new HashMap<>();
         definition.put("name", name);
