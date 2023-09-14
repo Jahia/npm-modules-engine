@@ -39,7 +39,7 @@
 
     <properties>
         <jahia-module-signature>MC0CFQCHvCc9BAYHTZloGXAUXHhbxmJv/gIUVCuU1oiLUd/fbm0HJ22vwkqyulc=</jahia-module-signature>
-        <import-packages>graphql.annotations.annotationTypes;version="[7.2,99)"</import-packages>
+        <import-package>graphql.annotations.annotationTypes;version="[7.2,99)"</import-package>
     </properties>
 
     <repositories>
@@ -60,14 +60,14 @@
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.annotation</artifactId>
+            <artifactId>osgi.annotation</artifactId>
             <version>${osgi.version}</version>
             <scope>provided</scope>
         </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>org.osgi</groupId>-->
-<!--            <artifactId>org.osgi.compendium</artifactId>-->
+<!--            <artifactId>osgi.compendium</artifactId>-->
 <!--            <version>${osgi.compendium.version}</version>-->
 <!--            <scope>provided</scope>-->
 <!--        </dependency>-->
