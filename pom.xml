@@ -39,7 +39,10 @@
 
     <properties>
         <jahia-module-signature>MC0CFQCHvCc9BAYHTZloGXAUXHhbxmJv/gIUVCuU1oiLUd/fbm0HJ22vwkqyulc=</jahia-module-signature>
-        <import-package>graphql.annotations.annotationTypes;version="[7.2,99)"</import-package>
+        <import-package>
+             graphql.annotations.annotationTypes;version="[7.2,99)",
+             graphql.schema;version="[13.0,22)"
+        </import-package>
     </properties>
 
     <repositories>
