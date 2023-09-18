@@ -16,6 +16,7 @@
 package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
@@ -55,92 +56,59 @@ public class RenderHelper {
         this.context = context;
     }
 
-    public String renderNode(Map<String, Object> parameters) throws RepositoryException, RenderException {
-        RenderContext renderContext = (RenderContext) parameters.get("renderContext");
-        String path = (String) parameters.get("path");
-        String template = (String) parameters.get("template");
-        String templateType = (String) parameters.get("templateType");
-        String contextConfiguration = (String) parameters.get("contextConfiguration");
-
-        JCRNodeWrapper node = jcrSessionFactory.getCurrentUserSession(renderContext.getWorkspace(), renderContext.getMainResource().getLocale()).getNode(path);
-        Resource resource = new Resource(node, templateType != null ? templateType : "html", template, contextConfiguration != null ? contextConfiguration : "module");
-        return renderService.render(resource, renderContext);
-    }
-
-    public String renderModule(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        return renderTag(new ModuleTag(), attr, renderContext);
-    }
-
-    public String renderInclude(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        return renderTag(new IncludeTag(), attr, renderContext);
-    }
-
-    public String renderOption(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        return renderTag(new OptionTag(), attr, renderContext);
-    }
-
     public ProxyObject transformToJsNode(JCRNodeWrapper node, boolean includeChildren, boolean includeDescendants, boolean includeAllTranslations) throws RepositoryException {
         return recursiveProxyMap(JSNodeMapper.toJSNode(node, includeChildren, includeDescendants, includeAllTranslations));
     }
 
-    private ProxyObject recursiveProxyMap(Map<String, Object> mapToProxy) {
-        for (Map.Entry<String, Object> entry : mapToProxy.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                mapToProxy.put(entry.getKey(), recursiveProxyMap((Map<String, Object>) entry.getValue()));
-            }
-            if (entry.getValue() instanceof Collection) {
-                mapToProxy.put(entry.getKey(), ((Collection) entry.getValue()).stream().map(o -> {
-                    if (o instanceof Map) {
-                        return recursiveProxyMap((Map<String, Object>) o);
-                    }
-                    return o;
-                }).collect(Collectors.toList()));
-            }
+    public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
+        if (!attr.containsKey("content")) {
+            return "";
         }
-        return ProxyObject.fromMap(mapToProxy);
-    }
 
-    public String renderComponent(Map<String, ?> definition, RenderContext renderContext) throws RepositoryException {
         return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
                 renderContext.getMainResource().getLocale(), session -> {
 
-            JCRNodeWrapper node = definition.containsKey("content") ?
-                    JSNodeMapper.toVirtualNode((Map<String, ?>) definition.get("content"), session, renderContext) :
-                    JSNodeMapper.toVirtualNode(definition, session, renderContext);
+            JCRNodeWrapper node = JSNodeMapper.toVirtualNode((Map<String, ?>) attr.get("content"), session, renderContext);
+            String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
+            String templateType = attr.containsKey("templateType") ? (String) attr.get("templateType") : "html";
 
-            String contextConfiguration = definition.containsKey("contextConfiguration") ? (String) definition.get("contextConfiguration") : "module";
-            String templateType = definition.containsKey("templateType") ? (String) definition.get("templateType") : "html";
-            Resource r = new Resource(node, templateType, (String) definition.get("view"), contextConfiguration);
-
-            // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
-            r.getModuleParams().put("toCacheWithParentFragment", true);
-            try {
-                return renderService.render(r, renderContext);
-            } catch (RenderException e) {
-                throw new RepositoryException(e);
+            if ("OPTION".equals(renderConfig)) {
+                Map<String, Object> optionAttr = new HashMap<>();
+                optionAttr.put("node", node);
+                optionAttr.put("templateType", templateType);
+                optionAttr.put("view", attr.get("view"));
+                try {
+                    return renderTag(new OptionTag(), optionAttr, renderContext);
+                } catch (IllegalAccessException | InvocationTargetException | JspException e) {
+                    throw new RepositoryException(e);
+                }
+            } else {
+                Resource r = new Resource(node, templateType, (String) attr.get("view"),
+                        "INCLUDE".equals(renderConfig) ? "include" : "module");
+                // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
+                r.getModuleParams().put("toCacheWithParentFragment", true);
+                try {
+                    return renderService.render(r, renderContext);
+                } catch (RenderException e) {
+                    throw new RepositoryException(e);
+                }
             }
         });
     }
 
-    public String createContentButtons(String childName, String[] nodeTypes, boolean editCheck, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
-        // if path exists, do nothing
-        Resource res = (Resource) renderContext.getRequest().getAttribute("currentResource" );
-        if (res.getNode().hasNode(childName)) {
-            return "";
-        }
+    public String createContentButtons(String childName, String nodeTypes, boolean editCheck, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
 
-        if (!editCheck || renderContext.isEditMode()) {
+        boolean childExists = !"*".equals(childName) && currentResource.getNode().hasNode(childName);
+        if (!childExists && (!editCheck || renderContext.isEditMode())) {
             Map<String, Object> attr = new HashMap<>();
             attr.put("path", childName);
-            if (nodeTypes.length > 0) {
-                attr.put("nodeTypes", nodeTypes);
-            }
+            attr.put("nodeTypes", StringUtils.isNotEmpty(nodeTypes) ? nodeTypes : "");
             return renderTag(new ModuleTag(), attr, renderContext);
         }
         return "";
     }
 
-    public String render(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
+    public String render(Map<String, Object> attr, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
 
         // handle json node
         if (attr.get("content") != null) {
@@ -148,14 +116,13 @@ public class RenderHelper {
         }
         // if the child node requested is not available, return an empty string
         // This make the path parameter mandatory, that's why is passed as a dedicated param.
-        Resource res = (Resource) renderContext.getRequest().getAttribute("currentResource" );
         String path = (String) attr.get("path");
         if (path.startsWith("/")) {
-            if (!res.getNode().getSession().nodeExists(path)) {
+            if (!currentResource.getNode().getSession().nodeExists(path)) {
                 return "";
             }
         } else {
-            if (!res.getNode().hasNode(path)) {
+            if (!currentResource.getNode().hasNode(path)) {
                 return "";
             }
         }
@@ -174,13 +141,6 @@ public class RenderHelper {
         }
     }
 
-    public String renderSimpleComponent(String name, String type, RenderContext renderContext) throws RepositoryException {
-        Map<String, String> definition = new HashMap<>();
-        definition.put("name", name);
-        definition.put("primaryNodeType", type);
-        return renderComponent(definition, renderContext);
-    }
-
     public String addResourcesTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
         return renderTag(new AddResourcesTag(), attr, renderContext);
     }
@@ -196,6 +156,23 @@ public class RenderHelper {
         tag.doStartTag();
         tag.doEndTag();
         return pageContext.getTargetWriter().getBuffer().toString();
+    }
+
+    private ProxyObject recursiveProxyMap(Map<String, Object> mapToProxy) {
+        for (Map.Entry<String, Object> entry : mapToProxy.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                mapToProxy.put(entry.getKey(), recursiveProxyMap((Map<String, Object>) entry.getValue()));
+            }
+            if (entry.getValue() instanceof Collection) {
+                mapToProxy.put(entry.getKey(), ((Collection) entry.getValue()).stream().map(o -> {
+                    if (o instanceof Map) {
+                        return recursiveProxyMap((Map<String, Object>) o);
+                    }
+                    return o;
+                }).collect(Collectors.toList()));
+            }
+        }
+        return ProxyObject.fromMap(mapToProxy);
     }
 
     @Inject

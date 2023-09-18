@@ -1,4 +1,11 @@
 {
+    "text": {
+        "name": "text",
+        "nodeType": "jnt:bigText",
+        "properties": {
+            "text": "Rich text here"
+        }
+    },
     "viewRelative": {
         "properties": {
             "j:prop": "This is a view relative component"

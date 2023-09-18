@@ -1,3 +1,4 @@
+{{loadJSON 'test.components.json' 'components'}}
 {{addResources type="css" resources="news.css"}}
 {{#gql}}
     {
@@ -69,11 +70,12 @@
 <h3>Components</h3>
     Render a simple predefined richtext component :
     <div data-testid="component-bigText" style="padding: 10px; margin:10px; border: 1px solid">
-    {{renderComponent name="text" primaryNodeType="jnt:bigText" properties=(obj text="Rich text here")}}
+    {{render content=components.text}}
     </div>
     Render a text child node :
     <div data-testid="component-text-child-node" style="padding: 10px; margin:10px; border: 1px solid">
-    {{renderModule path="simpletext" nodeTypes="jnt:text"}}
+    {{render path="simpletext"}}
+    {{createContentButtons childName="simpletext" nodeTypes="jnt:text"}}
     </div>
 <hr/>
 
@@ -85,7 +87,6 @@
     </div>
 
     Load a view relative JSON file : <strong>test.components.json</strong>
-    {{loadJSON 'test.components.json' 'components'}}
     <div data-testid="loadJSON-viewRelative">
         view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
     </div>

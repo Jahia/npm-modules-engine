@@ -1,5 +1,42 @@
 {
+    "header": {
+        "name": "header",
+        "nodeType": "jnt:absoluteArea"
+    },
+    "footer": {
+        "name": "footer",
+        "nodeType": "jnt:absoluteArea"
+    },
+    "pagecontent": {
+        "name": "pagecontent",
+        "nodeType": "jnt:area"
+    },
+    "aside": {
+        "name": "aside",
+        "nodeType": "jnt:area"
+    },
+    "events": {
+        "name": "events",
+        "nodeType": "jnt:area",
+        "properties": {
+            "j:allowedTypes": ["jnt:event"]
+        }
+    },
+    "calendar": {
+        "name": "calendar",
+        "nodeType": "jnt:calendar",
+        "boundComponentRelativePath": "/events",
+        "properties": {
+            "startDateProperty": "startDate",
+            "endDateProperty": "endDate"
+        }
+    },
+    "login": {
+        "name": "login",
+        "nodeType": "jnt:loginForm"
+    },
     "navMenu": {
+        "name": "navMenu",
         "nodeType": "npmExample:navMenu",
         "properties": {
             "j:maxDepth": "10",
