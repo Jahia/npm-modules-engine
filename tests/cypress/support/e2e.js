@@ -18,6 +18,7 @@
 import './commands'
 import '@cypress/code-coverage/support'
 import 'cypress-wait-until'
+import 'cypress-iframe'
 import { addNode, createSite, deleteSite } from '@jahia/cypress'
 import { addSimplePage } from '../utils/Utils'
 

@@ -77,6 +77,7 @@ public class RenderHelper {
                 optionAttr.put("node", node);
                 optionAttr.put("templateType", templateType);
                 optionAttr.put("view", attr.get("view"));
+                optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
                 try {
                     return renderTag(new OptionTag(), optionAttr, renderContext);
                 } catch (IllegalAccessException | InvocationTargetException | JspException e) {
@@ -117,13 +118,15 @@ public class RenderHelper {
         // if the child node requested is not available, return an empty string
         // This make the path parameter mandatory, that's why is passed as a dedicated param.
         String path = (String) attr.get("path");
-        if (path.startsWith("/")) {
-            if (!currentResource.getNode().getSession().nodeExists(path)) {
-                return "";
-            }
-        } else {
-            if (!currentResource.getNode().hasNode(path)) {
-                return "";
+        if (path != null) {
+            if (path.startsWith("/")) {
+                if (!currentResource.getNode().getSession().nodeExists(path)) {
+                    return "";
+                }
+            } else {
+                if (!currentResource.getNode().hasNode(path)) {
+                    return "";
+                }
             }
         }
 
