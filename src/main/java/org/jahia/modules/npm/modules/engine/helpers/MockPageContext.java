@@ -17,6 +17,7 @@ package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.jahia.services.render.RenderContext;
 
+import javax.el.ELContext;
 import javax.servlet.*;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
@@ -206,6 +207,11 @@ public class MockPageContext extends PageContext {
     }
 
     public VariableResolver getVariableResolver() {
+        return null;
+    }
+
+    @Override
+    public ELContext getELContext() {
         return null;
     }
 }
