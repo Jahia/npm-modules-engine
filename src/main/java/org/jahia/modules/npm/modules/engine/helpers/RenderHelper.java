@@ -61,10 +61,6 @@ public class RenderHelper {
     }
 
     public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
-        if (!attr.containsKey("content")) {
-            return "";
-        }
-
         return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
                 renderContext.getMainResource().getLocale(), session -> {
 
@@ -119,12 +115,15 @@ public class RenderHelper {
         // This make the path parameter mandatory, that's why is passed as a dedicated param.
         String path = (String) attr.get("path");
         if (path != null) {
+            JCRNodeWrapper currentNode = currentResource.getNode();
             if (path.startsWith("/")) {
-                if (!currentResource.getNode().getSession().nodeExists(path)) {
+                if (!currentNode.getSession().nodeExists(path)) {
+                    logger.warn("Skipping render of {}, the node doesn't exists", path);
                     return "";
                 }
             } else {
-                if (!currentResource.getNode().hasNode(path)) {
+                if (!currentNode.hasNode(path)) {
+                    logger.warn("Skipping render of {}/{}, the node doesn't exists", currentNode.getPath(), path);
                     return "";
                 }
             }
