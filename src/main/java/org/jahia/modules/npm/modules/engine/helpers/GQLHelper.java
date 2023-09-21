@@ -23,12 +23,10 @@ import org.jahia.modules.npm.modules.engine.jsengine.Promise;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.securityfilter.PermissionService;
+import org.jahia.utils.StringResponseWrapper;
 
 import javax.inject.Inject;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.security.Principal;
@@ -66,7 +64,6 @@ public class GQLHelper {
                 params.put("variables", mapper.writeValueAsString(parameters.get("variables")));
             }
         }
-        StringWriter out = new StringWriter();
 
         PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
         permissionService.addScopes(Collections.singleton("graphql"), null);
@@ -80,8 +77,9 @@ public class GQLHelper {
                 return super.getParameter(name);
             }
         };
-        servlet.service(req, new HttpServletResponseMock(out));
-        return context.getContext().eval("js", "(" + out + ")");
+        HttpServletResponseMock responseMock = new HttpServletResponseMock();
+        servlet.service(req, responseMock);
+        return context.getContext().eval("js", "(" + ((ServletOutputStreamMock) responseMock.getOutputStream()).getContent() + ")");
     }
 
     @Inject
@@ -204,8 +202,13 @@ public class GQLHelper {
         }
 
         @Override
+        public String changeSessionId() {
+            return null;
+        }
+
+        @Override
         public boolean isRequestedSessionIdValid() {
-            return false;
+            return true;
         }
 
         @Override
@@ -221,6 +224,36 @@ public class GQLHelper {
         @Override
         public boolean isRequestedSessionIdFromUrl() {
             return false;
+        }
+
+        @Override
+        public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+            return true;
+        }
+
+        @Override
+        public void login(String s, String s1) throws ServletException {
+
+        }
+
+        @Override
+        public void logout() throws ServletException {
+
+        }
+
+        @Override
+        public Collection<Part> getParts() throws IOException, ServletException {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Part getPart(String s) throws IOException, ServletException {
+            return null;
+        }
+
+        @Override
+        public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
+            return null;
         }
 
         @Override
@@ -245,6 +278,11 @@ public class GQLHelper {
 
         @Override
         public int getContentLength() {
+            return 0;
+        }
+
+        @Override
+        public long getContentLengthLong() {
             return 0;
         }
 
@@ -368,13 +406,69 @@ public class GQLHelper {
             return 0;
         }
 
+        @Override
+        public ServletContext getServletContext() {
+            return null;
+        }
+
+        @Override
+        public AsyncContext startAsync() throws IllegalStateException {
+            return null;
+        }
+
+        @Override
+        public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+            return null;
+        }
+
+        @Override
+        public boolean isAsyncStarted() {
+            return false;
+        }
+
+        public boolean isAsyncSupported() {
+            return false;
+        }
+
+        @Override
+        public AsyncContext getAsyncContext() {
+            return null;
+        }
+
+        @Override
+        public DispatcherType getDispatcherType() {
+            return null;
+        }
+    }
+
+    private static class ServletOutputStreamMock extends ServletOutputStream {
+
+        private final StringBuilder buffer = new StringBuilder();
+
+        @Override
+        public void write(int b) throws IOException {
+            buffer.append((char) b);
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
+        }
+
+        public String getContent() {
+            return buffer.toString();
+        }
     }
 
     private static class HttpServletResponseMock implements HttpServletResponse {
-        private final StringWriter out;
+        private final ServletOutputStream out;
 
-        public HttpServletResponseMock(StringWriter out) {
-            this.out = out;
+        public HttpServletResponseMock() {
+            this.out = new ServletOutputStreamMock();
         }
 
         @Override
@@ -463,6 +557,26 @@ public class GQLHelper {
         }
 
         @Override
+        public int getStatus() {
+            return 0;
+        }
+
+        @Override
+        public String getHeader(String s) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaders(String s) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Collection<String> getHeaderNames() {
+            return Collections.emptyList();
+        }
+
+        @Override
         public String getCharacterEncoding() {
             return null;
         }
@@ -484,16 +598,21 @@ public class GQLHelper {
 
         @Override
         public ServletOutputStream getOutputStream() throws IOException {
-            return null;
+            return out;
         }
 
         @Override
         public PrintWriter getWriter() throws IOException {
-            return new PrintWriter(out);
+            return null;
         }
 
         @Override
         public void setContentLength(int len) {
+
+        }
+
+        @Override
+        public void setContentLengthLong(long l) {
 
         }
 

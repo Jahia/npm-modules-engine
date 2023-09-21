@@ -64,10 +64,10 @@ const buildMenu = (node, navMenuLevel, config) => {
                 const hasChildren = navMenuLevel < config.maxDepth && getMenuItemsChildren(config.workspace, menuItem.getPath()).length > 0;
                 if (config.startLevelValue < navMenuLevel) {
                     config.currentResource.getDependencies().add(menuItem.getCanonicalPath());
-                    menuEntry.render = render.renderModule({
+                    menuEntry.render = render.render({
                         path: menuItem.getPath(),
                         view: config.menuEntryComponent || 'menuElement'
-                    }, config.renderContext);
+                    }, config.renderContext, config.currentResource);
                 }
 
                 if (hasChildren) {

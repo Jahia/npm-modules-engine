@@ -134,11 +134,9 @@ public class JSNodeMapper {
     private static JCRNodeWrapper toVirtualNode(Map<String, ?> jsonNode, JCRNodeWrapper parent, RenderContext renderContext) throws RepositoryException {
         JCRSessionWrapper session = parent.getSession();
         Locale locale = renderContext.getMainResource().getLocale();
-        // TODO: stop support primaryNodeType
-        String nodeType = jsonNode.containsKey("nodeType") ? (String) jsonNode.get("nodeType") : (String) jsonNode.get("primaryNodeType");
         // TODO: stop support temp-node name
         String name = jsonNode.containsKey("name") ? (String) jsonNode.get("name") : "temp-node";
-        JCRNodeWrapper node = parent.addNode(name, nodeType);
+        JCRNodeWrapper node = parent.addNode(name, (String) jsonNode.get("nodeType"));
 
         // handle mixins
         if (jsonNode.containsKey("mixins")) {

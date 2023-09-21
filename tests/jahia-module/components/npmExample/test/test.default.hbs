@@ -1,3 +1,4 @@
+{{loadJSON 'test.components.json' 'components'}}
 {{addResources type="css" resources="news.css"}}
 {{#gql}}
     {
@@ -67,13 +68,26 @@
 <hr/>
 
 <h3>Components</h3>
-    Render a simple predefined richtext component :
-    <div data-testid="component-bigText" style="padding: 10px; margin:10px; border: 1px solid">
-    {{renderComponent name="text" primaryNodeType="jnt:bigText" properties=(obj text="Rich text here")}}
+    Render a jnt:text as JSON Node :
+    <div data-testid="component-text-json-node" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render content=components.text}}
+    </div>
+    Render a jnt:text as JSON Node with conf OPTION :
+    <div data-testid="component-text-json-node-option" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render content=components.textOption advanceRenderingConfig="OPTION"}}
+    </div>
+    Render a npmExample:test with view sub as JSON Node with conf OPTION :
+    <div data-testid="component-npm-json-node-option" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render content=components.npmOption view="sub" advanceRenderingConfig="OPTION"}}
+    </div>
+    Render a simple predefined richtext component with conf INCLUDE :
+    <div data-testid="component-npm-node-include" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render view="sub" advanceRenderingConfig="INCLUDE"}}
     </div>
     Render a text child node :
     <div data-testid="component-text-child-node" style="padding: 10px; margin:10px; border: 1px solid">
-    {{renderModule path="simpletext" nodeTypes="jnt:text"}}
+        {{render path="simpletext"}}
+        {{createContentButtons childName="simpletext" nodeTypes="jnt:text"}}
     </div>
 <hr/>
 
@@ -85,7 +99,6 @@
     </div>
 
     Load a view relative JSON file : <strong>test.components.json</strong>
-    {{loadJSON 'test.components.json' 'components'}}
     <div data-testid="loadJSON-viewRelative">
         view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
     </div>

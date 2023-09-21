@@ -1,4 +1,32 @@
 {
+    "text": {
+        "name": "text",
+        "nodeType": "jnt:text",
+        "properties": {
+            "text": "JSON node rendered"
+        }
+    },
+    "textInclude": {
+        "name": "textInclude",
+        "nodeType": "jnt:text",
+        "properties": {
+            "text": "JSON node rendered with include config"
+        }
+    },
+    "textOption": {
+        "name": "textOption",
+        "nodeType": "jnt:text",
+        "properties": {
+            "text": "JSON node rendered with option config"
+        }
+    },
+    "npmOption": {
+        "name": "npmOption",
+        "nodeType": "npmExample:test",
+        "properties": {
+            "prop1": "prop1 value it is"
+        }
+    },
     "viewRelative": {
         "properties": {
             "j:prop": "This is a view relative component"

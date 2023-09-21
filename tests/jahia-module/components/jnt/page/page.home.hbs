@@ -5,15 +5,15 @@
         {{addResources type="css" resources="styles.css"}}
         <div class="page">
             <div class="header">
-                <div class="headerContent">{{renderComponent name="header" primaryNodeType="jnt:absoluteArea"}}</div>
-                <div class="headerLogin">{{renderComponent name="login" primaryNodeType="jnt:loginForm"}}</div>
+                <div class="headerContent">{{render content=components.header}}</div>
+                <div class="headerLogin">{{render content=components.login}}</div>
             </div>
-            <div class="nav">{{renderComponent name="navMenu" primaryNodeType=components.navMenu.nodeType properties=components.navMenu.properties}}</div>
+            <div class="nav">{{render content=components.navMenu}}</div>
             <div class="main">
-                <div class="article">{{renderComponent name="pagecontent" primaryNodeType="jnt:area"}}</div>
+                <div class="article">{{render content=components.pagecontent}}</div>
             </div>
             <div class="footer">
-                <div class="footerContent">{{renderComponent name="footer" primaryNodeType="jnt:absoluteArea"}}</div>
+                <div class="footerContent">{{render content=components.footer}}</div>
             </div>
         </div>
     </body>
