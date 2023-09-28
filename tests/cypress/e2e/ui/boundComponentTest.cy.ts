@@ -9,7 +9,14 @@ describe('Check on bound components', () => {
         enableModule('event', siteKey)
     })
 
-    const addEvent = (pageName: string, name: string, title: string, startDate: Date, endDate?: Date, eventsType: string = 'meeting') => {
+    const addEvent = (
+        pageName: string,
+        name: string,
+        title: string,
+        startDate: Date,
+        endDate?: Date,
+        eventsType = 'meeting',
+    ) => {
         addNode({
             parentPathOrId: `/sites/${siteKey}/home/${pageName}/events`,
             name: name,
@@ -47,8 +54,8 @@ describe('Check on bound components', () => {
     }
     it('Verify existing .jsp component like: calendar is correctly bound to events', function () {
         cy.login()
-        const pageName = "test1"
-        addEventPageAndEvents(pageName,() => {
+        const pageName = 'test1'
+        addEventPageAndEvents(pageName, () => {
             cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`)
             cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageName}.html`)
             validateNumberOfEventInCalendar(2)
@@ -58,7 +65,7 @@ describe('Check on bound components', () => {
 
     it('Verify that the calendar is correctly refreshed once a new event is added', function () {
         cy.login()
-        const pageName = "test2"
+        const pageName = 'test2'
         addEventPageAndEvents(pageName, () => {
             publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
             cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
@@ -80,7 +87,7 @@ describe('Check on bound components', () => {
 
     it('Verify that the facets is working correctly', function () {
         cy.login()
-        const pageName = "test3"
+        const pageName = 'test3'
         addEventPageAndEvents(pageName, () => {
             // create events with event type for facets
             const today = new Date()
@@ -92,25 +99,25 @@ describe('Check on bound components', () => {
 
             // check facets display
             cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
-            cy.get(".eventsListItem").should('have.length', 4);
-            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).should('exist');
-            cy.get(`div[class*="facetsList"] a:contains("meeting")`).should('exist');
+            cy.get('.eventsListItem').should('have.length', 4)
+            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).should('exist')
+            cy.get(`div[class*="facetsList"] a:contains("meeting")`).should('exist')
 
             // activate consumerShow facet
-            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).click();
-            cy.get(".eventsListItem").should('have.length', 1);
+            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).click()
+            cy.get('.eventsListItem').should('have.length', 1)
 
             // deactivate consumerShow facet
             cy.get(`a:contains("remove")`).click()
-            cy.get(".eventsListItem").should('have.length', 4);
+            cy.get('.eventsListItem').should('have.length', 4)
 
             // activate meeting facet
-            cy.get(`div[class*="facetsList"] a:contains("meeting")`).click();
-            cy.get(".eventsListItem").should('have.length', 3);
+            cy.get(`div[class*="facetsList"] a:contains("meeting")`).click()
+            cy.get('.eventsListItem').should('have.length', 3)
 
             // deactivate consumerShow facet
             cy.get(`a:contains("remove")`).click()
-            cy.get(".eventsListItem").should('have.length', 4);
+            cy.get('.eventsListItem').should('have.length', 4)
         })
         cy.logout()
     })
