@@ -43,7 +43,6 @@
              graphql.annotations.annotationTypes;version="[7.2,99)",
              graphql.schema;version="[13.0,22)"
         </import-package>
-        <jahia-depends/>
     </properties>
 
     <repositories>
