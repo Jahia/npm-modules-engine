@@ -43,6 +43,7 @@
              graphql.annotations.annotationTypes;version="[7.2,99)",
              graphql.schema;version="[13.0,22)"
         </import-package>
+        <jahia-depends/>
     </properties>
 
     <repositories>
@@ -210,16 +211,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <release>11</release>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 </project>

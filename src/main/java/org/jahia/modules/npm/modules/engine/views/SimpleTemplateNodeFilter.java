@@ -31,28 +31,32 @@ public class SimpleTemplateNodeFilter extends AbstractFilter {
 
     @Activate
     public void activate() {
-        setPriority(20.5f);
-        setSkipOnConfigurations("wrappedcontent,wrapper");
+        // Before Jahia cache system
+        setPriority(15.9f);
+        setApplyOnMainResource(true);
         setApplyOnTemplateTypes("html,html-.*");
     }
 
     @Override
     public String prepare(RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
-        Script script = (Script) renderContext.getRequest().getAttribute("script");
 
-        if (resource.getNode().hasProperty(TEMPLATE_NAME)) {
-            String oldTemplate = resource.getTemplate();
+        // Bypass Jahia cache script resolution for generating attributes for cache keys
+        // So that we are sure the cache key will be correct.
+        Script script;
+        if ("default".equals(resource.getTemplate()) && resource.getNode().hasProperty(TEMPLATE_NAME)) {
             try {
-                if ("default".equals(resource.getTemplate()) && resource.getNode().hasProperty(TEMPLATE_NAME)) {
-                    resource.setTemplate(resource.getNode().getProperty(TEMPLATE_NAME).getString());
-                }
-                script = service.resolveScript(resource, renderContext);
-                renderContext.getRequest().setAttribute("script", script);
+                // Handle template resolution for pages using NPM templates
+                resource.setTemplate(resource.getNode().getProperty(TEMPLATE_NAME).getString());
+                script = resource.getScript(renderContext);
             } finally {
-                resource.setTemplate(oldTemplate);
+                resource.setTemplate("default");
             }
+        } else {
+            script = resource.getScript(renderContext);
         }
 
+        // in case view properties contains "template=true" it means it's a NPM template, so we setup some requests attributes
+        // mostly to bypass Jahia core TemplateNodeFilter.
         if (Boolean.parseBoolean(script.getView().getProperties().getProperty("template"))) {
             chain.pushAttribute(renderContext.getRequest(), "inWrapper", Boolean.TRUE);
             chain.pushAttribute(renderContext.getRequest(), "skipWrapper", Boolean.TRUE);
@@ -60,5 +64,4 @@ public class SimpleTemplateNodeFilter extends AbstractFilter {
         }
         return null;
     }
-
 }

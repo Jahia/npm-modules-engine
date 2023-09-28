@@ -188,8 +188,7 @@ public class JSNodeMapper {
         List<Map<String, Object>> children = (List<Map<String, Object>>) jsonNode.get("children");
         if (children != null) {
             for (Map<String, Object> child : children) {
-                child.put("parent", node.getPath());
-                toVirtualNode(child, parent, renderContext);
+                toVirtualNode(child, node, renderContext);
             }
         }
 
