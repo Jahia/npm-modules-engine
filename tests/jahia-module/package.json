@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode=development",
-    "deploy": "jahia-deploy",
+    "deploy": "jahia-deploy pack",
     "watch": "yarn build --env deploy=true --watch",
     "lint": "eslint .",
     "test": "yarn lint"
