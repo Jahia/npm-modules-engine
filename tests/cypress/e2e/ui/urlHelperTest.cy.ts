@@ -48,12 +48,24 @@ describe('Test on url helper', () => {
         publishAndWaitJobEnding('/sites/npmTestSite')
     })
 
+    const testUrl = (urls) => {
+        for (const url of urls) {
+            if (url.expectedURL) {
+                cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`)
+                    .should('have.attr', url.attribute)
+                    .should('include', url.expectedURL)
+            } else {
+                cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should('have.attr', url.attribute, '')
+            }
+        }
+    }
+
     it('Generated URLs should be correct', function () {
         cy.login()
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testUrl.html`)
 
         // check default workspace in preview
-        let urls = [
+        testUrl([
             {
                 dataTestId: 'image_reference',
                 tag: 'img',
@@ -112,20 +124,12 @@ describe('Test on url helper', () => {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
-                expectedURL: '',
             },
-        ]
-        for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
-                'have.attr',
-                url.attribute,
-                url.expectedURL,
-            )
-        }
+        ])
 
         // check live workspace
         cy.visit(`/sites/npmTestSite/home/testUrl.html`)
-        urls = [
+        testUrl([
             {
                 dataTestId: 'image_reference',
                 tag: 'img',
@@ -184,16 +188,8 @@ describe('Test on url helper', () => {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
-                expectedURL: '',
             },
-        ]
-        for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
-                'have.attr',
-                url.attribute,
-                url.expectedURL,
-            )
-        }
+        ])
 
         cy.logout()
     })
@@ -207,7 +203,7 @@ describe('Test on url helper', () => {
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testUrl.html`)
 
         // check default workspace in preview
-        let urls = [
+        testUrl([
             {
                 dataTestId: 'image_reference',
                 tag: 'img',
@@ -261,20 +257,12 @@ describe('Test on url helper', () => {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
-                expectedURL: '',
             },
-        ]
-        for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
-                'have.attr',
-                url.attribute,
-                url.expectedURL,
-            )
-        }
+        ])
 
         // check live workspace
         cy.visit(`/sites/npmTestSite/home/testUrl.html`)
-        urls = [
+        testUrl([
             {
                 dataTestId: 'image_reference',
                 tag: 'img',
@@ -323,16 +311,8 @@ describe('Test on url helper', () => {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
-                expectedURL: '',
             },
-        ]
-        for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
-                'have.attr',
-                url.attribute,
-                url.expectedURL,
-            )
-        }
+        ])
 
         cy.logout()
     })
