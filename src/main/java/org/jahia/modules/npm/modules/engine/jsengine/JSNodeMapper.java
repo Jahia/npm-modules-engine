@@ -1,6 +1,8 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
 import aQute.bnd.maven.support.Repo;
+import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.value.ValueHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
@@ -25,6 +27,7 @@ public class JSNodeMapper {
     private static final List<String> IGNORED_I18N_PROPERTIES = Arrays.asList("jcr:lastModifiedBy", "jcr:language",
             "jcr:predecessors", "jcr:baseVersion", "jcr:uuid", "jcr:lastModified", "jcr:isCheckedOut",
             "jcr:primaryType", "jcr:versionHistory");
+    private static final List<String> IGNORED_PROPERTIES = Arrays.asList("jcr:predecessors", "jcr:baseVersion", "jcr:versionHistory");
 
     /**
      * Transform a JCR Node into a JS readable data (Map is used on Java side)
@@ -61,7 +64,7 @@ public class JSNodeMapper {
 
         // handle properties
         if (includeAllTranslations) {
-            jsNode.put("properties", toJSNodeProperties(node, false, null));
+            jsNode.put("properties", toJSNodeProperties(node, false, IGNORED_PROPERTIES));
 
             Map<String, Object> jsI18nProperties = new HashMap<>();
             NodeIterator i18nNodeIterator = node.getI18Ns();
@@ -72,7 +75,7 @@ public class JSNodeMapper {
             }
             jsNode.put("i18nProperties", jsI18nProperties);
         } else {
-            jsNode.put("properties", toJSNodeProperties(node, true, null));
+            jsNode.put("properties", toJSNodeProperties(node, true, IGNORED_PROPERTIES));
         }
 
         // handle children
@@ -107,13 +110,29 @@ public class JSNodeMapper {
             if (property.isMultiple()) {
                 jsProperties.put(property.getName(),
                         Arrays.stream(property.getValues())
-                                .map(ThrowingFunction.unchecked(Value::getString))
+                                .map(ThrowingFunction.unchecked(value -> toJSNodePropertyValue(property, value)))
                                 .collect(Collectors.toList()));
             } else {
-                jsProperties.put(property.getName(), property.getValue().getString());
+                jsProperties.put(property.getName(), toJSNodePropertyValue(property, property.getValue()));
             }
         }
         return jsProperties;
+    }
+
+    private static Object toJSNodePropertyValue(Property property, Value value) throws RepositoryException {
+        int type = value.getType();
+        switch (type) {
+            case PropertyType.REFERENCE:
+            case PropertyType.WEAKREFERENCE:
+                try {
+                    Node ref = property.getSession().getNodeByIdentifier(value.getString());
+                    return toJSNode((JCRNodeWrapper) ref, false, false, false);
+                } catch (ItemNotFoundException e) {
+                    return null;
+                }
+            default:
+                return value.getString();
+        }
     }
 
     /**

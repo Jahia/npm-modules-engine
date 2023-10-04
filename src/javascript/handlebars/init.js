@@ -19,7 +19,12 @@ import registerI18nHelper from 'handlebars-i18next';
 
 export default () => {
     Object.keys(helpers).forEach(k => {
-        Handlebars.registerHelper(k, helpers[k]);
+        if (helpers[k].init && typeof helpers[k].init === 'function') {
+            helpers[k].init();
+            Handlebars.registerHelper(k, helpers[k].helper);
+        } else {
+            Handlebars.registerHelper(k, helpers[k]);
+        }
     });
 
     [array, collection, comparison, html, match, math, misc, number, object, path, regex, string, url].forEach(lib => {

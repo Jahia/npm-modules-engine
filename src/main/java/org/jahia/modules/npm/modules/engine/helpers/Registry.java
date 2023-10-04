@@ -19,6 +19,7 @@ import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
 
@@ -35,11 +36,20 @@ public class Registry {
     }
 
     public List<Map<String, Object>> find(Map<String, Object> filter) {
+        return find(filter, null);
+    }
+
+    public List<Map<String, Object>> find(Map<String, Object> filter, String orderBy) {
         Collection<Map<String, Object>> result = registryMap.values();
 
-        return result.stream()
-                .filter(item -> filter.entrySet().stream().allMatch(f -> f.getValue().equals(item.get(f.getKey()))))
-                .collect(Collectors.toList());
+        Stream<Map<String, Object>> filtered = result.stream()
+                .filter(item -> filter.entrySet().stream().allMatch(f -> f.getValue().equals(item.get(f.getKey()))));
+
+        if (orderBy != null) {
+            filtered = filtered.sorted(Comparator.comparing(m -> (Integer) m.get(orderBy), Comparator.nullsFirst(Comparator.reverseOrder())));
+        }
+
+        return filtered.collect(Collectors.toList());
     }
 
     public void add(String type, String key, Map<String, Object>... arguments) {
