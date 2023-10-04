@@ -68,20 +68,27 @@ export default {
 
         let url;
         if (options.hash.path) {
-            const jcrNode = getNode({path: options.hash.path}, currentResource.getNode().getSession());
+            let jcrNode;
+            try {
+                jcrNode = getNode({path: options.hash.path}, currentResource.getNode().getSession())
+            } catch (error) {
+                // node not found
+            }
 
-            const urlBuilders = registry.find({type: 'urlBuilder'}, 'priority');
-            for (const urlBuilder of urlBuilders) {
-                if (urlBuilder.key === '*' || jcrNode.isNodeType(urlBuilder.key)) {
-                    url = urlBuilder.buildURL({
-                        jcrNode,
-                        mode: options.hash.mode,
-                        language: options.hash.language,
-                        extension: options.hash.extension,
-                        renderContext,
-                        currentResource
-                    });
-                    break;
+            if (jcrNode) {
+                const urlBuilders = registry.find({type: 'urlBuilder'}, 'priority');
+                for (const urlBuilder of urlBuilders) {
+                    if (urlBuilder.key === '*' || jcrNode.isNodeType(urlBuilder.key)) {
+                        url = urlBuilder.buildURL({
+                            jcrNode,
+                            mode: options.hash.mode,
+                            language: options.hash.language,
+                            extension: options.hash.extension,
+                            renderContext,
+                            currentResource
+                        });
+                        break;
+                    }
                 }
             }
         } else if (options.hash.value) {

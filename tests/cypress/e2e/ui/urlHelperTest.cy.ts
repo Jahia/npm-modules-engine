@@ -108,11 +108,19 @@ describe('Test on url helper', () => {
                 attribute: 'href',
                 expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testPage.myAction.do',
             },
+            {
+                dataTestId: 'path_not_exists',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '',
+            },
         ]
         for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`)
-                .should('have.attr', url.attribute)
-                .should('include', url.expectedURL)
+            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
+                'have.attr',
+                url.attribute,
+                url.expectedURL,
+            )
         }
 
         // check live workspace
@@ -172,11 +180,19 @@ describe('Test on url helper', () => {
                 attribute: 'href',
                 expectedURL: '/sites/npmTestSite/home/testPage.myAction.do',
             },
+            {
+                dataTestId: 'path_not_exists',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '',
+            },
         ]
         for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`)
-                .should('have.attr', url.attribute)
-                .should('include', url.expectedURL)
+            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
+                'have.attr',
+                url.attribute,
+                url.expectedURL,
+            )
         }
 
         cy.logout()
@@ -241,11 +257,19 @@ describe('Test on url helper', () => {
                 attribute: 'href',
                 expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testPage.myAction.do',
             },
+            {
+                dataTestId: 'path_not_exists',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '',
+            },
         ]
         for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`)
-                .should('have.attr', url.attribute)
-                .should('include', url.expectedURL)
+            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
+                'have.attr',
+                url.attribute,
+                url.expectedURL,
+            )
         }
 
         // check live workspace
@@ -295,11 +319,19 @@ describe('Test on url helper', () => {
                 attribute: 'href',
                 expectedURL: '/sites/npmTestSite/home/testPage.myAction.do',
             },
+            {
+                dataTestId: 'path_not_exists',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '',
+            },
         ]
         for (const url of urls) {
-            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`)
-                .should('have.attr', url.attribute)
-                .should('include', url.expectedURL)
+            cy.get(`div[data-testid="${url.dataTestId}"] ${url.tag}`).should(
+                'have.attr',
+                url.attribute,
+                url.expectedURL,
+            )
         }
 
         cy.logout()
