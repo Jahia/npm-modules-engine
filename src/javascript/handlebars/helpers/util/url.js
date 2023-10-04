@@ -70,9 +70,9 @@ export default {
         if (options.hash.path) {
             let jcrNode;
             try {
-                jcrNode = getNode({path: options.hash.path}, currentResource.getNode().getSession())
-            } catch (error) {
-                // node not found
+                jcrNode = getNode({path: options.hash.path}, currentResource.getNode().getSession());
+            } catch (_) {
+                // Node not found
             }
 
             if (jcrNode) {
