@@ -25,7 +25,7 @@ export default {
     init: () => {
         registry.add('urlBuilder', 'nt:file', {
             priority: 1,
-            buildURL: (jcrNode, mode, language, extension, renderContext, currentResource) => {
+            buildURL: ({jcrNode, mode, currentResource}) => {
                 let workspace = mode ?
                     ((mode === 'edit' || mode === 'preview') ? 'default' : 'live') :
                     currentResource.getWorkspace();
@@ -34,7 +34,7 @@ export default {
         });
         registry.add('urlBuilder', '*', {
             priority: 0,
-            buildURL: (jcrNode, mode, language, extension, renderContext, currentResource) => {
+            buildURL: ({jcrNode, mode, language, extension, renderContext, currentResource}) => {
                 let workspace;
                 let servletPath;
                 if (mode) {
@@ -73,7 +73,14 @@ export default {
             const urlBuilders = registry.find({type: 'urlBuilder'}, 'priority');
             for (const urlBuilder of urlBuilders) {
                 if (urlBuilder.key === '*' || jcrNode.isNodeType(urlBuilder.key)) {
-                    url = urlBuilder.buildURL(jcrNode, options.hash.mode, options.hash.language, options.hash.extension, renderContext, currentResource);
+                    url = urlBuilder.buildURL({
+                        jcrNode,
+                        mode: options.hash.mode,
+                        language: options.hash.language,
+                        extension: options.hash.extension,
+                        renderContext,
+                        currentResource
+                    });
                     break;
                 }
             }

@@ -1,8 +1,5 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
-import aQute.bnd.maven.support.Repo;
-import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.value.ValueHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
