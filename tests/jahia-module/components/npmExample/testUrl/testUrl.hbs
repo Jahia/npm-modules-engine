@@ -1,14 +1,9 @@
 {{renderInfo varName='renderInfo'}}
-{{#if currentContent.properties.image.path}}
-    {{addCacheDependency path=currentContent.properties.image.path}}
-{{/if}}
-{{#if currentContent.properties.linknode.path}}
-    {{addCacheDependency path=currentContent.properties.linknode.path}}
-{{/if}}
 
 <h3>Url helper testing component</h3>
 
 {{#if currentContent.properties.image.path}}
+    {{addCacheDependency path=currentContent.properties.image.path}}
     <div data-testid="image_reference">
         <img height="150" src="{{url path=currentContent.properties.image.path}}" alt="image">
     </div>
@@ -17,6 +12,7 @@
     <img height="150" src="{{url value=(append renderInfo.moduleUrl "/images/goat.jpg")}}" alt="goat">
 </div>
 {{#if currentContent.properties.linknode.path}}
+    {{addCacheDependency path=currentContent.properties.linknode.path}}
     <div data-testid="content_link">
         <a href="{{url path=currentContent.properties.linknode.path}}">content link - current context</a>
     </div>
