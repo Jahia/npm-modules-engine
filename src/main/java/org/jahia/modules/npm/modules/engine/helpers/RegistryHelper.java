@@ -39,6 +39,10 @@ public class RegistryHelper {
         return registry.find(filter).stream().map(ProxyObject::fromMap).collect(Collectors.toList());
     }
 
+    public List<Object> find(Map<String, Object> filter, String orderBy) {
+        return registry.find(filter, orderBy).stream().map(ProxyObject::fromMap).collect(Collectors.toList());
+    }
+
     public void add(String type, String key, Map<String, Object>... arguments) {
         registry.add(type, key, arguments);
     }
