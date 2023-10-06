@@ -31,5 +31,13 @@
         "properties": {
             "j:prop": "This is a view relative component"
         }
+    },
+    "viewWithMixin": {
+        "name": "viewWithMixin",
+        "nodeType": "npmExample:test",
+        "mixins": ["jmix:tagged"],
+        "properties": {
+            "j:tagList": ["tag1", "tag2"]
+        }
     }
 }

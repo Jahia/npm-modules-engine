@@ -41,6 +41,13 @@ describe('Test on render and createContentButtons helpers', () => {
         cy.logout()
     })
 
+    it('should render JSON node with mixin', function () {
+        cy.login()
+        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
+        cy.get('div[data-testid="component-json-node-with-mixin"]').should('contain', 'tag1, tag2')
+        cy.logout()
+    })
+
     it('should render existing child node using relative path', function () {
         cy.login()
         addNode({
