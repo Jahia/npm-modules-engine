@@ -55,7 +55,20 @@ export default () => {
             };
 
             const currentContent = render.transformToJsNode(currentResource.getNode(), false, false, false);
-            return template({currentResource, renderContext, i18next: i18nextValues, view, currentContent});
+
+            // Build a simplified ctx for handlebars template usage.
+            const ctx = {
+                isAjaxRequest: renderContext.isAjaxRequest(),
+                isLoggedIn: renderContext.isLoggedIn(),
+                readOnlyStatus: renderContext.getReadOnlyStatus().toString(),
+                mode: renderContext.getMode(),
+                workspace: renderContext.getWorkspace(),
+                contentLanguage: locale.getLanguage(),
+                uiLanguage: renderContext.getUILocale().getLanguage(),
+                requestLanguage: renderContext.getRequest().getLocale().getLanguage(),
+                currentModule: renderContext.getURLGenerator().getCurrentModule()
+            };
+            return template({ctx, currentResource, renderContext, i18next: i18nextValues, view, currentContent});
         }
     });
 };
