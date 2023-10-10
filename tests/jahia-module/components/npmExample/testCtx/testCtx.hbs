@@ -1,0 +1,7 @@
+<h3>ctx injected in views testing component</h3>
+
+{{#each ctx}}
+    <div data-testid="ctx_{{@key}}">
+        {{@key}}: {{this}}
+    </div>
+{{/each}}
