@@ -68,7 +68,16 @@ export default () => {
                 requestLanguage: renderContext.getRequest().getLocale().getLanguage(),
                 currentModule: renderContext.getURLGenerator().getCurrentModule()
             };
-            return template({ctx, currentResource, renderContext, i18next: i18nextValues, view, currentContent});
+            const renderParameters = render.getRenderParameters(currentResource);
+            return template({
+                ctx,
+                renderParameters,
+                currentResource,
+                renderContext,
+                i18next: i18nextValues,
+                view,
+                currentContent
+            });
         }
     });
 };

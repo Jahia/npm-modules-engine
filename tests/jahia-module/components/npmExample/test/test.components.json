@@ -39,5 +39,24 @@
         "properties": {
             "j:tagList": ["tag1", "tag2"]
         }
+    },
+    "viewWithParameters": {
+        "name": "viewWithParameters",
+        "nodeType": "npmExample:test",
+        "properties": {
+            "prop1": "prop1 value it is"
+        }
+    },
+    "renderParameters": {
+        "stringParam": "stringValue",
+        "objectParam": {
+            "integerParam": 1,
+            "booleanParam": true
+        },
+        "arrayParam": [
+            1,
+            2,
+            3
+        ]
     }
 }

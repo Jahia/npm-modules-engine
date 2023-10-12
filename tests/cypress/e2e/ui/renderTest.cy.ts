@@ -44,7 +44,19 @@ describe('Test on render and createContentButtons helpers', () => {
     it('should render JSON node with mixin', function () {
         cy.login()
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
-        cy.get('div[data-testid="component-json-node-with-mixin"]').should('contain', 'tag1, tag2')
+        cy.get('div[data-testid="component-json-node-with-mixin"]').should('contain', 'tag1,tag2')
+        cy.logout()
+    })
+
+    it('should render JSON node with parameters passed to render', function () {
+        cy.login()
+        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
+        cy.get('div[data-testid="component-json-node-with-parameters"]')
+            .should('contain', 'prop1=prop1 value it is')
+            .should('contain', 'stringParam=stringValue')
+            .should('contain', 'objectParam.integerParam=1')
+            .should('contain', 'objectParam.booleanParam=true')
+            .should('contain', 'lookup arrayParam 1=2')
         cy.logout()
     })
 
