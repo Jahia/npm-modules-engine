@@ -51,12 +51,34 @@ describe('Test on render and createContentButtons helpers', () => {
     it('should render JSON node with parameters passed to render', function () {
         cy.login()
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
-        cy.get('div[data-testid="component-json-node-with-parameters"]')
-            .should('contain', 'prop1=prop1 value it is')
-            .should('contain', 'stringParam=stringValue')
-            .should('contain', 'objectParam.integerParam=1')
-            .should('contain', 'objectParam.booleanParam=true')
-            .should('contain', 'lookup arrayParam 1=2')
+        cy.get('div[data-testid="component-json-node-with-parameters"] div[data-testid="renderParam-string1"]').should(
+            'contain',
+            'stringParam=stringValue',
+        )
+        cy.get('div[data-testid="component-json-node-with-parameters"] div[data-testid="renderParam-string2"]').should(
+            'contain',
+            'stringParam2=stringValue2',
+        )
+        cy.get(
+            'div[data-testid="component-json-node-with-parameters"] div[data-testid="renderParam-notString-notSupported"]',
+        ).should('contain', 'objectParam not supported=')
+        cy.logout()
+    })
+
+    it('should render NPM node with parameters passed to render', function () {
+        cy.login()
+        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
+        cy.get('div[data-testid="component-npm-node-with-parameters"] div[data-testid="renderParam-string1"]').should(
+            'contain',
+            'stringParam=stringValue',
+        )
+        cy.get('div[data-testid="component-npm-node-with-parameters"] div[data-testid="renderParam-string2"]').should(
+            'contain',
+            'stringParam2=stringValue2',
+        )
+        cy.get(
+            'div[data-testid="component-npm-node-with-parameters"] div[data-testid="renderParam-notString-notSupported"]',
+        ).should('contain', 'objectParam not supported=')
         cy.logout()
     })
 

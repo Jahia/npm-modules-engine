@@ -38,8 +38,11 @@ import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +71,7 @@ public class RenderHelper {
         return recursiveProxyMap(moduleParams);
     }
 
-    public String renderComponent(Map<String, ?> attr, RenderContext renderContext, Map<String, Serializable> tagParams) throws RepositoryException {
+    public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
         return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
                 renderContext.getMainResource().getLocale(), session -> {
 
@@ -81,9 +84,10 @@ public class RenderHelper {
                 optionAttr.put("node", node);
                 optionAttr.put("templateType", templateType);
                 optionAttr.put("view", attr.get("view"));
+                optionAttr.put("parameters", attr.get("parameters"));
                 optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
                 try {
-                    return renderTag(new OptionTag(), optionAttr, renderContext, tagParams);
+                    return renderTag(new OptionTag(), optionAttr, renderContext);
                 } catch (IllegalAccessException | InvocationTargetException | JspException e) {
                     throw new RepositoryException(e);
                 }
@@ -92,12 +96,23 @@ public class RenderHelper {
                         "INCLUDE".equals(renderConfig) ? "include" : "module");
                 // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
                 r.getModuleParams().put("toCacheWithParentFragment", true);
-                if (tagParams != null && !tagParams.isEmpty()) {
-                    r.getModuleParams().putAll(tagParams);
-                }
+
                 try {
+                    // handle render parameters for JSON rendering
+                    Map<String, Object> renderParameters = (Map<String, Object>) attr.get("parameters");
+                    if (renderParameters != null && !renderParameters.isEmpty()) {
+                        String charset = renderContext.getResponse().getCharacterEncoding();
+                        for (Map.Entry<String, Object> renderParam : renderParameters.entrySet()) {
+                            // only allow String params for compatibility reasons due to JSP ParamParent parameters being a <String,String> map
+                            if (renderParam.getValue() instanceof String) {
+                                r.getModuleParams().put(URLDecoder.decode(renderParam.getKey(), charset),
+                                        URLDecoder.decode((String) renderParam.getValue(), charset));
+                            }
+                        }
+                    }
+
                     return renderService.render(r, renderContext);
-                } catch (RenderException e) {
+                } catch (RenderException | IOException e) {
                     throw new RepositoryException(e);
                 }
             }
@@ -111,21 +126,16 @@ public class RenderHelper {
             Map<String, Object> attr = new HashMap<>();
             attr.put("path", childName);
             attr.put("nodeTypes", StringUtils.isNotEmpty(nodeTypes) ? nodeTypes : "");
-            return renderTag(new ModuleTag(), attr, renderContext, null);
+            return renderTag(new ModuleTag(), attr, renderContext);
         }
         return "";
     }
 
     public String render(Map<String, Object> attr, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
 
-        Map<String, Serializable> renderParameters = null;
-        if (attr.get("parameters") != null) {
-            renderParameters = (Map<String, Serializable>) attr.get("parameters");
-        }
-
         // handle json node
         if (attr.get("content") != null) {
-            return renderComponent(attr, renderContext, renderParameters);
+            return renderComponent(attr, renderContext);
         }
         // if the child node requested is not available, return an empty string
         // This make the path parameter mandatory, that's why is passed as a dedicated param.
@@ -148,30 +158,38 @@ public class RenderHelper {
         String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
         switch (renderConfig) {
             case "INCLUDE": {
-                return renderTag(new IncludeTag(), attr, renderContext, renderParameters);
+                return renderTag(new IncludeTag(), attr, renderContext);
             }
             case "OPTION": {
-                return renderTag(new OptionTag(), attr, renderContext, renderParameters);
+                return renderTag(new OptionTag(), attr, renderContext);
             }
             default: {
-                return renderTag(new ModuleTag(), attr, renderContext, renderParameters);
+                return renderTag(new ModuleTag(), attr, renderContext);
             }
         }
     }
 
     public String addResourcesTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        return renderTag(new AddResourcesTag(), attr, renderContext, null);
+        return renderTag(new AddResourcesTag(), attr, renderContext);
     }
 
     public String addCacheDependencyTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        return renderTag(new AddCacheDependencyTag(), attr, renderContext, null);
+        return renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
-    private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext, Map<String, Serializable> tagParams) throws IllegalAccessException, InvocationTargetException, JspException {
-        BeanUtils.populate(tag, attr);
-        if (tag instanceof ParamParent) {
-            addParametersToTag((ParamParent) tag, tagParams);
+    private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+
+        Map<String, Serializable> renderParameters = (Map<String, Serializable>) attr.remove("parameters");
+        if (tag instanceof ParamParent && renderParameters != null && !renderParameters.isEmpty()) {
+            for (Map.Entry<String, Serializable> tagParam : renderParameters.entrySet()) {
+                // only allow String params due to ParamParent parameters being a <String,String> map
+                if (tagParam.getValue() instanceof String) {
+                    ((ParamParent) tag).addParameter(tagParam.getKey(), (String) tagParam.getValue());
+                }
+            }
         }
+
+        BeanUtils.populate(tag, attr);
         MockPageContext pageContext = new MockPageContext(renderContext);
         tag.setPageContext(pageContext);
         tag.doStartTag();
@@ -212,14 +230,5 @@ public class RenderHelper {
     @OSGiService
     public void setRenderService(RenderService renderService) {
         this.renderService = renderService;
-    }
-
-    private void addParametersToTag(ParamParent tag, Map<String, Serializable> tagParams) {
-        if (tagParams == null || tagParams.isEmpty()) {
-            return;
-        }
-        for (Map.Entry<String, Serializable> tagParam : tagParams.entrySet()) {
-            tag.addParameter(tagParam.getKey(), tagParam.getValue().toString());
-        }
     }
 }

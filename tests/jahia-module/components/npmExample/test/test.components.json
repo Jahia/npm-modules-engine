@@ -49,14 +49,10 @@
     },
     "renderParameters": {
         "stringParam": "stringValue",
+        "stringParam2": "stringValue2",
         "objectParam": {
             "integerParam": 1,
             "booleanParam": true
-        },
-        "arrayParam": [
-            1,
-            2,
-            3
-        ]
+        }
     }
 }

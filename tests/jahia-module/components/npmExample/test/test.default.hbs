@@ -93,10 +93,14 @@
     <div data-testid="component-json-node-with-mixin" style="padding: 10px; margin:10px; border: 1px solid">
         {{render content=components.viewWithMixin view="tagged"}}
     </div>
-Render a JSON Node with parameters :
-<div data-testid="component-json-node-with-parameters" style="padding: 10px; margin:10px; border: 1px solid">
-    {{render content=components.viewWithParameters view="parameters" parameters=components.renderParameters}}
-</div>
+    Render a JSON Node with parameters :
+    <div data-testid="component-json-node-with-parameters" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render content=components.viewWithParameters view="parameters" parameters=components.renderParameters}}
+    </div>
+    Render an existing content Node with parameters :
+    <div data-testid="component-npm-node-with-parameters" style="padding: 10px; margin:10px; border: 1px solid">
+        {{render view="parameters" advanceRenderingConfig="INCLUDE" parameters=components.renderParameters}}
+    </div>
 <hr/>
 
 <h3>loadJSON</h3>
