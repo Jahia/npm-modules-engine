@@ -17,6 +17,8 @@ package org.jahia.modules.npm.modules.engine.helpers;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.taglibs.standard.tag.common.core.ParamParent;
+import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
@@ -36,7 +38,11 @@ import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +66,11 @@ public class RenderHelper {
         return recursiveProxyMap(JSNodeMapper.toJSNode(node, includeChildren, includeDescendants, includeAllTranslations));
     }
 
+    public ProxyObject getRenderParameters(Resource resource) {
+        Map<String, Object> moduleParams = new HashMap<>(resource.getModuleParams());
+        return recursiveProxyMap(moduleParams);
+    }
+
     public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
         return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
                 renderContext.getMainResource().getLocale(), session -> {
@@ -73,6 +84,7 @@ public class RenderHelper {
                 optionAttr.put("node", node);
                 optionAttr.put("templateType", templateType);
                 optionAttr.put("view", attr.get("view"));
+                optionAttr.put("parameters", attr.get("parameters"));
                 optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
                 try {
                     return renderTag(new OptionTag(), optionAttr, renderContext);
@@ -84,9 +96,23 @@ public class RenderHelper {
                         "INCLUDE".equals(renderConfig) ? "include" : "module");
                 // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
                 r.getModuleParams().put("toCacheWithParentFragment", true);
+
                 try {
+                    // handle render parameters for JSON rendering
+                    Map<String, Object> renderParameters = (Map<String, Object>) attr.get("parameters");
+                    if (renderParameters != null && !renderParameters.isEmpty()) {
+                        String charset = renderContext.getResponse().getCharacterEncoding();
+                        for (Map.Entry<String, Object> renderParam : renderParameters.entrySet()) {
+                            // only allow String params for compatibility reasons due to JSP ParamParent parameters being a <String,String> map
+                            if (renderParam.getValue() instanceof String) {
+                                r.getModuleParams().put(URLDecoder.decode(renderParam.getKey(), charset),
+                                        URLDecoder.decode((String) renderParam.getValue(), charset));
+                            }
+                        }
+                    }
+
                     return renderService.render(r, renderContext);
-                } catch (RenderException e) {
+                } catch (RenderException | IOException e) {
                     throw new RepositoryException(e);
                 }
             }
@@ -152,6 +178,17 @@ public class RenderHelper {
     }
 
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+
+        Map<String, Serializable> renderParameters = (Map<String, Serializable>) attr.remove("parameters");
+        if (tag instanceof ParamParent && renderParameters != null && !renderParameters.isEmpty()) {
+            for (Map.Entry<String, Serializable> tagParam : renderParameters.entrySet()) {
+                // only allow String params due to ParamParent parameters being a <String,String> map
+                if (tagParam.getValue() instanceof String) {
+                    ((ParamParent) tag).addParameter(tagParam.getKey(), (String) tagParam.getValue());
+                }
+            }
+        }
+
         BeanUtils.populate(tag, attr);
         MockPageContext pageContext = new MockPageContext(renderContext);
         tag.setPageContext(pageContext);
@@ -166,12 +203,12 @@ public class RenderHelper {
                 mapToProxy.put(entry.getKey(), recursiveProxyMap((Map<String, Object>) entry.getValue()));
             }
             if (entry.getValue() instanceof Collection) {
-                mapToProxy.put(entry.getKey(), ((Collection) entry.getValue()).stream().map(o -> {
+                mapToProxy.put(entry.getKey(), ProxyArray.fromList((List<Object>) ((Collection) entry.getValue()).stream().map(o -> {
                     if (o instanceof Map) {
                         return recursiveProxyMap((Map<String, Object>) o);
                     }
                     return o;
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toList())));
             }
         }
         return ProxyObject.fromMap(mapToProxy);

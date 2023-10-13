@@ -4,10 +4,7 @@ describe('Test on getContent helper', () => {
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testPage.html`)
         cy.get('div[data-testid="currentContent_properties_prop1"]').should('contain', 'prop1 value')
         cy.get('div[data-testid="currentContent_properties_jcr:title"]').should('contain', 'NPM test component')
-        cy.get('div[data-testid="currentContent_properties_propMultiple"]').should(
-            'contain',
-            '[value 1, value 2, value 3]',
-        )
+        cy.get('div[data-testid="currentContent_properties_propMultiple"]').should('contain', 'value 1,value 2,value 3')
         cy.get('p[data-testid="propRichTextValue"]').should('contain', 'Hello this is a sample rich text')
         cy.get('div[data-testid="currentContent_name"]').should('contain', 'test')
         cy.get('div[data-testid="currentContent_path"]').should(

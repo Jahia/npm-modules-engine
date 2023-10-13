@@ -2,7 +2,7 @@ import {SafeString} from 'handlebars';
 import {render} from '@jahia/server-helpers';
 import {setResult} from '../../util';
 
-const allowedRenderAttributes = ['content', 'node', 'path', 'editable', 'advanceRenderingConfig', 'templateType', 'view'];
+const allowedRenderAttributes = ['content', 'node', 'path', 'editable', 'advanceRenderingConfig', 'templateType', 'view', 'parameters'];
 
 export default function (options) {
     // Filter out available options hash
