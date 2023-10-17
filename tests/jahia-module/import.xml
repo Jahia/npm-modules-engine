@@ -2,10 +2,10 @@
 <content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
     <modules jcr:primaryType="jnt:modules">
         <npm-module-example>
-            <home j:isHomePage="true" j:templateName="home" jcr:primaryType="jnt:page">
-                <page1 j:templateName="simple" jcr:primaryType="jnt:page"/>
-                <page2 j:templateName="simple" jcr:primaryType="jnt:page"/>
-                <page3 j:templateName="simple" jcr:primaryType="jnt:page"/>
+            <home j:isHomePage="true" j:templateName="home" jcr:primaryType="jnt:page" jcr:title="Home">
+                <page1 j:templateName="simple" jcr:primaryType="jnt:page" jcr:title="Page 1"/>
+                <page2 j:templateName="simple" jcr:primaryType="jnt:page" jcr:title="Page 2"/>
+                <page3 j:templateName="simple" jcr:primaryType="jnt:page" jcr:title="Page 3"/>
             </home>
         </npm-module-example>
     </modules>
