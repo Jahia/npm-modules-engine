@@ -1,4 +1,4 @@
-import { createSite, deleteSite, publishAndWaitJobEnding, setNodeProperty } from '@jahia/cypress'
+import { createSite, deleteSite, publishAndWaitJobEnding } from '@jahia/cypress'
 import 'cypress-iframe'
 
 const siteKey = 'templateTestSite'
