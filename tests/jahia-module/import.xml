@@ -14,16 +14,19 @@
                               jcr:mixinTypes="mix:title"
                               jcr:primaryType="jnt:translation"
                               jcr:title="Page 1"/>
+                </page1>
                 <page2 j:templateName="simple" jcr:primaryType="jnt:page">
                     <j:translation_en jcr:language="en"
                               jcr:mixinTypes="mix:title"
                               jcr:primaryType="jnt:translation"
                               jcr:title="Page 2"/>
+                </page2>
                 <page3 j:templateName="simple" jcr:primaryType="jnt:page">
                     <j:translation_en jcr:language="en"
                               jcr:mixinTypes="mix:title"
                               jcr:primaryType="jnt:translation"
                               jcr:title="Page 3"/>
+                </page3>
             </home>
         </npm-module-example>
     </modules>
