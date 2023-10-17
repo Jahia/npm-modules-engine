@@ -44,10 +44,6 @@ describe('Template testsuite', () => {
     })
 
     it('Check 4 sections presence in LIVE workspace', () => {
-        setNodeProperty(`/sites/${siteKey}/home`, 'jcr:title', 'Home', 'en')
-        setNodeProperty(`/sites/${siteKey}/home/page1`, 'jcr:title', 'Page 1', 'en')
-        setNodeProperty(`/sites/${siteKey}/home/page2`, 'jcr:title', 'Page 2', 'en')
-        setNodeProperty(`/sites/${siteKey}/home/page3`, 'jcr:title', 'Page 3', 'en')
         publishAndWaitJobEnding('/sites/' + siteKey)
         cy.visit(`/sites/${siteKey}/home.html`)
         checkSectionsPresence()
