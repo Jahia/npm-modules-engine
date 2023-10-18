@@ -1,0 +1,18 @@
+<h3>jCurrentSite helper testing component</h3>
+
+{{jCurrentSite varName="currentSite"}}
+
+<div data-testid="currentSite_uuid">uuid : {{currentSite.uuid}}</div>
+<div data-testid="currentSite_name">name : {{currentSite.name}}</div>
+<div data-testid="currentSite_path">path : {{currentSite.path}}</div>
+<div data-testid="currentSite_parent">parent : {{currentSite.parent}}</div>
+<div data-testid="currentSite_nodeType">nodeType : {{currentSite.nodeType}}</div>
+<div data-testid="currentSite_mixins">mixins : {{currentSite.mixins}}</div>
+<br>
+<div data-testid="currentSite_properties">
+    {{#each currentSite.properties}}
+        <div data-testid="currentSite_property_{{@key}}">
+            property {{@key}}: {{this}}
+        </div>
+    {{/each}}
+</div>
