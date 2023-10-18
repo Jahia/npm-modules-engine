@@ -1,0 +1,18 @@
+<h3>jMainContent helper testing component</h3>
+
+{{jMainContent varName="mainContent"}}
+
+<div data-testid="mainContent_uuid">uuid : {{mainContent.uuid}}</div>
+<div data-testid="mainContent_name">name : {{mainContent.name}}</div>
+<div data-testid="mainContent_path">path : {{mainContent.path}}</div>
+<div data-testid="mainContent_parent">parent : {{mainContent.parent}}</div>
+<div data-testid="mainContent_nodeType">nodeType : {{mainContent.nodeType}}</div>
+<div data-testid="mainContent_mixins">mixins : {{mainContent.mixins}}</div>
+<br>
+<div data-testid="mainContent_properties">
+    {{#each mainContent.properties}}
+        <div data-testid="mainContent_property_{{@key}}">
+            property {{@key}}: {{this}}
+        </div>
+    {{/each}}
+</div>
