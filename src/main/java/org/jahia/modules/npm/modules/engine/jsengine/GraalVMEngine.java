@@ -269,7 +269,6 @@ public class GraalVMEngine {
                 }
             }
 
-            // set version here to reduce timing between context creation and internal validation done by the pool.
             return contextProvider;
         }
 
