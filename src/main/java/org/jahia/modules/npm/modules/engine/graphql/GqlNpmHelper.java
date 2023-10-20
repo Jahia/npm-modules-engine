@@ -19,6 +19,7 @@ import graphql.annotations.annotationTypes.GraphQLDescription;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.schema.DataFetchingEnvironment;
+import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Render;
 import org.jahia.modules.graphql.provider.dxm.node.GqlJcrNodeInput;
 import org.jahia.modules.graphql.provider.dxm.node.GqlJcrPropertyInput;
@@ -43,8 +44,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class GqlNpmHelper {
+    private static final Pattern CLEANUP_REGEXP = Pattern.compile("<!-- jahia:temp [^>]*-->");
     private JCRSessionFactory jcrSessionFactory;
     private JCRTemplate jcrTemplate;
     private RenderService renderService;
@@ -101,33 +104,11 @@ public class GqlNpmHelper {
         return null;
     }
 
-    private String getRenderedComponent(String mainResourcePath, String path, GqlJcrNodeInput input, String view, String templateType, String contextConfiguration, Boolean isEditMode, DataFetchingEnvironment environment, JCRSessionWrapper session) throws RepositoryException {
-        JCRNodeWrapper main = session.getNode(mainResourcePath);
-
-        JCRNodeWrapper parent = session.getNode(path != null ? path : "/");
-
-        JCRNodeWrapper node = parent.addNode(input.getName() != null ? input.getName() : "temp-node", input.getPrimaryNodeType());
-        Collection<GqlJcrPropertyInput> properties = input.getProperties();
-        if (properties != null) {
-            for (GqlJcrPropertyInput property : properties) {
-                node.setProperty(property.getName(), property.getValue());
-            }
-        }
-
-        if (contextConfiguration == null) {
-            contextConfiguration = "module";
-        }
-        if (templateType == null) {
-            templateType = "html";
-        }
-
-        Resource r = new Resource(node, templateType, view, contextConfiguration);
-
-        RenderContext renderContext = getRenderContext(environment, main, templateType, contextConfiguration, isEditMode);
-        try {
-            return renderService.render(r, renderContext);
-        } catch (RenderException e) {
-            throw new RepositoryException(e);
+    public static String removeTempTags(String content) {
+        if (StringUtils.isNotEmpty(content)) {
+            return CLEANUP_REGEXP.matcher(content).replaceAll("");
+        } else {
+            return content;
         }
     }
 
@@ -177,4 +158,35 @@ public class GqlNpmHelper {
             return output;
         }
     }
+
+    private String getRenderedComponent(String mainResourcePath, String path, GqlJcrNodeInput input, String view, String templateType, String contextConfiguration, Boolean isEditMode, DataFetchingEnvironment environment, JCRSessionWrapper session) throws RepositoryException {
+        JCRNodeWrapper main = session.getNode(mainResourcePath);
+
+        JCRNodeWrapper parent = session.getNode(path != null ? path : "/");
+
+        JCRNodeWrapper node = parent.addNode(input.getName() != null ? input.getName() : "temp-node", input.getPrimaryNodeType());
+        Collection<GqlJcrPropertyInput> properties = input.getProperties();
+        if (properties != null) {
+            for (GqlJcrPropertyInput property : properties) {
+                node.setProperty(property.getName(), property.getValue());
+            }
+        }
+
+        if (contextConfiguration == null) {
+            contextConfiguration = "module";
+        }
+        if (templateType == null) {
+            templateType = "html";
+        }
+
+        Resource r = new Resource(node, templateType, view, contextConfiguration);
+
+        RenderContext renderContext = getRenderContext(environment, main, templateType, contextConfiguration, isEditMode);
+        try {
+            return removeTempTags(renderService.render(r, renderContext));
+        } catch (RenderException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
 }

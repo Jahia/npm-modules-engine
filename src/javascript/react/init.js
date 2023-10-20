@@ -44,7 +44,7 @@ export default () => {
             };
 
             if (reactRenderType && reactRenderType === 'deferred') {
-                // React render
+                // React render, htmlRoot is not supported for this render type
                 return `
                     <div id=${id} data-reactrender="${getEncodedData(props)}"></div>
                     <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
@@ -70,12 +70,22 @@ export default () => {
                 const initialState = client.extract();
                 const stylesResource = styles.resolved ? `<jahia:resource type="inline" key="styles${id}">${styles.resolved}</jahia:resource>` : '';
 
-                return `
+                if (view.htmlRoot) {
+                    // rehydration is not supported for HTML root component.
+                    return `
+                    <html>
+                      ${stylesResource}
+                      ${r}
+                    </html>
+                    `;
+                } else {
+                    return `
                             <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
                             ${stylesResource}
                             <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
                             <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
                         `;
+                }
             });
         }
     });
