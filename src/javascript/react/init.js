@@ -71,21 +71,21 @@ export default () => {
                 const stylesResource = styles.resolved ? `<jahia:resource type="inline" key="styles${id}">${styles.resolved}</jahia:resource>` : '';
 
                 if (view.htmlRoot) {
-                    // rehydration is not supported for HTML root component.
+                    // Rehydration is not supported for HTML root component.
                     return `
                     <html>
                       ${stylesResource}
                       ${r}
                     </html>
                     `;
-                } else {
-                    return `
-                            <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
-                            ${stylesResource}
-                            <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
-                            <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
-                        `;
                 }
+                return `
+                        <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
+                        ${stylesResource}
+                        <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
+                        <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
+                    `;
+
             });
         }
     });
