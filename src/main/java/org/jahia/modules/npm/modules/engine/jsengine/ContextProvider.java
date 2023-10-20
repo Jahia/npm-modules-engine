@@ -16,26 +16,17 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
 import org.graalvm.polyglot.Context;
-import org.jahia.modules.npm.modules.engine.helpers.Registry;
-import org.jahia.modules.npm.modules.engine.helpers.RegistryHelper;
-import org.osgi.framework.Bundle;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ContextProvider {
 
-    private boolean isActive = true;
-    private final int version;
+    private int version;
     private final Context context;
 
-    private final Collection<Bundle> registeredBundles = new ArrayList<>();
-    private final Map<String, Object> helpers = new HashMap<>();
+    private final Registry registry;
 
     public ContextProvider(Context cx, int version) {
         this.context = cx;
+        this.registry = new Registry(cx);
         this.version = version;
     }
 
@@ -43,28 +34,15 @@ public class ContextProvider {
         return context;
     }
 
-    public int getVersion() {
+    protected int getVersion() {
         return version;
     }
 
-    public Collection<Bundle> getRegisteredBundles() {
-        return registeredBundles;
-    }
-
-    public Map<String, Object> getHelpers() {
-        return helpers;
-    }
-
     public Registry getRegistry() {
-        return ((RegistryHelper) getHelpers().get("registry")).getRegistry();
+        return registry;
     }
 
     public void close() {
         context.close();
-        isActive = false;
-    }
-
-    public boolean isActive() {
-        return isActive;
     }
 }

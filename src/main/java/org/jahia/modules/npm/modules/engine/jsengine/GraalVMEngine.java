@@ -25,7 +25,6 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.graalvm.polyglot.*;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm.modules.engine.registrars.Registrar;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRTemplate;
@@ -41,10 +40,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Base JS engine based on GraalVM
@@ -57,7 +56,7 @@ public class GraalVMEngine {
 
     private Engine sharedEngine;
 
-    private final List<JSGlobalVariableFactory> globals = new ArrayList<>();
+    private JSGlobalVariableFactory globals;
 
     private GenericObjectPool<ContextProvider> pool;
     private final ThreadLocal<Stack<ContextProvider>> currentContext = ThreadLocal.withInitial(Stack::new);
@@ -65,36 +64,11 @@ public class GraalVMEngine {
     private final LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
     private final AtomicInteger version = new AtomicInteger(0);
 
-    private final Collection<Registrar> registrars = new ArrayList<>();
-
     private BundleContext bundleContext;
 
-    private final AtomicBoolean active = new AtomicBoolean(false);
-
-    @Reference(service = JSGlobalVariableFactory.class, policy = ReferencePolicy.STATIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
-    public void bindVariable(JSGlobalVariableFactory global) {
-        globals.add(global);
-    }
-
-    public void unbindVariable(JSGlobalVariableFactory global) {
-        globals.remove(global);
-    }
-
-    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
-    public void addRegistrar(Registrar registrar) {
-        logger.debug("Adding registrar {}", registrar);
-        registrars.add(registrar);
-        if (active.get()) {
-            registerRegistrarForAllBundles(registrar);
-        }
-    }
-
-    public void removeRegistrar(Registrar registrar) {
-        if (active.get()) {
-            unregisterRegistrarForAllBundles(registrar);
-        }
-        logger.debug("Removing registrar {}", registrar);
-        registrars.remove(registrar);
+    @Reference(service = JSGlobalVariableFactory.class, cardinality = ReferenceCardinality.MANDATORY)
+    public void bindVariable(JSGlobalVariableFactory globals) {
+        this.globals = globals;
     }
 
     public void enableBundle(Bundle bundle) {
@@ -103,14 +77,7 @@ public class GraalVMEngine {
             try {
                 initScripts.put(bundle, getGraalSource(bundle, script));
                 version.incrementAndGet();
-                doWithContext(contextProvider -> {
-                    if (registrars.isEmpty()) {
-                        logger.debug("No registrars registered, registration will be delayed to when they are available");
-                    }
-                    for (Registrar registrar : registrars) {
-                        registrar.register(contextProvider.getRegistry(), bundle, this);
-                    }
-                });
+                logger.info("Registered bundle {} in GraalVM engine", bundle.getSymbolicName());
             } catch (IOException ioe) {
                 logger.error("Error enabling bundle {}", bundle.getSymbolicName(), ioe);
             }
@@ -118,14 +85,9 @@ public class GraalVMEngine {
     }
 
     public void disableBundle(Bundle bundle) {
-        doWithContext(contextProvider -> {
-            for (Registrar registrar : registrars) {
-                registrar.unregister(contextProvider.getRegistry(), bundle);
-            }
-        });
-
         if (initScripts.remove(bundle) != null) {
             version.incrementAndGet();
+            logger.info("Unregistered bundle {} from GraalVM engine", bundle.getSymbolicName());
         }
     }
 
@@ -150,25 +112,21 @@ public class GraalVMEngine {
         }
         sharedEngine = builder.build();
         initializePool();
-        // register registrars
-        for (Registrar registrar : registrars) {
-            registerRegistrarForAllBundles(registrar);
-        }
-        active.set(true);
     }
 
     @Deactivate
     public void deactivate() {
         logger.debug("GraalVMEngine.deactivate");
-        active.set(false);
-        // unregister registrars
-        for (Registrar registrar : registrars) {
-            unregisterRegistrarForAllBundles(registrar);
-        }
         pool.close();
         sharedEngine.close();
     }
 
+    // TODO: this is actually necessary for React views rendering
+    // TODO: because they are using Promises for rendering, only a fresh context seem's to work
+    // TODO: but this could be consuming, if a lot of react views are rendering nesting multiple levels
+    // TODO: the thread will borrow a number of new contexts matching the level of react view nested.
+    // TODO: this could be problematic and should be done differently.
+    // TODO: Ideally the current thread should only reuse the already borrowed context and not create multiple ones.
     public <T> T doWithNewContext(Function<ContextProvider, T> callback) {
         Stack<ContextProvider> cx = currentContext.get();
         try {
@@ -270,25 +228,15 @@ public class GraalVMEngine {
         return null;
     }
 
-    private void processBundles(Registrar registrar, Consumer<Bundle> action) {
-        logger.debug("Processing bundles for registrar {}...", registrar.getClass().getName());
-        Arrays.stream(bundleContext.getBundles())
-                .filter(bundle -> bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
-                        bundle.getState() == Bundle.ACTIVE &&
-                        getBundleScript(bundle) != null)
-                .forEach(action);
+    public List<Bundle> getNPMBundles() {
+        return Arrays.stream(bundleContext.getBundles())
+                .filter(bundle -> bundle.getState() == Bundle.ACTIVE && isNPMBundle(bundle))
+                .collect(Collectors.toList());
     }
 
-    private void registerRegistrarForAllBundles(Registrar registrar) {
-        doWithContext(contextProvider -> {
-            processBundles(registrar, bundle -> registrar.register(contextProvider.getRegistry(), bundle, this));
-        });
-    }
-
-    private void unregisterRegistrarForAllBundles(Registrar registrar) {
-        doWithContext(contextProvider -> {
-            processBundles(registrar, bundle -> registrar.unregister(contextProvider.getRegistry(), bundle));
-        });
+    public boolean isNPMBundle(Bundle bundle) {
+        return bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
+                        getBundleScript(bundle) != null;
     }
 
     class ContextPoolFactory extends BasePooledObjectFactory<ContextProvider> {
@@ -304,21 +252,24 @@ public class GraalVMEngine {
 
             ContextProvider contextProvider = new ContextProvider(context, version.get());
 
-            for (JSGlobalVariableFactory global : globals) {
-                context.getBindings(JS).putMember(global.getName(), global.getObject(contextProvider));
+            // Inject globals object into the context
+            if (globals != null) {
+                context.getBindings(JS).putMember(globals.getName(), globals.getObject(contextProvider));
             }
 
-            // Initialize context with available JS
+            // Initialize context with available Server side JS from bundles
             for (Map.Entry<Bundle, Source> entry : initScripts.entrySet()) {
                 try {
+                    // Here we inject the bundle because registry is keeping track of witch bundle is registering stuff.
                     context.getBindings(JS).putMember("bundle", entry.getKey());
                     context.eval(entry.getValue());
-                    contextProvider.getRegisteredBundles().add(entry.getKey());
                     context.getBindings(JS).removeMember("bundle");
                 } catch (Exception e) {
                     logger.error("Cannot execute init script {}", entry.getValue(), e);
                 }
             }
+
+            // set version here to reduce timing between context creation and internal validation done by the pool.
             return contextProvider;
         }
 
