@@ -79,13 +79,13 @@ export default () => {
                     </html>
                     `;
                 }
+
                 return `
                         <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
                         ${stylesResource}
                         <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
                         <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
                     `;
-
             });
         }
     });
