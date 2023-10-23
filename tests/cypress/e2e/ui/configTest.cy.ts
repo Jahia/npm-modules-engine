@@ -25,13 +25,22 @@ describe('Test OSGi configuration in views', () => {
     })
 
     const testConfigEntries = () => {
-        cy.get(`p[data-testid="configKey1"]`).should('contain', "configKey1=configValue1");
-        cy.get(`p[data-testid="configValues.configKey1"]`).should('contain', "configValues.configKey1=configValue1");
-        cy.get(`p[data-testid="configValues.configKey2"]`).should('contain', "configValues.configKey2=configValue2");
-        cy.get(`p[data-testid="defaultFactoryConfigs.configKey1"]`).should('contain', "defaultFactoryConfigs.configKey1=configValue1");
-        cy.get(`p[data-testid="defaultFactoryConfigs.configKey2"]`).should('contain', "defaultFactoryConfigs.configKey2=configValue2");
-        cy.get(`p[data-testid="testModuleFactoryIdentifiers"]`).should('contain', "testModuleFactoryIdentifiers=default,id1,id2");
-        cy.get(`div[data-testid="complexObject_metadata.name"]`).should('contain', "metadata.name: my-app");
+        cy.get(`p[data-testid="configKey1"]`).should('contain', 'configKey1=configValue1')
+        cy.get(`p[data-testid="configValues.configKey1"]`).should('contain', 'configValues.configKey1=configValue1')
+        cy.get(`p[data-testid="configValues.configKey2"]`).should('contain', 'configValues.configKey2=configValue2')
+        cy.get(`p[data-testid="defaultFactoryConfigs.configKey1"]`).should(
+            'contain',
+            'defaultFactoryConfigs.configKey1=configValue1',
+        )
+        cy.get(`p[data-testid="defaultFactoryConfigs.configKey2"]`).should(
+            'contain',
+            'defaultFactoryConfigs.configKey2=configValue2',
+        )
+        cy.get(`p[data-testid="testModuleFactoryIdentifiers"]`).should(
+            'contain',
+            'testModuleFactoryIdentifiers=default,id1,id2',
+        )
+        cy.get(`div[data-testid="complexObject_metadata.name"]`).should('contain', 'metadata.name: my-app')
     }
 
     it('test config in preview', function () {
@@ -64,6 +73,6 @@ describe('Test OSGi configuration in views', () => {
 
     it('test config in ajax rendered content', function () {
         cy.visit(`/sites/npmTestSite/home/testConfig/pagecontent/test.html.ajax`)
-        testConfigEntries();
+        testConfigEntries()
     })
 })
