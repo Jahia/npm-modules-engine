@@ -1,5 +1,5 @@
-import {addNode, deleteNode, publishAndWaitJobEnding} from '@jahia/cypress'
-import {addSimplePage} from '../../utils/Utils'
+import { addNode, deleteNode, publishAndWaitJobEnding } from '@jahia/cypress'
+import { addSimplePage } from '../../utils/Utils'
 
 describe('Test OSGi configuration in views', () => {
     before('Create NPM test page', () => {
@@ -53,7 +53,7 @@ describe('Test OSGi configuration in views', () => {
     it('test config in edit', function () {
         cy.login()
         cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/testConfig`)
-        cy.iframe('[data-sel-role="page-builder-frame-active"]', {timeout: 90000, log: true}).within(() => {
+        cy.iframe('[data-sel-role="page-builder-frame-active"]', { timeout: 90000, log: true }).within(() => {
             testConfigEntries()
         })
         cy.logout()
