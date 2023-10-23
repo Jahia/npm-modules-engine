@@ -45,7 +45,7 @@ export default () => {
             const templateStr = osgi.loadResource(view.bundle, view.templateFile, false);
             const template = Handlebars.compile(templateStr);
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
-
+            const mode = renderContext.getMode();
             i18next.loadNamespaces(view.bundle.getSymbolicName());
             i18next.loadLanguages(locale.getLanguage());
 
@@ -61,7 +61,13 @@ export default () => {
                 isAjaxRequest: renderContext.isAjaxRequest(),
                 isLoggedIn: renderContext.isLoggedIn(),
                 readOnlyStatus: renderContext.getReadOnlyStatus().toString(),
-                mode: renderContext.getMode(),
+                mode: {
+                    value: mode,
+                    isEdit: mode === "edit",
+                    isPreview: mode === "preview",
+                    isLive: mode === "live",
+                    isFrame: mode === "frame",
+                },
                 workspace: renderContext.getWorkspace(),
                 contentLanguage: locale.getLanguage(),
                 uiLanguage: renderContext.getUILocale().getLanguage(),

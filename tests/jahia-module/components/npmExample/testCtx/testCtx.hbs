@@ -2,6 +2,17 @@
 
 {{#each ctx}}
     <div data-testid="ctx_{{@key}}">
-        {{@key}}: {{this}}
+        {{#if (isObject this)}}
+            {{@key}}: {
+                <ul style="list-style: none">
+                {{#each this}}
+                    <li>{{@key}}: {{this}}</li>
+                {{/each}}
+                </ul>
+            }
+        {{/if}}
+        {{#unless (isObject this)}}
+            {{@key}}: {{this}}
+        {{/unless}}
     </div>
 {{/each}}
