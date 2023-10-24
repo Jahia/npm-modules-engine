@@ -17,6 +17,7 @@ package org.jahia.modules.npm.modules.engine;
 
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
+import org.jahia.modules.npm.modules.engine.registrars.Registrar;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRTemplate;
@@ -24,10 +25,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -35,6 +33,8 @@ import org.springframework.core.io.Resource;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Listener to execute scripts at activate/desactivate time
@@ -45,19 +45,36 @@ public class NpmModuleListener implements BundleListener {
     public static final String SOURCES = "sources";
     public static final String MODULES = "/modules/";
     private GraalVMEngine engine;
+    private final Collection<Registrar> registrars = new ArrayList<>();
 
-    @Reference
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setEngine(GraalVMEngine engine) {
         this.engine = engine;
     }
 
+    @Reference(service = Registrar.class, policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, policyOption = ReferencePolicyOption.GREEDY)
+    public void addRegistrar(Registrar registrar) {
+        for (Bundle bundle : engine.getNPMBundles()) {
+            registrar.register(bundle);
+        }
+
+        registrars.add(registrar);
+    }
+
+    public void removeRegistrar(Registrar registrar) {
+        registrars.remove(registrar);
+
+        for (Bundle bundle : engine.getNPMBundles()) {
+            registrar.unregister(bundle);
+        }
+    }
+
     @Activate
     public void activate(BundleContext context) {
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.ACTIVE) {
-                engine.enableBundle(bundle);
-            }
+        for (Bundle bundle : engine.getNPMBundles()) {
+            engine.enableBundle(bundle);
         }
+
         context.addBundleListener(this);
     }
 
@@ -65,13 +82,10 @@ public class NpmModuleListener implements BundleListener {
     public void deactivate(BundleContext context) {
         context.removeBundleListener(this);
 
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.ACTIVE) {
-                engine.disableBundle(bundle);
-            }
+        for (Bundle bundle : engine.getNPMBundles()) {
+            engine.disableBundle(bundle);
         }
     }
-
 
     @Override
     public void bundleChanged(BundleEvent event) {
@@ -81,7 +95,13 @@ public class NpmModuleListener implements BundleListener {
                 copySources(bundle);
             } else if (event.getType() == BundleEvent.STARTED) {
                 engine.enableBundle(bundle);
+                for (Registrar registrar : registrars) {
+                    registrar.register(bundle);
+                }
             } else if (event.getType() == BundleEvent.STOPPED) {
+                for (Registrar registrar : registrars) {
+                    registrar.unregister(bundle);
+                }
                 engine.disableBundle(bundle);
             }
         } catch (Exception e) {

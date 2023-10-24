@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jahia.modules.npm.modules.engine.helpers;
+package org.jahia.modules.npm.modules.engine.jsengine;
 
-import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
+import org.graalvm.polyglot.Context;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,10 +24,10 @@ import java.util.stream.Stream;
 import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
 
 public class Registry {
-    private final ContextProvider context;
+    private final Context context;
     Map<String, Map<String, Object>> registryMap = new HashMap<>();
 
-    public Registry(ContextProvider context) {
+    public Registry(Context context) {
         this.context = context;
     }
 
@@ -64,7 +64,7 @@ public class Registry {
 
         object.put("key", key);
         object.put("type", type);
-        object.put("bundle", context.getContext().getBindings(JS).getMember("bundle"));
+        object.put("bundle", context.getBindings(JS).getMember("bundle"));
         registryMap.put(type + "-" + key, object);
     }
 

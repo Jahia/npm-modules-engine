@@ -53,8 +53,6 @@ public class CoreHelperFactory implements JSGlobalVariableFactory {
             }
         }
 
-        contextProvider.getHelpers().putAll(helpers);
-
         return ProxyObject.fromMap(helpers);
     }
 }

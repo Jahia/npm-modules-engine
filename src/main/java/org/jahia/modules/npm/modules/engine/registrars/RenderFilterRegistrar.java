@@ -16,7 +16,6 @@
 package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm.modules.engine.helpers.Registry;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.services.render.RenderContext;
@@ -31,6 +30,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import java.util.*;
 
@@ -40,11 +40,18 @@ public class RenderFilterRegistrar implements Registrar {
     private RenderService renderService;
     private BundleContext bundleContext;
 
+    private GraalVMEngine graalVMEngine;
+
     private final Map<Bundle, Collection<ServiceRegistration<RenderFilter>>> registrations = new HashMap<>();
 
     @Reference
     public void setRenderService(RenderService renderService) {
         this.renderService = renderService;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
+    public void setGraalVMEngine(GraalVMEngine graalVMEngine) {
+        this.graalVMEngine = graalVMEngine;
     }
 
     @Activate
@@ -53,17 +60,18 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     @Override
-    public void register(Registry registry, Bundle bundle, GraalVMEngine engine) {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("type", "render-filter");
-        filter.put("bundle", Value.asValue(bundle));
+    public void register(Bundle bundle) {
+        List<Map<String, Object>> renderFilters = graalVMEngine.doWithContext(contextProvider -> {
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("type", "render-filter");
+            filter.put("bundle", Value.asValue(bundle));
+            return contextProvider.getRegistry().find(filter);
+        });
 
         Set<ServiceRegistration<RenderFilter>> set = new HashSet<>();
         registrations.put(bundle, set);
-
-        List<Map<String, Object>> renderFilters = registry.find(filter);
         for (Map<String, Object> renderFilter : renderFilters) {
-            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter, engine);
+            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter, graalVMEngine);
             renderFilterImpl.setRenderService(renderService);
             renderFilterImpl.setPriority(0);
 
@@ -72,7 +80,7 @@ public class RenderFilterRegistrar implements Registrar {
     }
 
     @Override
-    public void unregister(Registry registry, Bundle bundle) {
+    public void unregister(Bundle bundle) {
         Collection<ServiceRegistration<RenderFilter>> set = registrations.remove(bundle);
         if (set != null) {
             for (ServiceRegistration<RenderFilter> registration : set) {

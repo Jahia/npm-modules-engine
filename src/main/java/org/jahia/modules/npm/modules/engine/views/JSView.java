@@ -36,6 +36,7 @@ public class JSView implements View, Comparable<View> {
     protected String displayName;
     protected String target;
     protected String templateType;
+    protected boolean requireNewJSContext;
 
     public JSView(String registryKey, String viewName, JahiaTemplatesPackage module, String target, String templateType) {
         this.registryKey = registryKey;
@@ -43,6 +44,7 @@ public class JSView implements View, Comparable<View> {
         this.module = module;
         this.target = target;
         this.templateType = templateType;
+        this.requireNewJSContext = false;
     }
 
     public JSView(Map<String, Object> jsValue) {
@@ -63,6 +65,9 @@ public class JSView implements View, Comparable<View> {
         }
         defaultProperties = new Properties();
         path = getModule().getBundleKey() + "/" + getRegistryKey();
+        requireNewJSContext = jsValue.containsKey("requireNewJSContext") &&
+                jsValue.get("requireNewJSContext") instanceof Boolean &&
+                ((Boolean) jsValue.get("requireNewJSContext"));
     }
 
     public Map<String, Object> getValue(ContextProvider contextProvider) {
@@ -132,6 +137,10 @@ public class JSView implements View, Comparable<View> {
 
     public String getTemplateType() {
         return templateType;
+    }
+
+    public boolean isRequireNewJSContext() {
+        return requireNewJSContext;
     }
 
     @Override
