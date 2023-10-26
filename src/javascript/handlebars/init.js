@@ -63,10 +63,10 @@ export default () => {
                 readOnlyStatus: renderContext.getReadOnlyStatus().toString(),
                 mode: {
                     value: mode,
-                    isEdit: mode === "edit",
-                    isPreview: mode === "preview",
-                    isLive: mode === "live",
-                    isFrame: mode === "frame",
+                    isEdit: mode === 'edit',
+                    isPreview: mode === 'preview',
+                    isLive: mode === 'live',
+                    isFrame: mode === 'frame'
                 },
                 workspace: renderContext.getWorkspace(),
                 contentLanguage: locale.getLanguage(),
