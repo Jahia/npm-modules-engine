@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 const JCreateContentbuttons = ({nodeTypes, childName = '*', editCheck = false}) => {
     const {renderContext, currentResource} = useServerContext();
     return (
+        /* eslint-disable-next-line no-warning-comments */
         // Todo we should find a way to strip this unwanted div here, check: https://stackoverflow.com/a/65033466
         /* eslint-disable-next-line react/no-danger */
         <div dangerouslySetInnerHTML={{
@@ -21,6 +22,7 @@ const JCreateContentbuttons = ({nodeTypes, childName = '*', editCheck = false}) 
 JCreateContentbuttons.propTypes = {
     nodeTypes: PropTypes.string,
     childName: PropTypes.string,
+    /* eslint-disable-next-line react/boolean-prop-naming */
     editCheck: PropTypes.bool
 };
 
