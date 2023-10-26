@@ -5,7 +5,6 @@
   "repository": "git@github.com:Jahia/npm-modules-engine.git",
   "license": "MIT",
   "scripts": {
-    "old-build_toBeRemoved": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
     "build": "webpack --mode=development",
     "lint": "eslint --ext js,jsx,json .",
     "lint:fix": "eslint --ext js,jsx,json --fix ."
