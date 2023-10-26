@@ -26,28 +26,28 @@ describe('Test on ctx injected in views', () => {
 
     const testCtxMode = (modeValue) => {
         const mode = {
-            value:'value',
-            isEdit:'edit',
-            isPreview:'preview',
-            isLive:'live',
-            isFrame:'frame'
+            value: 'value',
+            isEdit: 'edit',
+            isPreview: 'preview',
+            isLive: 'live',
+            isFrame: 'frame',
         }
         for (const key in mode) {
-            switch(key){
+            switch (key) {
                 case 'value':
                     cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${modeValue}`)
-                    break;
+                    break
                 default:
                     cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${mode[key] === modeValue}`)
-                    break;
+                    break
             }
         }
     }
     const testCtxEntries = (entries) => {
         for (const key in entries) {
-            if(key==='mode'){
+            if (key === 'mode') {
                 testCtxMode(entries[key])
-            }else{
+            } else {
                 cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
             }
         }
