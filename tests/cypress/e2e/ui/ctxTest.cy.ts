@@ -24,9 +24,32 @@ describe('Test on ctx injected in views', () => {
         publishAndWaitJobEnding('/sites/npmTestSite')
     })
 
+    const testCtxMode = (modeValue) => {
+        const mode = {
+            value:'value',
+            isEdit:'edit',
+            isPreview:'preview',
+            isLive:'live',
+            isFrame:'frame'
+        }
+        for (const key in mode) {
+            switch(key){
+                case 'value':
+                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${modeValue}`)
+                    break;
+                default:
+                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${mode[key] === modeValue}`)
+                    break;
+            }
+        }
+    }
     const testCtxEntries = (entries) => {
         for (const key in entries) {
-            cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
+            if(key==='mode'){
+                testCtxMode(entries[key])
+            }else{
+                cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
+            }
         }
     }
 
@@ -37,13 +60,7 @@ describe('Test on ctx injected in views', () => {
             isAjaxRequest: 'false',
             isLoggedIn: 'true',
             readOnlyStatus: 'OFF',
-            mode: {
-                value: 'preview',
-                isEdit: false,
-                isPreview: true,
-                isLive: false,
-                isFrame: false,
-            },
+            mode: 'preview',
             workspace: 'default',
             contentLanguage: 'en',
             uiLanguage: 'en',
@@ -60,13 +77,7 @@ describe('Test on ctx injected in views', () => {
                 isAjaxRequest: 'false',
                 isLoggedIn: 'true',
                 readOnlyStatus: 'OFF',
-                mode: {
-                    value: 'edit',
-                    isEdit: true,
-                    isPreview: false,
-                    isLive: false,
-                    isFrame: false,
-                },
+                mode: 'edit',
                 workspace: 'default',
                 contentLanguage: 'en',
                 uiLanguage: 'en',
@@ -82,13 +93,7 @@ describe('Test on ctx injected in views', () => {
             isAjaxRequest: 'false',
             isLoggedIn: 'false',
             readOnlyStatus: 'OFF',
-            mode: {
-                value: 'live',
-                isEdit: false,
-                isPreview: false,
-                isLive: true,
-                isFrame: false,
-            },
+            mode: 'live',
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
@@ -103,13 +108,7 @@ describe('Test on ctx injected in views', () => {
             isAjaxRequest: 'false',
             isLoggedIn: 'true',
             readOnlyStatus: 'OFF',
-            mode: {
-                value: 'live',
-                isEdit: false,
-                isPreview: false,
-                isLive: true,
-                isFrame: false,
-            },
+            mode: 'live',
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
@@ -124,13 +123,7 @@ describe('Test on ctx injected in views', () => {
             isAjaxRequest: 'true',
             isLoggedIn: 'false',
             readOnlyStatus: 'OFF',
-            mode: {
-                value: 'live',
-                isEdit: false,
-                isPreview: false,
-                isLive: true,
-                isFrame: false,
-            },
+            mode: 'live',
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',

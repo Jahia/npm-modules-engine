@@ -3,13 +3,12 @@
 {{#each ctx}}
     <div data-testid="ctx_{{@key}}">
         {{#if (isObject this)}}
-            {{@key}}: {
-                <ul style="list-style: none">
+            {{@key}}:
+                <ul>
                 {{#each this}}
-                    <li>{{@key}}: {{this}}</li>
+                    <li data-testid="ctx_{{@../key}}_{{@key}}">{{@key}}: {{this}}</li>
                 {{/each}}
                 </ul>
-            }
         {{/if}}
         {{#unless (isObject this)}}
             {{@key}}: {{this}}
