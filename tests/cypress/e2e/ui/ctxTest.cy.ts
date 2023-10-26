@@ -42,7 +42,7 @@ describe('Test on ctx injected in views', () => {
                 isEdit: false,
                 isPreview: true,
                 isLive: false,
-                isFrame: false
+                isFrame: false,
             },
             workspace: 'default',
             contentLanguage: 'en',
@@ -65,7 +65,7 @@ describe('Test on ctx injected in views', () => {
                     isEdit: true,
                     isPreview: false,
                     isLive: false,
-                    isFrame: false
+                    isFrame: false,
                 },
                 workspace: 'default',
                 contentLanguage: 'en',
@@ -87,7 +87,7 @@ describe('Test on ctx injected in views', () => {
                 isEdit: false,
                 isPreview: false,
                 isLive: true,
-                isFrame: false
+                isFrame: false,
             },
             workspace: 'live',
             contentLanguage: 'en',
@@ -108,7 +108,7 @@ describe('Test on ctx injected in views', () => {
                 isEdit: false,
                 isPreview: false,
                 isLive: true,
-                isFrame: false
+                isFrame: false,
             },
             workspace: 'live',
             contentLanguage: 'en',
@@ -129,7 +129,7 @@ describe('Test on ctx injected in views', () => {
                 isEdit: false,
                 isPreview: false,
                 isLive: true,
-                isFrame: false
+                isFrame: false,
             },
             workspace: 'live',
             contentLanguage: 'en',
