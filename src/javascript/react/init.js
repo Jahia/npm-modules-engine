@@ -1,15 +1,11 @@
-import {registry} from '@jahia/server-helpers';
+import {registry, gql} from '@jahia/server-helpers';
 import React from 'react';
+import JRender from './JRender'
+import JCreateContentButtons from './JCreateContentButtons'
 import ReactDOMServer from 'react-dom/server';
-import {flushToHTML} from 'styled-jsx/server';
 import styledJsx from 'styled-jsx/style';
-import {getMarkupFromTree} from '@apollo/client/react/ssr';
-import {getClient} from '../apollo/client';
-
-function getEncodedData(data) {
-    // eslint-disable-next-line no-useless-escape
-    return JSON.stringify(data).replace(/[\u00A0-\u9999<>\&";]/g, i => '&#' + i.charCodeAt(0) + ';');
-}
+import {ServerContextProvider, useServerContext} from "./ServerContext";
+import {createStyleRegistry, StyleRegistry} from "styled-jsx";
 
 export default () => {
     // Hack to expose react to other modules
@@ -20,10 +16,22 @@ export default () => {
         exports: styledJsx
     });
 
+    // Expose Jahia JSX functions/components
+    registry.add('module', 'jahia-server-jsx', {
+        exports: {
+            JRender,
+            JCreateContentButtons,
+            useServerContext,
+            useQuery: ({query, variables, operationName}) => {
+                const {renderContext} = useServerContext();
+                return gql.executeQuerySync({query, variables, operationName, renderContext});
+            }
+        }
+    });
+
     registry.add('view', 'react', {
         requireNewJSContext: true,
         render: (currentResource, renderContext, view) => {
-            const reactRenderType = renderContext.getRequest().getAttribute('reactRenderType');
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
             const props = {
                 id,
@@ -44,40 +52,21 @@ export default () => {
                 bundle: view.bundle.getSymbolicName()
             };
 
-            if (reactRenderType && reactRenderType === 'deferred') {
-                // React render
-                return `
-                    <div id=${id} data-reactrender="${getEncodedData(props)}"></div>
-                    <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
-                    <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
-                `;
-            }
-
             // SSR
-            const element = React.createElement(view.component, {...props, currentResource, renderContext});
-
-            const client = getClient(renderContext);
-            registry.get('module', 'helpers').exports.apollo = client;
-
-            const styles = {};
-            // Render function that also get styles from styled-jsx
-            let renderFunction = element => {
-                const res = ReactDOMServer.renderToString(element);
-                styles.resolved = flushToHTML();
-                return res;
-            };
-
-            return getMarkupFromTree({tree: element, renderFunction: renderFunction}).then(r => {
-                const initialState = client.extract();
-                const stylesResource = styles.resolved ? `<jahia:resource type="inline" key="styles${id}">${styles.resolved}</jahia:resource>` : '';
-
-                return `
-                            <div id=${id} data-reacthydrate="${getEncodedData(props)}" data-apollostate="${getEncodedData(initialState)}">${r}</div>
-                            ${stylesResource}
-                            <jahia:resource type="javascript" path="/modules/${view.bundle.getSymbolicName()}/javascript/remote.js" key="" insert="true"/>
-                            <jahia:resource type="javascript" path="/modules/npm-modules-engine/javascript/apps/reactAppShell.js" key=""/>
-                        `;
-            });
+            const styleRegistry = createStyleRegistry();
+            const element =
+                React.createElement(StyleRegistry, {registry: styleRegistry},
+                    React.createElement(ServerContextProvider, {renderContext, currentResource},
+                        React.createElement(view.component, {...props})
+                ));
+            const r = ReactDOMServer.renderToString(element);
+            const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
+            const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
+            if (currentResource.getContextConfiguration() === 'page') {
+                return `<html>${r}${stylesResource}</html>`;
+            } else {
+                return `${r}${stylesResource}`
+            }
         }
     });
 };

@@ -5,7 +5,8 @@
   "repository": "git@github.com:Jahia/npm-modules-engine.git",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
+    "old-build_toBeRemoved": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
+    "build": "webpack --mode=development",
     "lint": "eslint --ext js,jsx,json .",
     "lint:fix": "eslint --ext js,jsx,json --fix ."
   },
@@ -13,6 +14,7 @@
     "@apollo/client": "^3.5.5",
     "@jahia/ui-extender": "^1.0.1",
     "dayjs": "^1.10.4",
+    "fast-text-encoding": "^1.0.6",
     "graphql": "^16.0.1",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
@@ -20,20 +22,24 @@
     "handlebars-utils": "^1.0.6",
     "husky": "^4.2.5",
     "i18next": "^20.2.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-jsx": "^5.1.2"
   },
   "resolutions": {
     "minimist": "^1.2.6",
     "set-getter": "^0.1.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
     "@jahia/eslint-config": "^1.1.0",
+    "babel-loader": "^8.2.3",
     "eslint": "^6.7.2",
     "eslint-plugin-jest": "^23.8.0",
     "eslint-plugin-json": "^2.1.0",
     "node-polyfill-webpack-plugin": "^1.1.0",
-    "styled-jsx": "^4.0.1",
     "unlazy-loader": "^0.1.3",
     "webpack": "^5.30.0",
     "webpack-bundle-analyzer": "^4.4.1",

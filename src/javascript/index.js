@@ -1,11 +1,7 @@
+import 'fast-text-encoding'; // Required for React 18 to work (normally provided by browsers or NodeJS, it is not in GraalJS)
 import initI18next from './i18next/init';
 import initHandlebars from './handlebars/init';
 import initReact from './react/init';
-import {registry} from '@jahia/server-helpers';
-
-registry.add('module', 'helpers', {
-    exports: {}
-});
 
 initI18next();
 initHandlebars();

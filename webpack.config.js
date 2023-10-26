@@ -18,7 +18,8 @@ module.exports = (env, argv) => {
             },
             fallback: {
                 "fs": false,
-            }
+            },
+            extensions: ['.mjs', '.js', '.jsx']
         },
         module: {
             rules: [
@@ -29,6 +30,19 @@ module.exports = (env, argv) => {
                         path.resolve(__dirname, "node_modules/handlebars-helpers")
                     ],
                     loader: 'unlazy-loader'
+                },
+                {
+                    test: /\.jsx$/,
+                    include: [path.join(__dirname, 'src')],
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                ['@babel/preset-env', {modules: false, targets: {safari: '7', ie: '10'}}],
+                                '@babel/preset-react'
+                            ]
+                        }
+                    }
                 }
             ]
         },
