@@ -1,11 +1,11 @@
 import {registry, gql} from '@jahia/server-helpers';
 import React from 'react';
-import JRender from './JRender'
-import JCreateContentButtons from './JCreateContentButtons'
+import JRender from './JRender';
+import JCreateContentButtons from './JCreateContentButtons';
 import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
-import {ServerContextProvider, useServerContext} from "./ServerContext";
-import {createStyleRegistry, StyleRegistry} from "styled-jsx";
+import {ServerContextProvider, useServerContext} from './ServerContext';
+import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 
 export default () => {
     // Hack to expose react to other modules
@@ -55,18 +55,16 @@ export default () => {
             // SSR
             const styleRegistry = createStyleRegistry();
             const element =
-                React.createElement(StyleRegistry, {registry: styleRegistry},
-                    React.createElement(ServerContextProvider, {renderContext, currentResource},
-                        React.createElement(view.component, {...props})
+                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource}, React.createElement(view.component, {...props})
                 ));
             const r = ReactDOMServer.renderToString(element);
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
             const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
             if (currentResource.getContextConfiguration() === 'page') {
                 return `<html>${r}${stylesResource}</html>`;
-            } else {
-                return `${r}${stylesResource}`
             }
+
+            return `${r}${stylesResource}`;
         }
     });
 };
