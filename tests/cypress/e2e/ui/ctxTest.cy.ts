@@ -24,9 +24,32 @@ describe('Test on ctx injected in views', () => {
         publishAndWaitJobEnding('/sites/npmTestSite')
     })
 
+    const testCtxMode = (modeValue) => {
+        const mode = {
+            value: 'value',
+            isEdit: 'edit',
+            isPreview: 'preview',
+            isLive: 'live',
+            isFrame: 'frame',
+        }
+        for (const key in mode) {
+            switch (key) {
+                case 'value':
+                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${modeValue}`)
+                    break
+                default:
+                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${mode[key] === modeValue}`)
+                    break
+            }
+        }
+    }
     const testCtxEntries = (entries) => {
         for (const key in entries) {
-            cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
+            if (key === 'mode') {
+                testCtxMode(entries[key])
+            } else {
+                cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
+            }
         }
     }
 
