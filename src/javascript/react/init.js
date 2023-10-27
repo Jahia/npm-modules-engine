@@ -57,14 +57,14 @@ export default () => {
             const element =
                 React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource}, React.createElement(view.component, {...props})
                 ));
-            const r = ReactDOMServer.renderToString(element);
+            const renderedElement = ReactDOMServer.renderToString(element);
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
             const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
             if (currentResource.getContextConfiguration() === 'page') {
-                return `<html>${r}${stylesResource}</html>`;
+                return `<html>${renderedElement}${stylesResource}</html>`;
             }
 
-            return `${r}${stylesResource}`;
+            return `${renderedElement}${stylesResource}`;
         }
     });
 };
