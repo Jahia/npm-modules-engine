@@ -16,7 +16,6 @@
 package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
-import org.jahia.modules.npm.modules.engine.helpers.Registry;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.modules.npm.modules.engine.views.JSScript;
 import org.jahia.modules.npm.modules.engine.views.JSView;
@@ -30,10 +29,7 @@ import org.jahia.services.render.scripting.Script;
 import org.jahia.services.render.scripting.ScriptResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +54,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         this.renderService = renderService;
     }
 
-    @Reference
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setGraalVMEngine(GraalVMEngine graalVMEngine) {
         this.graalVMEngine = graalVMEngine;
     }
@@ -78,27 +74,28 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         l.remove(this);
         renderService.setScriptResolvers(l);
     }
-
     @Override
-    public void register(Registry registry, Bundle bundle, GraalVMEngine engine) {
+    public void register(Bundle bundle) {
         Set<JSView> views = new HashSet<>();
 
         views.addAll(parseBundleFolder(bundle));
-        views.addAll(getRegistryViewsSet(registry, bundle));
+        views.addAll(getRegistryViewsSet(bundle));
 
         viewsPerBundle.put(bundle, views);
     }
 
     @Override
-    public void unregister(Registry registry, Bundle bundle) {
+    public void unregister(Bundle bundle) {
         viewsPerBundle.remove(bundle);
     }
 
-    private Collection<JSView> getRegistryViewsSet(Registry registry, Bundle bundle) {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("type", "view");
-        filter.put("bundle", Value.asValue(bundle));
-        return registry.find(filter).stream().map(JSView::new).collect(Collectors.toSet());
+    private Collection<JSView> getRegistryViewsSet(Bundle bundle) {
+        return graalVMEngine.doWithContext(contextProvider -> {
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("type", "view");
+            filter.put("bundle", Value.asValue(bundle));
+            return contextProvider.getRegistry().find(filter).stream().map(JSView::new).collect(Collectors.toSet());
+        });
     }
 
     private Collection<JSView> parseBundleFolder(Bundle bundle) {

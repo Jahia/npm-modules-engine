@@ -44,6 +44,7 @@ public class CoreHelperFactory implements JSGlobalVariableFactory {
         helpers.put("gql", new GQLHelper(contextProvider));
         helpers.put("osgi", new OSGiHelper(contextProvider));
         helpers.put("node", new NodeHelper(contextProvider));
+        helpers.put("config", new ConfigHelper(contextProvider));
 
         for (Map.Entry<String, Object> entry : helpers.entrySet()) {
             try {
@@ -52,8 +53,6 @@ public class CoreHelperFactory implements JSGlobalVariableFactory {
                 logger.error("Cannot inject services for {} helper", entry.getKey(), e);
             }
         }
-
-        contextProvider.getHelpers().putAll(helpers);
 
         return ProxyObject.fromMap(helpers);
     }

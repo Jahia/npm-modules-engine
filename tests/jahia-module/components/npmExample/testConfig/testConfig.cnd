@@ -1,0 +1,8 @@
+<mix = 'http://www.jcp.org/jcr/mix/1.0'>
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+<npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
+<npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
+
+
+[npmExample:testConfig] > jnt:content, npmExampleMix:npmExampleComponent, mix:title

@@ -21,6 +21,7 @@ export default () => {
     });
 
     registry.add('view', 'react', {
+        requireNewJSContext: true,
         render: (currentResource, renderContext, view) => {
             const reactRenderType = renderContext.getRequest().getAttribute('reactRenderType');
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);

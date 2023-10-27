@@ -1,0 +1,34 @@
+<h2>OSGi Configuration view testing component</h2>
+
+<h3>OSGi Config Basic value tests</h3>
+
+{{jConfigValues 'org.jahia.modules.test' varName="configValues"}}
+
+<p data-testid="configValues.configKey1">configValues.configKey1={{configValues.configKey1}}</p>
+<p data-testid="configValues.configKey2">configValues.configKey2={{configValues.configKey2}}</p>
+
+<p data-testid="configKey1">configKey1={{jConfigValue 'org.jahia.modules.test' 'configKey1'}}</p>
+
+<h3>OSGi Config Factory tests</h3>
+
+{{jConfigFactoryValues 'org.jahia.modules.test.factory' 'default' varName="defaultFactoryConfigs" }}
+<p data-testid="defaultFactoryConfigs.configKey1">
+    defaultFactoryConfigs.configKey1={{defaultFactoryConfigs.configKey1}}</p>
+<p data-testid="defaultFactoryConfigs.configKey2">
+    defaultFactoryConfigs.configKey2={{defaultFactoryConfigs.configKey2}}</p>
+
+<h3>OSGi Test Module Factory Config Identifiers</h3>
+<p data-testid="testModuleFactoryIdentifiers">testModuleFactoryIdentifiers={{jConfigFactoryIdentifiers
+        'org.jahia.modules.test.factory'}}</p>
+
+<h3>All Config PIDs</h3>
+<p data-testid="allConfigPIDs">allConfigPIDs={{jConfigPids}}</p>
+
+<h3>OSGi Config Complex Values</h3>
+{{jConfigValues 'org.jahia.modules.test.complex' varName="complexObject"}}
+
+{{#each complexObject}}
+    <div data-testid="complexObject_{{@key}}">
+        {{@key}}: {{this}}
+    </div>
+{{/each}}
