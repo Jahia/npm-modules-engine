@@ -1,5 +1,6 @@
+// QA-14997 temporarily deactivated since it causing flakyness in tests
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const codeCoverage = require('@cypress/code-coverage/task')
+// const codeCoverage = require('@cypress/code-coverage/task')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const installLogsPrinter = require('cypress-terminal-report/src/installLogsPrinter')
 const env = require('./env')
@@ -9,6 +10,7 @@ const cypressTypeScriptPreprocessor = require('./cy-ts-preprocessor')
 
 module.exports = (on, config) => {
     env(on, config)
+    // QA-14997 temporarily deactivated since it causing flakyness in tests
     // codeCoverage(on, config);
 
     //https://github.com/archfz/cypress-terminal-report
