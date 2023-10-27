@@ -77,7 +77,7 @@ public class RenderHelper {
 
             JCRNodeWrapper node = JSNodeMapper.toVirtualNode((Map<String, ?>) attr.get("content"), session, renderContext);
             String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
-            String templateType = attr.containsKey("templateType") ? (String) attr.get("templateType") : "html";
+            String templateType = attr.get("templateType") != null ? (String) attr.get("templateType") : "html";
 
             if ("OPTION".equals(renderConfig)) {
                 Map<String, Object> optionAttr = new HashMap<>();

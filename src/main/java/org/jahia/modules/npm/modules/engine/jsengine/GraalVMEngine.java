@@ -121,26 +121,6 @@ public class GraalVMEngine {
         sharedEngine.close();
     }
 
-    // TODO: this is actually necessary for React views rendering
-    // TODO: because they are using Promises for rendering, only a fresh context seem's to work
-    // TODO: but this could be consuming, if a lot of react views are rendering nesting multiple levels
-    // TODO: the thread will borrow a number of new contexts matching the level of react view nested.
-    // TODO: this could be problematic and should be done differently.
-    // TODO: Ideally the current thread should only reuse the already borrowed context and not create multiple ones.
-    public <T> T doWithNewContext(Function<ContextProvider, T> callback) {
-        Stack<ContextProvider> cx = currentContext.get();
-        try {
-            cx.push(pool.borrowObject());
-        } catch (Exception e) {
-            throw new GraalVMException("Unable to borrow context from pool: " + e.getMessage(), e);
-        }
-        try {
-            return callback.apply(cx.peek());
-        } finally {
-            pool.returnObject(cx.pop());
-        }
-    }
-
     public <T> T doWithContext(Function<ContextProvider, T> callback) {
         Stack<ContextProvider> cx = currentContext.get();
         if (!cx.isEmpty()) {
