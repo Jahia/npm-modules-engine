@@ -87,7 +87,6 @@ describe('jArea helper test', () => {
 
     afterEach('Logout', () => {
         cy.logout()
-        cy.visit('/')
     })
 
     after('Delete site', () => {
