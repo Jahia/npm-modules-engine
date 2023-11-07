@@ -17,7 +17,6 @@
     "cypress-file-upload": "^5.0.7",
     "cypress-iframe": "^1.0.1",
     "cypress-multi-reporters": "^1.4.0",
-    "cypress-iframe": "^1.0.1",
     "cypress-terminal-report": "^5.2.0",
     "cypress-wait-until": "^1.7.2",
     "diff": "^4.0.2",

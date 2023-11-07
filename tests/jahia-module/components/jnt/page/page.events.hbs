@@ -10,7 +10,7 @@
             </div>
             <div class="nav">{{render content=components.navMenu}}</div>
             <div class="main">
-                <div class="article">{{render content=components.events}}</div>
+                <div class="article">{{jArea name="events" allowedTypes=(arr "jnt:event")}}</div>
                 <div class="aside">
                     {{render content=components.calendar}}
                     {{render content=components.facets}}

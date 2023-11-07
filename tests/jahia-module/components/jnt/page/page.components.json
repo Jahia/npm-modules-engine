@@ -7,21 +7,6 @@
         "name": "footer",
         "nodeType": "jnt:absoluteArea"
     },
-    "pagecontent": {
-        "name": "pagecontent",
-        "nodeType": "jnt:area"
-    },
-    "aside": {
-        "name": "aside",
-        "nodeType": "jnt:area"
-    },
-    "events": {
-        "name": "events",
-        "nodeType": "jnt:area",
-        "properties": {
-            "j:allowedTypes": ["jnt:event"]
-        }
-    },
     "calendar": {
         "name": "calendar",
         "nodeType": "jnt:calendar",
