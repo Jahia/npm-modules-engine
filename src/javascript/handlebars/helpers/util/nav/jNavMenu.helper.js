@@ -1,4 +1,4 @@
-import {getMenuItemsChildren, getPageAncestors} from './navMenu.utils';
+import {getMenuItemsChildren, getPageAncestors} from './jNavMenu.utils';
 import {render} from '@jahia/server-helpers';
 const getBaseNode = (baseline, renderContext, workspace) => {
     const mainResourceNode = renderContext.getMainResource().getNode();

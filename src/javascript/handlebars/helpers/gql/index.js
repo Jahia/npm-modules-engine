@@ -1,1 +1,1 @@
-export {default as gql} from './gql';
+export {default as jGql} from './jGql';
