@@ -1,4 +1,5 @@
-export {default as addResources} from './addResources';
-export {default as addCacheDependency} from './addCacheDependency';
-export {default as render} from './render';
-export {default as createContentButtons} from './createContentButtons';
+export {default as jAddResources} from './jAddResources';
+export {default as jAddCacheDependency} from './jAddCacheDependency';
+export {default as jRender} from './jRender';
+export {default as jCreateContentButtons} from './jCreateContentButtons';
+

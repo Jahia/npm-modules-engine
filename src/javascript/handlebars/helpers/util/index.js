@@ -1,9 +1,9 @@
-export {default as obj} from './obj';
-export {default as date} from './date';
-export {default as arr} from './arr';
-export {default as loadJSON} from './loadJSON';
-export {default as buildNavMenu} from './nav/navMenu.helper';
-export {default as url} from './url';
+export {default as jObj} from './jObj';
+export {default as jDate} from './jDate';
+export {default as jArr} from './jArr';
+export {default as jLoadJSON} from './jLoadJSON';
+export {default as jBuildNavMenu} from './nav/jNavMenu.helper';
+export {default as jUrl} from './jUrl';
 export {default as jConfigValue} from './config/jConfigValue';
 export {default as jConfigValues} from './config/jConfigValues';
 export {default as jConfigFactoryValue} from './config/jConfigFactoryValue';
