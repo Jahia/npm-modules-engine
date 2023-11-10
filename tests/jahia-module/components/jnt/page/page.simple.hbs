@@ -1,20 +1,20 @@
-{{loadJSON 'page.components.json' 'components'}}
+{{jLoadJSON 'page.components.json' 'components'}}
 <html>
     <head></head>
     <body>
-        {{addResources type="css" resources="styles.css"}}
+        {{jAddResources type="css" resources="styles.css"}}
         <div class="page">
             <div class="header">
-                <div class="headerContent">{{render content=components.header}}</div>
-                <div class="headerLogin">{{render content=components.login}}</div>
+                <div class="headerContent">{{jRender content=components.header}}</div>
+                <div class="headerLogin">{{jRender content=components.login}}</div>
             </div>
-            <div class="nav">{{render content=components.navMenu}}</div>
+            <div class="nav">{{jRender content=components.navMenu}}</div>
             <div class="main">
                 <div class="article">{{jArea name="pagecontent"}}</div>
                 <div class="aside">{{jArea name="aside"}}</div>
             </div>
             <div class="footer">
-                <div class="footerContent">{{render content=components.footer}}</div>
+                <div class="footerContent">{{jRender content=components.footer}}</div>
             </div>
         </div>
     </body>

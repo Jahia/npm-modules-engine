@@ -1,41 +1,41 @@
 <h3>Url helper testing component</h3>
 
 {{#if currentContent.properties.image.path}}
-    {{addCacheDependency path=currentContent.properties.image.path}}
+    {{jAddCacheDependency path=currentContent.properties.image.path}}
     <div data-testid="image_reference">
-        <img height="150" src="{{url path=currentContent.properties.image.path}}" alt="image">
+        <img height="150" src="{{jUrl path=currentContent.properties.image.path}}" alt="image">
     </div>
 {{/if}}
 <div data-testid="image_static_resource">
-    <img height="150" src="{{url value=(append ctx.currentModule "/images/goat.jpg")}}" alt="goat">
+    <img height="150" src="{{jUrl value=(append ctx.currentModule "/images/goat.jpg")}}" alt="goat">
 </div>
 {{#if currentContent.properties.linknode.path}}
-    {{addCacheDependency path=currentContent.properties.linknode.path}}
+    {{jAddCacheDependency path=currentContent.properties.linknode.path}}
     <div data-testid="content_link">
-        <a href="{{url path=currentContent.properties.linknode.path}}">content link - current context</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path}}">content link - current context</a>
     </div>
     <div data-testid="content_link_mode_edit">
-        <a href="{{url path=currentContent.properties.linknode.path mode="edit"}}">content link - edit</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path mode="edit"}}">content link - edit</a>
     </div>
     <div data-testid="content_link_mode_preview">
-        <a href="{{url path=currentContent.properties.linknode.path mode="preview"}}">content link - preview</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path mode="preview"}}">content link - preview</a>
     </div>
     <div data-testid="content_link_mode_live">
-        <a href="{{url path=currentContent.properties.linknode.path mode="live"}}">content link - live</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path mode="live"}}">content link - live</a>
     </div>
     <div data-testid="content_link_language_fr">
-        <a href="{{url path=currentContent.properties.linknode.path language="fr"}}">content link - FR</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path language="fr"}}">content link - FR</a>
     </div>
     <div data-testid="content_link_parameters">
-        <a href="{{url path=currentContent.properties.linknode.path parameters=(obj param1="value1" param2="value2")}}">content link - parameters</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path parameters=(jObj param1="value1" param2="value2")}}">content link - parameters</a>
     </div>
     <div data-testid="action_url">
-        <a href="{{url path=currentContent.properties.linknode.path extension=".myAction.do"}}">action link</a>
+        <a href="{{jUrl path=currentContent.properties.linknode.path extension=".myAction.do"}}">action link</a>
     </div>
 {{/if}}
 <div data-testid="absolute_external_link">
-    <a href="{{url value='https://www.google.com'}}">External absolute link</a>
+    <a href="{{jUrl value='https://www.google.com'}}">External absolute link</a>
 </div>
 <div data-testid="path_not_exists">
-    <a href="{{url path='/sites/mySiteNotExists/home'}}">Using a path of node that does not exists</a>
+    <a href="{{jUrl path='/sites/mySiteNotExists/home'}}">Using a path of node that does not exists</a>
 </div>
