@@ -1,6 +1,9 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
-import org.jahia.services.content.*;
+import org.jahia.services.content.JCRNodeIteratorWrapper;
+import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRPropertyWrapperImpl;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.render.RenderContext;
@@ -196,8 +199,14 @@ public class JSNodeMapper {
                 renderContext.getMainResource().getDependencies().add(boundComponent.getPath());
                 node.setProperty("j:bindedComponent", boundComponent);
             }
-        } catch (RepositoryException e) {
-            logger.error("Error while getting bound component: {}", e.getMessage());
+        } catch (RepositoryException re) {
+            // We add some details to the logging manually but don't want to log a full stack trace since this error
+            // might occur repeatedly in the logs
+            if (re.getCause() != null) {
+                logger.error("Error while retrieving bound component: class={} message={} causeClass={} causeMessage={}", re.getClass().getName(), re.getMessage(), re.getCause().getClass().getName(), re.getCause().getMessage());
+            } else {
+                logger.error("Error while retrieving bound component: class={} message={}", re.getClass().getName(), re.getMessage());
+            }
         }
 
         // handle children
