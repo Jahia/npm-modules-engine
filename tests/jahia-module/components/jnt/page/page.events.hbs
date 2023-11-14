@@ -10,7 +10,7 @@
             </div>
             <div class="nav">{{jRender content=components.navMenu}}</div>
             <div class="main">
-                <div class="article">{{jRender content=components.events}}</div>
+                <div class="article">{{jArea name="events" allowedTypes=(jArr "jnt:event")}}</div>
                 <div class="aside">
                     {{jRender content=components.calendar}}
                     {{jRender content=components.facets}}
