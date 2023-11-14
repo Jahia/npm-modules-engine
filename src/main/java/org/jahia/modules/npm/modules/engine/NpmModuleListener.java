@@ -33,11 +33,11 @@ import org.springframework.core.io.Resource;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Listener to execute scripts at activate/desactivate time
+ * Listener to execute scripts at activate/deactivate time
  */
 @Component(immediate = true)
 public class NpmModuleListener implements BundleListener {
@@ -45,7 +45,7 @@ public class NpmModuleListener implements BundleListener {
     public static final String SOURCES = "sources";
     public static final String MODULES = "/modules/";
     private GraalVMEngine engine;
-    private final Collection<Registrar> registrars = new ArrayList<>();
+    private final Queue<Registrar> registrars = new ConcurrentLinkedQueue<>();
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setEngine(GraalVMEngine engine) {
@@ -105,7 +105,7 @@ public class NpmModuleListener implements BundleListener {
                 engine.disableBundle(bundle);
             }
         } catch (Exception e) {
-            logger.error("Cannot handle event", e);
+            logger.error("Cannot handle event {}", event.toString(), e);
         }
     }
 
