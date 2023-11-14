@@ -118,7 +118,7 @@ public class GraalVMEngine {
     public void deactivate() {
         logger.debug("GraalVMEngine.deactivate");
         pool.close();
-        sharedEngine.close();
+        sharedEngine.close(true);
     }
 
     public <T> T doWithContext(Function<ContextProvider, T> callback) {
