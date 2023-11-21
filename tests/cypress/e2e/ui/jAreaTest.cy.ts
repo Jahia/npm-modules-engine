@@ -1,9 +1,11 @@
-import { addNode } from '@jahia/cypress'
+import {addNode, enableModule} from '@jahia/cypress'
 import 'cypress-wait-until'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('jArea helper test', () => {
     before('Create NPM test site', () => {
+        enableModule('event', 'npmTestSite')
+
         addSimplePage(`/sites/npmTestSite/home`, 'testJArea', 'testJArea', 'en', 'simple', [
             {
                 name: 'pagecontent',
