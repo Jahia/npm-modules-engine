@@ -5,3 +5,5 @@
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
 [npmExample:testAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testAreasReact] > jnt:content, npmExampleMix:npmExampleComponent, mix:title

@@ -6,6 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
 import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
+import JArea from './JArea';
 
 export default () => {
     // Hack to expose react to other modules
@@ -20,6 +21,7 @@ export default () => {
     registry.add('module', 'jahia-server-jsx', {
         exports: {
             JRender,
+            JArea,
             JCreateContentButtons,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
