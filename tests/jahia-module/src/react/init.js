@@ -11,4 +11,4 @@ export function initReact() {
         templateType: 'html',
         displayName: 'test Areas (react)'
     });
-};
+}

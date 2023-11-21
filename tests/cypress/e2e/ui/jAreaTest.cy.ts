@@ -1,6 +1,6 @@
-import {addNode} from '@jahia/cypress'
+import { addNode } from '@jahia/cypress'
 import 'cypress-wait-until'
-import {addSimplePage} from "../../utils/Utils";
+import { addSimplePage } from '../../utils/Utils'
 
 describe('jArea helper test', () => {
     before('Create NPM test site', () => {
@@ -29,11 +29,8 @@ describe('jArea helper test', () => {
                 primaryNodeType: 'npmExample:testAreasReact',
             })
         })
-    });
-
-    [   "testJArea",
-        "testJAreaReact",
-    ].forEach((pageName) => {
+    })
+    ;['testJArea', 'testJAreaReact'].forEach((pageName) => {
         it(`${pageName}: Basic Area test`, () => {
             cy.login()
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`)
