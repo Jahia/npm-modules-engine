@@ -160,32 +160,12 @@ public class GraalVMEngine {
         return Source.newBuilder(JS, resource, bundle.getSymbolicName() + "/" + script).build();
     }
 
-    private static String getSourceFile(Bundle bundle, String path) throws RepositoryException {
-        return JCRTemplate.getInstance().doExecuteWithSystemSession(session -> {
-            JahiaTemplatesPackage pkg = BundleUtils.getModule(bundle);
-            String sourcePath = "/modules/" + pkg.getIdWithVersion() + "/sources";
-            if (!session.itemExists(sourcePath)) {
-                return null;
-            }
-            JCRNodeWrapper sources = session.getNode(sourcePath);
-            if (sources.hasNode(path)) {
-                try {
-                    return IOUtils.toString(sources.getNode(path).getFileContent().downloadFile(), Charset.defaultCharset());
-                } catch (IOException e) {
-                    throw new RepositoryException(e);
-                }
-            }
-            return null;
-        });
-    }
-
     public static String loadResource(Bundle bundle, String path) {
         try {
-            return Optional
-                    .ofNullable(getSourceFile(bundle, path))
-                    .orElseGet(ThrowingSupplier.unchecked(() -> bundle.getResource(path) != null ? IOUtils.toString(bundle.getResource(path), Charset.defaultCharset()) : null));
+            URL url = bundle.getResource(path);
+            return url != null ? IOUtils.toString(url, Charset.defaultCharset()) : null;
         } catch (Exception e) {
-            logger.error("Cannot get resource", e);
+            logger.error("Cannot get resource: " + path, e);
         }
         return null;
     }
