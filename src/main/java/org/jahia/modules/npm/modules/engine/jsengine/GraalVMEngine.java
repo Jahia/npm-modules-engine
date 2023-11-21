@@ -156,7 +156,8 @@ public class GraalVMEngine {
 
     public static String loadResource(Bundle bundle, String path) {
         try {
-            return bundle.getResource(path) != null ? IOUtils.toString(bundle.getResource(path), Charset.defaultCharset()) : null;
+            URL url = bundle.getResource(path);
+            return url != null ? IOUtils.toString(url, Charset.defaultCharset()) : null;
         } catch (Exception e) {
             logger.error("Cannot get resource", e);
         }
