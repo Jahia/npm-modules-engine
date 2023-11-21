@@ -16,6 +16,7 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -37,6 +38,7 @@ import pl.touk.throwing.ThrowingSupplier;
 
 import javax.jcr.RepositoryException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -61,7 +63,7 @@ public class GraalVMEngine {
     private GenericObjectPool<ContextProvider> pool;
     private final ThreadLocal<Stack<ContextProvider>> currentContext = ThreadLocal.withInitial(Stack::new);
 
-    private final LinkedHashMap<Bundle, Source> initScripts = new LinkedHashMap<>();
+    private final Map<Bundle, Source> initScripts = Collections.synchronizedMap(new LinkedHashMap<>());
     private final AtomicInteger version = new AtomicInteger(0);
 
     private BundleContext bundleContext;
@@ -102,16 +104,20 @@ public class GraalVMEngine {
         }
 
         Engine.Builder builder = Engine.newBuilder();
+        Map<String,String> poolOptions = new HashMap<>();
         boolean experimental = props.containsKey("experimental") && Boolean.parseBoolean(props.get("experimental").toString());
         builder.allowExperimentalOptions(experimental);
         for (Map.Entry<String, ?> entry : props.entrySet()) {
             if (entry.getKey().startsWith("polyglot.")) {
                 String opt = StringUtils.substringAfter(entry.getKey(), "polyglot.");
                 builder.option(opt, entry.getValue().toString());
+            } else if (entry.getKey().startsWith("pool.")) {
+                String key = StringUtils.substringAfter(entry.getKey(), "pool.");
+                poolOptions.put(key, entry.getValue().toString());
             }
         }
         sharedEngine = builder.build();
-        initializePool();
+        initializePool(poolOptions);
     }
 
     @Deactivate
@@ -184,9 +190,14 @@ public class GraalVMEngine {
         return null;
     }
 
-    private void initializePool() {
+    private void initializePool(Map<String,String> poolOptions) {
         GenericObjectPoolConfig<ContextProvider> config = new GenericObjectPoolConfig<>();
-        config.setTestOnBorrow(true);
+        try {
+            BeanUtils.populate(config, poolOptions);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.error("Error while applying GraalVM Context pool options", e);
+            throw new RuntimeException(e);
+        }
         pool = new GenericObjectPool<>(new ContextPoolFactory(), config);
     }
 
