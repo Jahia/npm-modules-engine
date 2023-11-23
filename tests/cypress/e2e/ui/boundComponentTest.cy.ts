@@ -34,13 +34,20 @@ describe('Check on bound components', () => {
         cy.get(`span[class*="fc-event-title"]:contains("${expectedNumber}")`).should('exist')
     }
 
-    const addEventPageAndEvents = (pageName: string, thenFunction: () => void) => {
-        return addSimplePage(`/sites/${siteKey}/home`, pageName, 'Events page', 'en', 'events', [
-            {
-                name: 'events',
-                primaryNodeType: 'jnt:contentList',
-            },
-        ]).then(() => {
+    const addEventPageAndEvents = (reactTest: boolean, pageName: string, thenFunction: () => void) => {
+        return addSimplePage(
+            `/sites/${siteKey}/home`,
+            pageName,
+            'Events page',
+            'en',
+            reactTest ? 'eventsReact' : 'events',
+            [
+                {
+                    name: 'events',
+                    primaryNodeType: 'jnt:contentList',
+                },
+            ],
+        ).then(() => {
             const today = new Date()
             const tomorrow = new Date()
             tomorrow.setDate(tomorrow.getDate() + 1)
@@ -52,73 +59,80 @@ describe('Check on bound components', () => {
             }
         })
     }
-    it('Verify existing .jsp component like: calendar is correctly bound to events', function () {
-        cy.login()
-        const pageName = 'test1'
-        addEventPageAndEvents(pageName, () => {
-            cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`)
-            cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageName}.html`)
-            validateNumberOfEventInCalendar(2)
+
+    ;[false, true].forEach((reactTest) => {
+        it(`${
+            reactTest ? 'React' : 'Handlebar'
+        }: Verify existing .jsp component like: calendar is correctly bound to events`, function () {
+            cy.login()
+            const pageName = 'test1' + (reactTest ? 'React' : '')
+            addEventPageAndEvents(reactTest, pageName, () => {
+                cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`)
+                cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageName}.html`)
+                validateNumberOfEventInCalendar(2)
+            })
+            cy.logout()
         })
-        cy.logout()
-    })
 
-    it('Verify that the calendar is correctly refreshed once a new event is added', function () {
-        cy.login()
-        const pageName = 'test2'
-        addEventPageAndEvents(pageName, () => {
-            publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
-            cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
+        it(`${
+            reactTest ? 'React' : 'Handlebar'
+        }: Verify that the calendar is correctly refreshed once a new event is added`, function () {
+            cy.login()
+            const pageName = 'test2' + (reactTest ? 'React' : '')
+            addEventPageAndEvents(reactTest, pageName, () => {
+                publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
+                cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
 
-            const inTwoDays = new Date()
-            inTwoDays.setDate(inTwoDays.getDate() + 2)
-            addEvent(pageName, 'event-c', 'The third event', inTwoDays)
+                const inTwoDays = new Date()
+                inTwoDays.setDate(inTwoDays.getDate() + 2)
+                addEvent(pageName, 'event-c', 'The third event', inTwoDays)
 
-            publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
+                publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
 
-            cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`)
-            cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
+                cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`)
+                cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
 
-            validateNumberOfEventInCalendar(2)
-            validateNumberOfEventInCalendar(1)
+                validateNumberOfEventInCalendar(2)
+                validateNumberOfEventInCalendar(1)
+            })
+            cy.logout()
         })
-        cy.logout()
-    })
 
-    it('Verify that the facets is working correctly', function () {
-        cy.login()
-        const pageName = 'test3'
-        addEventPageAndEvents(pageName, () => {
-            // create events with event type for facets
-            const today = new Date()
-            const tomorrow = new Date()
-            tomorrow.setDate(tomorrow.getDate() + 1)
-            addEvent(pageName, 'event-meeting', 'The meeting event', today, tomorrow, 'meeting')
-            addEvent(pageName, 'event-consumerShow', 'The consumerShow event', today, tomorrow, 'consumerShow')
-            publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
+        it(`${reactTest ? 'React' : 'Handlebar'}: Verify that the facets is working correctly`, function () {
+            cy.login()
+            const pageName = 'test3' + (reactTest ? 'React' : '')
+            addEventPageAndEvents(reactTest, pageName, () => {
+                // create events with event type for facets
+                const today = new Date()
+                const tomorrow = new Date()
+                tomorrow.setDate(tomorrow.getDate() + 1)
+                addEvent(pageName, 'event-meeting', 'The meeting event', today, tomorrow, 'meeting')
+                addEvent(pageName, 'event-consumerShow', 'The consumerShow event', today, tomorrow, 'consumerShow')
+                publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`)
 
-            // check facets display
-            cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
-            cy.get('.eventsListItem').should('have.length', 4)
-            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).should('exist')
-            cy.get(`div[class*="facetsList"] a:contains("meeting")`).should('exist')
+                // check facets display
+                cy.visit(`/sites/${siteKey}/home/${pageName}.html`, { failOnStatusCode: false })
+                cy.get('.eventsListItem').should('have.length', 4)
+                cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).should('exist')
+                cy.get(`div[class*="facetsList"] a:contains("meeting")`).should('exist')
 
-            // activate consumerShow facet
-            cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).click()
-            cy.get('.eventsListItem').should('have.length', 1)
+                // activate consumerShow facet
+                cy.get(`div[class*="facetsList"] a:contains("consumerShow")`).click()
+                cy.get('.eventsListItem').should('have.length', 1)
 
-            // deactivate consumerShow facet
-            cy.get(`a:contains("remove")`).click()
-            cy.get('.eventsListItem').should('have.length', 4)
+                // deactivate consumerShow facet
+                cy.get(`a:contains("remove")`).click()
+                cy.get('.eventsListItem').should('have.length', 4)
 
-            // activate meeting facet
-            cy.get(`div[class*="facetsList"] a:contains("meeting")`).click()
-            cy.get('.eventsListItem').should('have.length', 3)
+                // activate meeting facet
+                cy.get(`div[class*="facetsList"] a:contains("meeting")`).click()
+                cy.get('.eventsListItem').should('have.length', 3)
 
-            // deactivate consumerShow facet
-            cy.get(`a:contains("remove")`).click()
-            cy.get('.eventsListItem').should('have.length', 4)
+                // deactivate consumerShow facet
+                cy.get(`a:contains("remove")`).click()
+                cy.get('.eventsListItem').should('have.length', 4)
+            })
+            cy.logout()
         })
-        cy.logout()
     })
 })

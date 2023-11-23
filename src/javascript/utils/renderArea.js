@@ -15,8 +15,6 @@ export default function renderArea(props, renderContext) {
         if (allowedAreaProperties.includes(attr)) {
             // .toString is here because virtual JS Node property only handle string for now (even if JCR definition say long, or other type)
             acc['j:' + attr] = attr === 'numberOfItems' ? props[attr].toString() : props[attr];
-        } else {
-            console.warn(`jArea: ${attr} is not a valid attribute, attribute ignored`);
         }
 
         return acc;

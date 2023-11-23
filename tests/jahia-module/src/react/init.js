@@ -6,6 +6,8 @@ import TestRenderParameters from './npmExample/testRender/TestRender.parameters'
 import TestRenderSub from './npmExample/testRender/TestRender.sub';
 import TestRenderTagged from './npmExample/testRender/TestRender.tagged';
 import TestCurrentContent from './npmExample/testCurrentContent/TestCurrentContent';
+import PageEvent from './jnt/page/PageEvent';
+import TestConfig from './npmExample/testConfig/testConfig';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
@@ -20,6 +22,26 @@ export function initReact() {
         properties: {
             template: 'true'
         }
+    });
+    registry.add('view', 'page_event_react', reactView, {
+        target: 'jnt:page',
+        remote: 'npm',
+        component: PageEvent,
+        templateName: 'eventsReact',
+        templateType: 'html',
+        displayName: 'Events page (react)',
+        properties: {
+            template: 'true',
+            'cache.requestParameters': 'N-*'
+        }
+    });
+
+    registry.add('view', 'testConfig_react', reactView, {
+        target: 'npmExample:testConfig',
+        component: TestConfig,
+        templateName: 'react',
+        templateType: 'html',
+        displayName: 'test jConfig (react)'
     });
 
     registry.add('view', 'testCurrentContent_react', reactView, {

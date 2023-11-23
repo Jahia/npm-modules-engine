@@ -1,4 +1,4 @@
-import {setResult} from '../../../util';
+import {setResult} from '../../../hbsUtils';
 import {config} from '@jahia/server-helpers';
 
 export default function (factoryPid, options) {

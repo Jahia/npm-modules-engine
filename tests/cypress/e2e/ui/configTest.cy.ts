@@ -1,4 +1,4 @@
-import { addNode, deleteNode, publishAndWaitJobEnding } from '@jahia/cypress'
+import { addNode, publishAndWaitJobEnding } from '@jahia/cypress'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('Test OSGi configuration in views', () => {
@@ -14,13 +14,23 @@ describe('Test OSGi configuration in views', () => {
                 name: 'test',
                 primaryNodeType: 'npmExample:testConfig',
             })
-
-            publishAndWaitJobEnding('/sites/npmTestSite')
         })
-    })
 
-    after('Clean', () => {
-        deleteNode('/sites/npmTestSite/home/testConfig')
+        addSimplePage(`/sites/npmTestSite/home`, 'testConfigReact', 'testConfigReact', 'en', 'simpleReact', [
+            {
+                name: 'pagecontent',
+                primaryNodeType: 'jnt:contentList',
+            },
+        ]).then(() => {
+            addNode({
+                parentPathOrId: `/sites/npmTestSite/home/testConfigReact/pagecontent`,
+                name: 'test',
+                primaryNodeType: 'npmExample:testConfig',
+                mixins: ['jmix:renderable'],
+                properties: [{ name: 'j:view', value: 'react' }],
+            })
+        })
+
         publishAndWaitJobEnding('/sites/npmTestSite')
     })
 
@@ -43,36 +53,38 @@ describe('Test OSGi configuration in views', () => {
         cy.get(`div[data-testid="complexObject_metadata.name"]`).should('contain', 'metadata.name: my-app')
     }
 
-    it('test config in preview', function () {
-        cy.login()
-        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testConfig.html`)
-        testConfigEntries()
-        cy.logout()
-    })
+    ;['testConfig', 'testConfigReact'].forEach((pageName) => {
+        it(`${pageName}: test config in preview`, function () {
+            cy.login()
+            cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`)
+            testConfigEntries()
+            cy.logout()
+        })
 
-    it('test config in edit', function () {
-        cy.login()
-        cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/testConfig`)
-        cy.iframe('[data-sel-role="page-builder-frame-active"]', { timeout: 90000, log: true }).within(() => {
+        it(`${pageName}: test config in edit`, function () {
+            cy.login()
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`)
+            cy.iframe('[data-sel-role="page-builder-frame-active"]', { timeout: 90000, log: true }).within(() => {
+                testConfigEntries()
+            })
+            cy.logout()
+        })
+
+        it(`${pageName}: test config in live guest`, function () {
+            cy.visit(`/sites/npmTestSite/home/${pageName}.html`)
             testConfigEntries()
         })
-        cy.logout()
-    })
 
-    it('test config in live guest', function () {
-        cy.visit(`/sites/npmTestSite/home/testConfig.html`)
-        testConfigEntries()
-    })
+        it(`${pageName}: test config in live logged`, function () {
+            cy.login()
+            cy.visit(`/sites/npmTestSite/home/${pageName}.html`)
+            testConfigEntries()
+            cy.logout()
+        })
 
-    it('test config in live logged', function () {
-        cy.login()
-        cy.visit(`/sites/npmTestSite/home/testConfig.html`)
-        testConfigEntries()
-        cy.logout()
-    })
-
-    it('test config in ajax rendered content', function () {
-        cy.visit(`/sites/npmTestSite/home/testConfig/pagecontent/test.html.ajax`)
-        testConfigEntries()
+        it(`${pageName}: test config in ajax rendered content`, function () {
+            cy.visit(`/sites/npmTestSite/home/${pageName}/pagecontent/test.html.ajax`)
+            testConfigEntries()
+        })
     })
 })

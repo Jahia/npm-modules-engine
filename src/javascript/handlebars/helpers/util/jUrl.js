@@ -1,4 +1,4 @@
-import {getNode, setResult} from '../../util';
+import {getNode, setResult} from '../../hbsUtils';
 import {node, registry} from '@jahia/server-helpers';
 
 const absoluteUrlRegExp = /^(?:[a-z+]+:)?\/\//i;

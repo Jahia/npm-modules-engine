@@ -1,6 +1,6 @@
 import {SafeString} from 'handlebars';
 import {render} from '@jahia/server-helpers';
-import {setResult} from '../../util';
+import {setResult} from '../../hbsUtils';
 
 const allowedRenderAttributes = ['content', 'node', 'path', 'editable', 'advanceRenderingConfig', 'templateType', 'view', 'parameters'];
 

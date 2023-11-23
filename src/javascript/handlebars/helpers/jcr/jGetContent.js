@@ -1,4 +1,4 @@
-import {getNode, setResult} from '../../util';
+import {getNode, setResult} from '../../hbsUtils';
 import {render} from '@jahia/server-helpers';
 
 export default function (options) {
