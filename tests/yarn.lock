@@ -1189,12 +1189,13 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.3.tgz#e45e384e4b8ec16bce2fd903af78450f6bf7ec98"
   integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
 
-"@jahia/cypress@^3.13.0":
-  version "3.14.6"
-  resolved "https://registry.yarnpkg.com/@jahia/cypress/-/cypress-3.14.6.tgz#be4293d40d60c219eadcb1a5d01d5196a22b8dc1"
-  integrity sha512-W6Q39qNKvynXeWr6yyis4F8/9wNpFtlv3r3WrAp5fJq0kOQi+srDy0YGcCqS6BrUBzrZFnI4umTpw3rFszY0Xw==
+"@jahia/cypress@^3.17.4":
+  version "3.17.4"
+  resolved "https://registry.yarnpkg.com/@jahia/cypress/-/cypress-3.17.4.tgz#901d6bfd6cfd6998a6452bec02a8254f89f79e64"
+  integrity sha512-CAvYKbSYMyHiZWNfxdUglH90+Pn7mytfefAtDIFCo3g83zQcSM82v0CBV26jpqZlxE5sv6xbVMggHM9YTwOGfQ==
   dependencies:
     "@apollo/client" "^3.4.9"
+    cypress-real-events "^1.11.0"
     graphql "^15.5.0"
     graphql-tag "^2.11.0"
 
@@ -1879,11 +1880,6 @@ ansi-escapes@^4.3.0:
   integrity sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==
   dependencies:
     type-fest "^0.21.3"
-
-ansi-regex@^4.1.0:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.1.tgz#164daac87ab2d6f6db3a29875e2d1766582dabed"
-  integrity sha512-ILlv4k/3f6vfQ4OoP2AGvirOktlQ98ZEL1k9FaQjxa3L1abBgbuTDAdPOpvbGncC0BTVQrl+OM8xZGK6tWXt7g==
 
 ansi-regex@^4.1.0:
   version "4.1.1"
@@ -3138,6 +3134,11 @@ cypress-multi-reporters@^1.4.0:
   dependencies:
     debug "^4.1.1"
     lodash "^4.17.15"
+
+cypress-real-events@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/cypress-real-events/-/cypress-real-events-1.11.0.tgz#292fe5281c5b6e955524e766ab7fec46930c7763"
+  integrity sha512-4LXVRsyq+xBh5TmlEyO1ojtBXtN7xw720Pwb9rEE9rkJuXmeH3VyoR1GGayMGr+Itqf11eEjfDewtDmcx6PWPQ==
 
 cypress-terminal-report@^5.2.0:
   version "5.2.0"
@@ -5793,49 +5794,6 @@ mochawesome@^6.3.1:
     strip-ansi "^6.0.0"
     uuid "^8.3.2"
 
-mochawesome-merge@^4.2.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/mochawesome-merge/-/mochawesome-merge-4.3.0.tgz#7cc5d5730c7d8d1b034c8d8fecf3cd36e0010297"
-  integrity sha512-1roR6g+VUlfdaRmL8dCiVpKiaUhbPVm1ZQYUM6zHX46mWk+tpsKVZR6ba98k2zc8nlPvYd71yn5gyH970pKBSw==
-  dependencies:
-    fs-extra "^7.0.1"
-    glob "^7.1.6"
-    yargs "^15.3.1"
-
-mochawesome-report-generator@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/mochawesome-report-generator/-/mochawesome-report-generator-5.2.0.tgz#ffd29f8d610863e48e63c15c4e83b5689d8dbd04"
-  integrity sha512-DDY/3jSkM/VrWy0vJtdYOf6qBLdaPaLcI7rQmBVbnclIX7AKniE1Rhz3T/cMT/7u54W5EHNo1z84z7efotq/Eg==
-  dependencies:
-    chalk "^2.4.2"
-    dateformat "^3.0.2"
-    escape-html "^1.0.3"
-    fs-extra "^7.0.0"
-    fsu "^1.0.2"
-    lodash.isfunction "^3.0.8"
-    opener "^1.5.2"
-    prop-types "^15.7.2"
-    tcomb "^3.2.17"
-    tcomb-validation "^3.3.0"
-    validator "^10.11.0"
-    yargs "^13.2.2"
-
-mochawesome@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/mochawesome/-/mochawesome-6.3.1.tgz#9dc1e73165f4686a6f29c382d36b8cf3cd6a6e9c"
-  integrity sha512-G2J7Le8ap+0222otJQEUVFs7RYzphiIk21NzaBZE2dbyHJ2+9aai+V2cV7lreEKigDpwQ+SXeiiBH9KQlrkaAQ==
-  dependencies:
-    chalk "^4.1.0"
-    diff "^5.0.0"
-    json-stringify-safe "^5.0.1"
-    lodash.isempty "^4.4.0"
-    lodash.isfunction "^3.0.9"
-    lodash.isobject "^3.0.2"
-    lodash.isstring "^4.0.1"
-    mochawesome-report-generator "^5.2.0"
-    strip-ansi "^6.0.0"
-    uuid "^8.3.2"
-
 module-deps@^6.0.0, module-deps@^6.2.3:
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/module-deps/-/module-deps-6.2.3.tgz#15490bc02af4b56cf62299c7c17cba32d71a96ee"
@@ -7375,13 +7333,6 @@ stringify-object@^3.3.0:
     get-own-enumerable-property-symbols "^3.0.0"
     is-obj "^1.0.1"
     is-regexp "^1.0.0"
-
-strip-ansi@^5.0.0, strip-ansi@^5.1.0, strip-ansi@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.2.0.tgz#8c9a536feb6afc962bdfa5b104a5091c1ad9c0ae"
-  integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
-  dependencies:
-    ansi-regex "^4.1.0"
 
 strip-ansi@^5.0.0, strip-ansi@^5.1.0, strip-ansi@^5.2.0:
   version "5.2.0"

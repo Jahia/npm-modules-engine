@@ -1,4 +1,4 @@
-import {registry, gql} from '@jahia/server-helpers';
+import {registry, gql, render} from '@jahia/server-helpers';
 import React from 'react';
 import JRender from './JRender';
 import JCreateContentButtons from './JCreateContentButtons';
@@ -7,6 +7,7 @@ import styledJsx from 'styled-jsx/style';
 import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
+import JAddResources from './JAddResources';
 
 export default () => {
     // Hack to expose react to other modules
@@ -23,6 +24,12 @@ export default () => {
             JRender,
             JArea,
             JCreateContentButtons,
+            JAddResources,
+            jAddCacheDependency: ({...props}) => {
+                /* eslint-disable-next-line react-hooks/rules-of-hooks */
+                const {renderContext} = useServerContext();
+                render.addCacheDependencyTag(props, renderContext);
+            },
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();

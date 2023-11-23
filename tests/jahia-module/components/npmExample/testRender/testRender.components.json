@@ -1,0 +1,46 @@
+{
+    "text": {
+        "name": "text",
+        "nodeType": "jnt:text",
+        "properties": {
+            "text": "JSON node rendered"
+        }
+    },
+    "textOption": {
+        "name": "textOption",
+        "nodeType": "jnt:text",
+        "properties": {
+            "text": "JSON node rendered with option config"
+        }
+    },
+    "npmOption": {
+        "name": "npmOption",
+        "nodeType": "npmExample:testRender",
+        "properties": {
+            "prop1": "prop1 value it is"
+        }
+    },
+    "viewWithMixin": {
+        "name": "viewWithMixin",
+        "nodeType": "npmExample:testRender",
+        "mixins": ["jmix:tagged"],
+        "properties": {
+            "j:tagList": ["tag1", "tag2"]
+        }
+    },
+    "viewWithParameters": {
+        "name": "viewWithParameters",
+        "nodeType": "npmExample:testRender",
+        "properties": {
+            "prop1": "prop1 value it is"
+        }
+    },
+    "renderParameters": {
+        "stringParam": "stringValue",
+        "stringParam2": "stringValue2",
+        "objectParam": {
+            "integerParam": 1,
+            "booleanParam": true
+        }
+    }
+}

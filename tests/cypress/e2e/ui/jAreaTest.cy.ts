@@ -19,7 +19,7 @@ describe('jArea helper test', () => {
             })
         })
 
-        addSimplePage(`/sites/npmTestSite/home`, 'testJAreaReact', 'testJAreaReact', 'en', 'simple', [
+        addSimplePage(`/sites/npmTestSite/home`, 'testJAreaReact', 'testJAreaReact', 'en', 'simpleReact', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList',
@@ -28,7 +28,9 @@ describe('jArea helper test', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testJAreaReact/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testAreasReact',
+                primaryNodeType: 'npmExample:testAreas',
+                mixins: ['jmix:renderable'],
+                properties: [{ name: 'j:view', value: 'react' }],
             })
         })
     })

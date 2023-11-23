@@ -1,14 +1,63 @@
 import {registry} from '@jahia/server-helpers';
-import TestAreas from './TestAreas';
+import TestAreas from './npmExample/testAreas/TestAreas';
+import PageSimple from './jnt/page/PageSimple';
+import TestRender from './npmExample/testRender/TestRender';
+import TestRenderParameters from './npmExample/testRender/TestRender.parameters';
+import TestRenderSub from './npmExample/testRender/TestRender.sub';
+import TestRenderTagged from './npmExample/testRender/TestRender.tagged';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
 
-    registry.add('view', 'testAreasReact', reactView, {
-        target: 'npmExample:testAreasReact',
+    registry.add('view', 'page_simple_react', reactView, {
+        target: 'jnt:page',
+        remote: 'npm',
+        component: PageSimple,
+        templateName: 'simpleReact',
+        templateType: 'html',
+        displayName: 'Simple page (react)',
+        properties: {
+            template: 'true'
+        }
+    });
+
+    registry.add('view', 'testAreas_react', reactView, {
+        target: 'npmExample:testAreas',
         component: TestAreas,
-        templateName: 'default',
+        templateName: 'react',
         templateType: 'html',
         displayName: 'test Areas (react)'
+    });
+
+    registry.add('view', 'testRender_react', reactView, {
+        target: 'npmExample:testRender',
+        component: TestRender,
+        templateName: 'react',
+        templateType: 'html',
+        displayName: 'test Render (react)'
+    });
+
+    registry.add('view', 'testRender_parametersReact', reactView, {
+        target: 'npmExample:testRender',
+        component: TestRenderParameters,
+        templateName: 'parametersReact',
+        templateType: 'html',
+        displayName: 'test Render (parameters react)'
+    });
+
+    registry.add('view', 'testRender_subReact', reactView, {
+        target: 'npmExample:testRender',
+        component: TestRenderSub,
+        templateName: 'subReact',
+        templateType: 'html',
+        displayName: 'test Render (sub react)'
+    });
+
+    registry.add('view', 'testRender_taggedReact', reactView, {
+        target: 'npmExample:testRender',
+        component: TestRenderTagged,
+        templateName: 'taggedReact',
+        templateType: 'html',
+        displayName: 'test Render (tagged react)'
     });
 }

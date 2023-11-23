@@ -3,7 +3,7 @@ import {JArea} from '@jahia/server-jsx';
 
 export default () => {
     return (
-        <div>
+        <>
             <h2>jArea heper testing component</h2>
 
             <h2>Basic Area</h2>
@@ -30,6 +30,6 @@ export default () => {
             <div data-testid="subNodesViewArea">
                 <JArea name={"subNodesViewArea"} subNodesView={"link"}/>
             </div>
-        </div>
+        </>
     )
 }
