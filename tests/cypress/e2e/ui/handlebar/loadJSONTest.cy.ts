@@ -1,5 +1,5 @@
-import {addSimplePage} from "../../../utils/Utils";
-import {addNode} from "@jahia/cypress";
+import { addSimplePage } from '../../../utils/Utils'
+import { addNode } from '@jahia/cypress'
 
 describe('Test on loadJSON helper', () => {
     before('Create NPM test site', () => {
@@ -12,11 +12,11 @@ describe('Test on loadJSON helper', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testJLoadJSON/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testJLoadJSON'
+                primaryNodeType: 'npmExample:testJLoadJSON',
             })
         })
     })
-    
+
     it('Check loadJSON for view relative file', function () {
         cy.login()
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testJLoadJSON.html`)

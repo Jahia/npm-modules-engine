@@ -1,5 +1,5 @@
-import {addSimplePage} from "../../../utils/Utils";
-import {addNode} from "@jahia/cypress";
+import { addSimplePage } from '../../../utils/Utils'
+import { addNode } from '@jahia/cypress'
 
 describe('Test on getContent helper', () => {
     before('Create NPM test site', () => {
@@ -12,11 +12,11 @@ describe('Test on getContent helper', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testJGetContent/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testJGetContent'
+                primaryNodeType: 'npmExample:testJGetContent',
             })
         })
     })
-    
+
     it('Check getContent helper with includeChildren', function () {
         cy.login()
         cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testJGetContent.html`)
