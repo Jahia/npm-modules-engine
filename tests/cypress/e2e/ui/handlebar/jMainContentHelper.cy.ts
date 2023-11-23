@@ -1,4 +1,4 @@
-import { addSimplePage } from '../../utils/Utils'
+import { addSimplePage } from '../../../utils/Utils'
 import { addNode, deleteNode, publishAndWaitJobEnding, setNodeProperty } from '@jahia/cypress'
 
 describe('Test on jMainContent helper', () => {

@@ -1,4 +1,3 @@
-{{jLoadJSON 'test.components.json' 'components'}}
 {{jAddResources type="css" resources="news.css"}}
 {{#jGql}}
     {
@@ -48,47 +47,4 @@
             {{/each}}
         </ul>
     </div>
-<hr/>
-
-<h3>currentContent usages</h3>
-    <div data-testid="currentContent_properties_jcr:title">jcr:title : {{currentContent.properties.[jcr:title]}}</div>
-    <div data-testid="currentContent_properties_prop1">prop1 : {{currentContent.properties.prop1}}</div>
-    <div data-testid="currentContent_properties_propMultiple">propMultiple : {{currentContent.properties.propMultiple}}</div>
-    <div data-testid="currentContent_properties_propI18n">propI18n : {{currentContent.properties.propI18n}}</div>
-    <div data-testid="currentContent_properties_propRichText">
-    <div>richtext : </div>
-    {{{currentContent.properties.propRichText}}}
-    </div>
-    <div data-testid="currentContent_uuid">uuid : {{currentContent.uuid}}</div>
-    <div data-testid="currentContent_name">name : {{currentContent.name}}</div>
-    <div data-testid="currentContent_path">path : {{currentContent.path}}</div>
-    <div data-testid="currentContent_parent">parent : {{currentContent.parent}}</div>
-    <div data-testid="currentContent_nodeType">nodeType : {{currentContent.nodeType}}</div>
-    <div data-testid="currentContent_mixins">mixins : {{currentContent.mixins}}</div>
-<hr/>
-
-<h3>loadJSON</h3>
-    Load an absolute JSON file : <strong>/test.globalComponents.json</strong>
-    {{jLoadJSON '/test.globalComponents.json' 'globalComponents'}}
-    <div data-testid="loadJSON-absolute">
-        global component loaded: {{globalComponents.absolute.properties.[j:prop]}}
-    </div>
-
-    Load a view relative JSON file : <strong>test.components.json</strong>
-    <div data-testid="loadJSON-viewRelative">
-        view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
-    </div>
-<hr/>
-
-<h3>getContent helper</h3>
-        {{jGetContent path=gql.jcr.nodeByPath.site.path varName="currentResourceContent"}}
-        <div data-testid="getContent_site">site node transformed to JSNode : {{currentResourceContent.name}}</div>
-        {{jGetContent path=gql.jcr.nodeByPath.site.path varName="currentResourceContentWithChildren" includeChildren=true}}
-        <div data-testid="getContent_site_withChildren">currentResource transformed to JSNode with children included:</div>
-        {{#each currentResourceContentWithChildren.children}}
-            <br>
-            <div data-testid="getContent_site_withChildren_{{name}}_name">children name: {{name}}</div>
-            <div data-testid="getContent_site_withChildren_{{name}}_path">children path: {{path}}</div>
-            <div data-testid="getContent_site_withChildren_{{name}}_nodeType">children nodeType: {{nodeType}}</div>
-        {{/each}}
 <hr/>

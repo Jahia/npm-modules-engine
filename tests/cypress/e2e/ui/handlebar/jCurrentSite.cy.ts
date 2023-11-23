@@ -1,4 +1,4 @@
-import { addSimplePage } from '../../utils/Utils'
+import { addSimplePage } from '../../../utils/Utils'
 import { addNode, deleteNode, enableModule, publishAndWaitJobEnding } from '@jahia/cypress'
 
 describe('Test on jCurrentSite helper', () => {

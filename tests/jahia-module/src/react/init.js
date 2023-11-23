@@ -5,6 +5,7 @@ import TestRender from './npmExample/testRender/TestRender';
 import TestRenderParameters from './npmExample/testRender/TestRender.parameters';
 import TestRenderSub from './npmExample/testRender/TestRender.sub';
 import TestRenderTagged from './npmExample/testRender/TestRender.tagged';
+import TestCurrentContent from './npmExample/testCurrentContent/TestCurrentContent';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
@@ -21,6 +22,14 @@ export function initReact() {
         }
     });
 
+    registry.add('view', 'testCurrentContent_react', reactView, {
+        target: 'npmExample:testCurrentContent',
+        component: TestCurrentContent,
+        templateName: 'react',
+        templateType: 'html',
+        displayName: 'test currentContent (react)'
+    });
+
     registry.add('view', 'testAreas_react', reactView, {
         target: 'npmExample:testAreas',
         component: TestAreas,
@@ -28,7 +37,6 @@ export function initReact() {
         templateType: 'html',
         displayName: 'test Areas (react)'
     });
-
     registry.add('view', 'testRender_react', reactView, {
         target: 'npmExample:testRender',
         component: TestRender,
@@ -36,7 +44,6 @@ export function initReact() {
         templateType: 'html',
         displayName: 'test Render (react)'
     });
-
     registry.add('view', 'testRender_parametersReact', reactView, {
         target: 'npmExample:testRender',
         component: TestRenderParameters,
@@ -44,7 +51,6 @@ export function initReact() {
         templateType: 'html',
         displayName: 'test Render (parameters react)'
     });
-
     registry.add('view', 'testRender_subReact', reactView, {
         target: 'npmExample:testRender',
         component: TestRenderSub,
@@ -52,7 +58,6 @@ export function initReact() {
         templateType: 'html',
         displayName: 'test Render (sub react)'
     });
-
     registry.add('view', 'testRender_taggedReact', reactView, {
         target: 'npmExample:testRender',
         component: TestRenderTagged,

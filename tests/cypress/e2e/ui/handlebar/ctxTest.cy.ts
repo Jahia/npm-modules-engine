@@ -1,5 +1,5 @@
 import { addNode, deleteNode, publishAndWaitJobEnding } from '@jahia/cypress'
-import { addSimplePage } from '../../utils/Utils'
+import { addSimplePage } from '../../../utils/Utils'
 
 describe('Test on ctx injected in views', () => {
     before('Create NPM test site', () => {
