@@ -1,12 +1,3 @@
 export {default as jObj} from './jObj';
 export {default as jDate} from './jDate';
 export {default as jArr} from './jArr';
-export {default as jLoadJSON} from './jLoadJSON';
-export {default as jBuildNavMenu} from './nav/jNavMenu.helper';
-export {default as jUrl} from './jUrl';
-export {default as jConfigValue} from './config/jConfigValue';
-export {default as jConfigValues} from './config/jConfigValues';
-export {default as jConfigFactoryValue} from './config/jConfigFactoryValue';
-export {default as jConfigFactoryValues} from './config/jConfigFactoryValues';
-export {default as jConfigPids} from './config/jConfigPids';
-export {default as jConfigFactoryIdentifiers} from './config/jConfigFactoryIdentifiers';

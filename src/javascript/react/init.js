@@ -1,14 +1,16 @@
-import {registry, gql, render} from '@jahia/server-helpers';
+import {registry, gql} from '@jahia/server-helpers';
 import React from 'react';
 import JRender from './JRender';
-import JAddContentbuttons from './JAddContentbuttons';
+import JAddContentButtons from './JAddContentButtons';
+import jBuildNavMenu from './jBuildNavMenu';
+import jAddCacheDependency from './jAddCacheDependency';
+import jUrl from './jUrl';
 import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
 import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
 import JAddResources from './JAddResources';
-import {buildUrl} from '../urlBuilder';
 
 export default () => {
     // Hack to expose react to other modules
@@ -24,18 +26,11 @@ export default () => {
         exports: {
             JRender,
             JArea,
-            JAddContentbuttons,
+            JAddContentButtons,
             JAddResources,
-            jAddCacheDependency: ({...props}) => {
-                /* eslint-disable-next-line react-hooks/rules-of-hooks */
-                const {renderContext} = useServerContext();
-                render.addCacheDependencyTag(props, renderContext);
-            },
-            jUrl: ({...props}) => {
-                /* eslint-disable-next-line react-hooks/rules-of-hooks */
-                const {currentResource, renderContext} = useServerContext();
-                return buildUrl(props, renderContext, currentResource);
-            },
+            jBuildNavMenu,
+            jAddCacheDependency,
+            jUrl,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();

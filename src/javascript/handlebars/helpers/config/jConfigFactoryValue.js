@@ -1,4 +1,4 @@
-import setResult from '../../../setResult';
+import setResult from '../../setResult';
 import {config} from '@jahia/server-helpers';
 
 export default function (factoryPid, factoryIdentifier, key, options) {

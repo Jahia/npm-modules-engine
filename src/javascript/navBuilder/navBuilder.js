@@ -1,5 +1,54 @@
-import {getMenuItemsChildren, getPageAncestors} from './jNavMenu.utils';
-import {render} from '@jahia/server-helpers';
+import {gql as gqlServer, render} from '@jahia/server-helpers';
+import {gql} from '@apollo/client';
+import {print} from 'graphql';
+
+const getPageAncestors = (workspace, path) => {
+    const result = gqlServer.executeQuerySync({
+        query: print(gql`
+            query ($workspace: Workspace!, $path: String!){
+                jcr(workspace: $workspace) {
+                    nodeByPath(path: $path) {
+                        ancestors(fieldFilter: {filters:[{fieldName:"isNodeType", value:"true"}]}) {
+                            path
+                            isNodeType(type: {types: ["jnt:page"]})
+                        }
+                    }
+                }
+            }
+        `),
+        variables: {
+            workspace,
+            path
+        }
+    });
+    // Currently no error handling is done, it will be implemented once handled by the framework
+    return result.data ? result.data.jcr.nodeByPath.ancestors : [];
+};
+
+const getMenuItemsChildren = (workspace, path) => {
+    const result = gqlServer.executeQuerySync({
+        query: print(gql`
+            query childrenOfType($workspace: Workspace!, $path: String!){
+                jcr(workspace: $workspace) {
+                    nodeByPath(path: $path) {
+                        children(typesFilter: {types:["jmix:navMenuItem"]}) {
+                            nodes {
+                                path
+                            }
+                        }
+                    }
+                }
+            }
+        `),
+        variables: {
+            workspace,
+            path
+        }
+    });
+    // Currently no error handling is done, it will be implemented once handled by the framework
+    return result.data ? result.data.jcr.nodeByPath.children.nodes : [];
+};
+
 const getBaseNode = (baseline, renderContext, workspace) => {
     const mainResourceNode = renderContext.getMainResource().getNode();
     const pageAncestors = getPageAncestors(workspace, mainResourceNode.getPath(), ['jnt:page']);
@@ -66,7 +115,7 @@ const buildMenu = (node, navMenuLevel, config) => {
                     config.currentResource.getDependencies().add(menuItem.getCanonicalPath());
                     menuEntry.render = render.render({
                         path: menuItem.getPath(),
-                        view: config.menuEntryComponent || 'menuElement'
+                        view: config.menuEntryView || 'menuElement'
                     }, config.renderContext, config.currentResource);
                 }
 
@@ -87,29 +136,18 @@ const buildMenu = (node, navMenuLevel, config) => {
     return result;
 };
 
-/**
- * Helper to build a navigation array (used to build nav menus)
- */
-export default options => {
-    const renderContext = options.data.root.renderContext;
-    const currentResource = options.data.root.currentResource;
-    const menuName = currentResource.getNode().getName();
-    const mainResourceNode = renderContext.getMainResource().getNode();
+/* eslint-disable-next-line max-params */
+export function buildNavMenu(maxDepth, base, menuEntryView, startLevelValue, renderContext, currentResource) {
     const workspace = renderContext.isLiveMode() ? 'LIVE' : 'EDIT';
 
-    const maxDepth = parseInt(options.hash.maxDepth, 10);
-    const baseNode = getBaseNode(options.hash.baseNode, renderContext, workspace);
-    const menuEntryComponent = options.hash.menuEntryComponent;
-    const startLevelValue = options.hash.startLevel ? parseInt(options.hash.startLevel, 10) : 0;
-
-    return buildMenu(baseNode, 1, {
+    return buildMenu(getBaseNode(base, renderContext, workspace), 1, {
         renderContext,
-        mainResourceNode,
+        mainResourceNode: renderContext.getMainResource().getNode(),
         currentResource,
         workspace,
-        menuName,
+        menuName: currentResource.getNode().getName(),
         startLevelValue,
         maxDepth,
-        menuEntryComponent
+        menuEntryView
     });
-};
+}

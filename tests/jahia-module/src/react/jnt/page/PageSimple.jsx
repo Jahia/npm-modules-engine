@@ -26,10 +26,12 @@ export default () => {
                 <JRender content={{
                     "name": "navMenu",
                     "nodeType": "npmExample:navMenu",
+                    "mixins": ["jmix:renderable"],
                     "properties": {
                         "j:maxDepth": "10",
                         "j:baselineNode": "home",
-                        "j:menuItemView": "menuElement"
+                        "j:menuItemView": "menuElement",
+                        "j:view": "react"
                     }
                 }}/>
             </div>

@@ -9,6 +9,7 @@ import TestCurrentContent from './npmExample/testCurrentContent/TestCurrentConte
 import PageEvent from './jnt/page/PageEvent';
 import TestConfig from './npmExample/testConfig/testConfig';
 import TestUrl from './npmExample/testUrl/TestUrl';
+import NavMenu from './npmExample/navMenu/NavMenu';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
@@ -34,6 +35,17 @@ export function initReact() {
         properties: {
             template: 'true',
             'cache.requestParameters': 'N-*'
+        }
+    });
+
+    registry.add('view', 'navMenu_react', reactView, {
+        target: 'npmExample:navMenu',
+        component: NavMenu,
+        templateName: 'react',
+        templateType: 'html',
+        displayName: 'navMenu (react)',
+        properties: {
+            'cache.mainResource': 'true'
         }
     });
 
