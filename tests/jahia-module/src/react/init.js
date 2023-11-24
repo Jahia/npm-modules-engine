@@ -8,6 +8,7 @@ import TestRenderTagged from './npmExample/testRender/TestRender.tagged';
 import TestCurrentContent from './npmExample/testCurrentContent/TestCurrentContent';
 import PageEvent from './jnt/page/PageEvent';
 import TestConfig from './npmExample/testConfig/testConfig';
+import TestUrl from './npmExample/testUrl/TestUrl';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
@@ -34,6 +35,14 @@ export function initReact() {
             template: 'true',
             'cache.requestParameters': 'N-*'
         }
+    });
+
+    registry.add('view', 'testUrl_react', reactView, {
+        target: 'npmExample:testUrl',
+        component: TestUrl,
+        templateName: 'react',
+        templateType: 'html',
+        displayName: 'test jUrl (react)'
     });
 
     registry.add('view', 'testConfig_react', reactView, {

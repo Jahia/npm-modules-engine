@@ -8,6 +8,7 @@ import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
 import JAddResources from './JAddResources';
+import {buildUrl} from '../urlBuilder';
 
 export default () => {
     // Hack to expose react to other modules
@@ -29,6 +30,11 @@ export default () => {
                 /* eslint-disable-next-line react-hooks/rules-of-hooks */
                 const {renderContext} = useServerContext();
                 render.addCacheDependencyTag(props, renderContext);
+            },
+            jUrl: ({...props}) => {
+                /* eslint-disable-next-line react-hooks/rules-of-hooks */
+                const {currentResource, renderContext} = useServerContext();
+                return buildUrl(props, renderContext, currentResource);
             },
             useServerContext,
             useQuery: ({query, variables, operationName}) => {

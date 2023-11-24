@@ -1,4 +1,4 @@
-import {setResult} from '../../../hbsUtils';
+import setResult from '../../../setResult';
 import {config} from '@jahia/server-helpers';
 
 export default function (configPid, key, options) {
