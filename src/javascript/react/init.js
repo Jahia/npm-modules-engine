@@ -1,7 +1,7 @@
 import {registry, gql, render} from '@jahia/server-helpers';
 import React from 'react';
 import JRender from './JRender';
-import JCreateContentButtons from './JCreateContentButtons';
+import JAddContentbuttons from './JAddContentbuttons';
 import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
 import {ServerContextProvider, useServerContext} from './ServerContext';
@@ -24,7 +24,7 @@ export default () => {
         exports: {
             JRender,
             JArea,
-            JCreateContentButtons,
+            JAddContentbuttons,
             JAddResources,
             jAddCacheDependency: ({...props}) => {
                 /* eslint-disable-next-line react-hooks/rules-of-hooks */

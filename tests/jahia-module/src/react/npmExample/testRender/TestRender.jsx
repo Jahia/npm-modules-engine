@@ -1,5 +1,5 @@
 import React from 'react';
-import {JRender, JCreateContentButtons} from '@jahia/server-jsx';
+import {JRender, JAddContentbuttons} from '@jahia/server-jsx';
 
 export default () => {
     return (
@@ -53,7 +53,7 @@ export default () => {
             Render a text child node :
             <div data-testid="component-text-child-node" className="case">
                     <JRender path={'simpletext'}/>
-                    <JCreateContentButtons childName={'simpletext'} nodeTypes={'jnt:text'}/>
+                    <JAddContentbuttons childName={'simpletext'} nodeTypes={'jnt:text'}/>
             </div>
             Render a JSON Node with mixins :
             <div data-testid="component-json-node-with-mixin" className="case">

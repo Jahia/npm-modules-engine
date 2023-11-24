@@ -3,7 +3,7 @@ import {render} from '@jahia/server-helpers';
 import {useServerContext} from './ServerContext';
 import PropTypes from 'prop-types';
 
-const JCreateContentbuttons = ({nodeTypes, childName = '*', editCheck = false}) => {
+const JAddContentbuttons = ({nodeTypes, childName = '*', editCheck = false}) => {
     const {renderContext, currentResource} = useServerContext();
     return (
         /* eslint-disable-next-line no-warning-comments */
@@ -19,11 +19,11 @@ const JCreateContentbuttons = ({nodeTypes, childName = '*', editCheck = false}) 
     );
 };
 
-JCreateContentbuttons.propTypes = {
+JAddContentbuttons.propTypes = {
     nodeTypes: PropTypes.string,
     childName: PropTypes.string,
     /* eslint-disable-next-line react/boolean-prop-naming */
     editCheck: PropTypes.bool
 };
 
-export default JCreateContentbuttons;
+export default JAddContentbuttons;
