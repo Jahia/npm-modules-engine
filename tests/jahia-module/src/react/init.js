@@ -10,6 +10,7 @@ import PageEvent from './jnt/page/PageEvent';
 import TestConfig from './npmExample/testConfig/testConfig';
 import TestUrl from './npmExample/testUrl/TestUrl';
 import NavMenu from './npmExample/navMenu/NavMenu';
+import PageNavMenu from './jnt/page/PageNavMenu';
 
 export function initReact() {
     const reactView = registry.get('view', 'react');
@@ -35,6 +36,17 @@ export function initReact() {
         properties: {
             template: 'true',
             'cache.requestParameters': 'N-*'
+        }
+    });
+    registry.add('view', 'page_navMenu_react', reactView, {
+        target: 'jnt:page',
+        remote: 'npm',
+        component: PageNavMenu,
+        templateName: 'navMenuReact',
+        templateType: 'html',
+        displayName: 'Nav Menu (react)',
+        properties: {
+            template: 'true'
         }
     });
 
