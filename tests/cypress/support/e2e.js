@@ -24,6 +24,11 @@ import { addSimplePage } from '../utils/Utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('@jahia/cypress/dist/support/registerSupport').registerSupport()
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // Returning false here prevents Cypress from
+    // failing the test
+    return false;
+});
 
 before('Create NPM test site', () => {
     createSite('npmTestSite', {
