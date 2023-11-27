@@ -28,3 +28,6 @@ src/main/resources/META-INF/js
 /tests/build-dependencies
 /tests/node_modules
 yarn-error.log
+
+# Yarn files
+.yarn
