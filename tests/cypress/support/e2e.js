@@ -54,5 +54,6 @@ before('Create NPM test site', () => {
 })
 
 after('Clean', () => {
+    cy.visit('/start', {failOnStatusCode: false})
     deleteSite('npmTestSite')
 })
