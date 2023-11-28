@@ -5,24 +5,16 @@ export const registerJahiaComponents = (jahiaComponents) => {
     Object.keys(jahiaComponents).forEach(k => {
         let options, log = false;
         const props = jahiaComponents[k].jahiaComponent;
-        // Detect if element is a template or a view and set default values
+
         if(!props || !props.id || !props.target) {
             return;
         }
+
+        options = {
+            templateName: 'default',
+            templateType: 'html',
+        };
         
-        if(props.properties && props.properties.template ) {
-            log = true;
-            options = {
-                remote: 'npm',//
-                templateType: 'html',
-                templateName: 'default',
-            };
-        } else {
-            options = {
-                templateName: 'default',
-                templateType: 'html',
-            };
-        }
         const id = props.id;
         delete props.id;
         options.component = jahiaComponents[k];
