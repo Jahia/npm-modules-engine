@@ -1,27 +1,27 @@
 import {registry} from '@jahia/server-helpers';
 
-export const registerJahiaComponents = (jahiaComponents) => {
+export const registerJahiaComponents = jahiaComponents => {
     const reactView = registry.get('view', 'react');
     Object.keys(jahiaComponents).forEach(k => {
-        let options, log = false;
+        let options;
         const props = jahiaComponents[k].jahiaComponent;
 
-        if(!props || !props.id || !props.target) {
+        if (!props || !props.id || !props.target) {
             return;
         }
 
         options = {
             templateName: 'default',
-            templateType: 'html',
+            templateType: 'html'
         };
-        
+
         const id = props.id;
         delete props.id;
         options.component = jahiaComponents[k];
-        
-        //replace default values if set in view
+
+        // Replace default values if set in view
         const processOptions = {...options, ...props};
-        //register view
+        // Register view
         registry.add('view', id, reactView, processOptions);
     });
-}
+};
