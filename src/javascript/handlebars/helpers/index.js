@@ -1,4 +1,3 @@
-export * from './gql';
-export * from './jcr';
+export * from './config';
 export * from './render';
 export * from './util';
