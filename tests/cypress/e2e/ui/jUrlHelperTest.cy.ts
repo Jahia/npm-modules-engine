@@ -2,7 +2,7 @@ import { addNode, addVanityUrl, deleteNode, publishAndWaitJobEnding } from '@jah
 import { addSimplePage } from '../../utils/Utils'
 
 describe('Test on url helper', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         cy.fixture('testData/image.jpg', 'binary').then((image) => {
             const blob = Cypress.Blob.binaryStringToBlob(image, 'image/jpeg')
             const file = new File([blob], 'image.jpg', { type: blob.type })
@@ -26,7 +26,7 @@ describe('Test on url helper', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testUrl/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testUrl',
+                primaryNodeType: 'npmExample:testJUrl',
                 properties: [
                     {
                         name: 'linknode',
@@ -54,7 +54,7 @@ describe('Test on url helper', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testUrlReact/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testUrl',
+                primaryNodeType: 'npmExample:testJUrl',
                 mixins: ['jmix:renderable'],
                 properties: [
                     {

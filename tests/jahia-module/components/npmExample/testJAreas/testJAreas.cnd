@@ -4,5 +4,4 @@
 <npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
-
-[npmExample:testConfig] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testJAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title

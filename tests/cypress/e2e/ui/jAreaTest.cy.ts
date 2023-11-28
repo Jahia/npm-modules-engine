@@ -3,7 +3,7 @@ import 'cypress-wait-until'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('jArea helper test', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         enableModule('event', 'npmTestSite')
 
         addSimplePage(`/sites/npmTestSite/home`, 'testJArea', 'testJArea', 'en', 'simple', [
@@ -15,7 +15,7 @@ describe('jArea helper test', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testJArea/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testAreas',
+                primaryNodeType: 'npmExample:testJAreas',
             })
         })
 
@@ -28,7 +28,7 @@ describe('jArea helper test', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testJAreaReact/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testAreas',
+                primaryNodeType: 'npmExample:testJAreas',
                 mixins: ['jmix:renderable'],
                 properties: [{ name: 'j:view', value: 'react' }],
             })

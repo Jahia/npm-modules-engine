@@ -2,7 +2,7 @@ import { addSimplePage } from '../../../utils/Utils'
 import { addNode } from '@jahia/cypress'
 
 describe('Test on getContent helper', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testJGetContent', 'testJGetContent', 'en', 'simple', [
             {
                 name: 'pagecontent',

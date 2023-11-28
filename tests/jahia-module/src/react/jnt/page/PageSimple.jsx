@@ -1,5 +1,6 @@
 import React from 'react';
 import {JArea, JRender, JAddResources} from '@jahia/server-jsx';
+import {footer, login, navMenu, header} from "./pageComponents";
 
 export default () => {
     return (<>
@@ -10,30 +11,14 @@ export default () => {
         <div className="page">
             <div className="header">
                 <div className="headerContent">
-                    <JRender content={{
-                        "name": "header",
-                        "nodeType": "jnt:absoluteArea"
-                    }}/>
+                    <JRender content={header}/>
                 </div>
                 <div className="headerLogin">
-                    <JRender content={{
-                        "name": "login",
-                        "nodeType": "jnt:loginForm"
-                    }}/>
+                    <JRender content={login}/>
                 </div>
             </div>
             <div className="nav">
-                <JRender content={{
-                    "name": "navMenu",
-                    "nodeType": "npmExample:navMenu",
-                    "mixins": ["jmix:renderable"],
-                    "properties": {
-                        "j:maxDepth": "10",
-                        "j:baselineNode": "home",
-                        "j:menuItemView": "menuElement",
-                        "j:view": "react"
-                    }
-                }}/>
+                <JRender content={navMenu}/>
             </div>
             <div className="main">
                 <div className="article">
@@ -45,10 +30,7 @@ export default () => {
             </div>
             <div className="footer">
                 <div className="footerContent">
-                    <JRender content={{
-                        "name": "footer",
-                        "nodeType": "jnt:absoluteArea"
-                    }}/>
+                    <JRender content={footer}/>
                 </div>
             </div>
         </div>

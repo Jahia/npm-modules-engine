@@ -2,7 +2,7 @@ import { addNode, deleteNode, publishAndWaitJobEnding } from '@jahia/cypress'
 import { addSimplePage } from '../../../utils/Utils'
 
 describe('Test on ctx injected in views', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testCtx', 'testCtx', 'en', 'simple', [
             {
                 name: 'pagecontent',

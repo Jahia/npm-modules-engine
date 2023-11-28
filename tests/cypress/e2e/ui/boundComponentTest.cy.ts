@@ -63,7 +63,7 @@ describe('Check on bound components', () => {
     ;[false, true].forEach((reactTest) => {
         it(`${
             reactTest ? 'React' : 'Handlebar'
-        }: Verify existing .jsp component like: calendar is correctly bound to events`, function () {
+        }: Verify calendar (.jsp content in the template) is correctly bound to the events list`, function () {
             cy.login()
             const pageName = 'test1' + (reactTest ? 'React' : '')
             addEventPageAndEvents(reactTest, pageName, () => {

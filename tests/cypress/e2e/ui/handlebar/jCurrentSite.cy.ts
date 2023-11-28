@@ -19,7 +19,7 @@ describe('Test on jCurrentSite helper', () => {
         'property_j:templatesSet': 'npm-module-example',
     }
 
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testJCurrentSite', 'testJCurrentSite', 'en', 'simple', [
             {
                 name: 'pagecontent',

@@ -12,7 +12,7 @@ describe('Test OSGi configuration in views', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testConfig/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testConfig',
+                primaryNodeType: 'npmExample:testJConfig',
             })
         })
 
@@ -25,7 +25,7 @@ describe('Test OSGi configuration in views', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testConfigReact/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testConfig',
+                primaryNodeType: 'npmExample:testJConfig',
                 mixins: ['jmix:renderable'],
                 properties: [{ name: 'j:view', value: 'react' }],
             })

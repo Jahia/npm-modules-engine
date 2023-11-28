@@ -10,7 +10,7 @@ const checkSectionsPresence = () => {
 }
 
 describe('Template testsuite', () => {
-    before('Create site with template', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testTemplate', 'testTemplate', 'en', 'simple', [
             {
                 name: 'pagecontent',

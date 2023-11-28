@@ -2,7 +2,7 @@ import { addNode } from '@jahia/cypress'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('Test on currentContent injected data', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testCurrentContent', 'testCurrentContent', 'en', 'simple', [
             {
                 name: 'pagecontent',

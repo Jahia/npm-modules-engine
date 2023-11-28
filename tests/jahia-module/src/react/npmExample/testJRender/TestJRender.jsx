@@ -38,7 +38,7 @@ export default () => {
                         view={'subReact'}
                         content={{
                                 "name": "npmOption",
-                                "nodeType": "npmExample:testRender",
+                                "nodeType": "npmExample:testJRender",
                                 "properties": {
                                         "prop1": "prop1 value it is"
                                 }
@@ -61,7 +61,7 @@ export default () => {
                         view={'taggedReact'}
                         content={{
                                 "name": "viewWithMixin",
-                                "nodeType": "npmExample:testRender",
+                                "nodeType": "npmExample:testJRender",
                                 "mixins": ["jmix:tagged"],
                                 "properties": {
                                         "j:tagList": ["tag1", "tag2"]
@@ -74,7 +74,7 @@ export default () => {
                         view={'parametersReact'}
                         content={{
                                 "name": "viewWithParameters",
-                                "nodeType": "npmExample:testRender",
+                                "nodeType": "npmExample:testJRender",
                                 "properties": {
                                         "prop1": "prop1 value it is"
                                 }

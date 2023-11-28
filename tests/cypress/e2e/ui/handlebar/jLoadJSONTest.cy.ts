@@ -2,7 +2,7 @@ import { addSimplePage } from '../../../utils/Utils'
 import { addNode } from '@jahia/cypress'
 
 describe('Test on loadJSON helper', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testJLoadJSON', 'testJLoadJSON', 'en', 'simple', [
             {
                 name: 'pagecontent',

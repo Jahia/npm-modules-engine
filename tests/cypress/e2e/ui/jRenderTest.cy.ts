@@ -2,7 +2,7 @@ import { addNode, enableModule } from '@jahia/cypress'
 import { addSimplePage } from '../../utils/Utils'
 
 describe('Test on render and createContentButtons helpers', () => {
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         enableModule('event', 'npmTestSite')
 
         addSimplePage(`/sites/npmTestSite/home`, 'testRender', 'testRender', 'en', 'simple', [
@@ -14,7 +14,7 @@ describe('Test on render and createContentButtons helpers', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testRender/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testRender',
+                primaryNodeType: 'npmExample:testJRender',
                 properties: [{ name: 'prop1', value: 'prop1 value' }],
             })
         })
@@ -28,7 +28,7 @@ describe('Test on render and createContentButtons helpers', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/testRenderReact/pagecontent`,
                 name: 'test',
-                primaryNodeType: 'npmExample:testRender',
+                primaryNodeType: 'npmExample:testJRender',
                 mixins: ['jmix:renderable'],
                 properties: [
                     { name: 'prop1', value: 'prop1 value' },

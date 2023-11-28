@@ -11,7 +11,7 @@ describe('Test on jMainContent helper', () => {
         'property_j:templateName': 'simple',
     }
 
-    before('Create NPM test site', () => {
+    before('Create test page and contents', () => {
         addSimplePage(`/sites/npmTestSite/home`, 'testJMainContent', 'testJMainContent title', 'en', 'simple', [
             {
                 name: 'pagecontent',

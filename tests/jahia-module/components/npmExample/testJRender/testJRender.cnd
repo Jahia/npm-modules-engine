@@ -4,7 +4,7 @@
 <npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
-[npmExample:testRender] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testJRender] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)
  - propMultiple (string) multiple
