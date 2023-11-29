@@ -47,9 +47,6 @@
     "webpack": "4.46.0",
     "yarn": "^1.22.4"
   },
-  "resolutions": {
-    "*/**/elliptic": "6.5.4"
-  },
   "scripts": {
     "instrument": "nyc instrument --compact=false cypress instrumented",
     "e2e:coverage": "yarn instrument && yarn cypress run --config integrationFolder=./instrumented/integration && yarn nyc report --reporter=html --report-dir=./results/coverage && yarn nyc report",

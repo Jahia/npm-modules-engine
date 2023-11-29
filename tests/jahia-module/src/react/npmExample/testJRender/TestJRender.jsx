@@ -1,7 +1,7 @@
 import React from 'react';
 import {JRender, JAddContentButtons} from '@jahia/server-jsx';
 
-export default () => {
+export const TestJRender = () => {
     return (
         <>
             <div data-testid="npm-view">NPM view working</div>
@@ -112,6 +112,13 @@ export default () => {
             `}</style>
         </>
     )
+}
+
+TestJRender.jahiaComponent = {
+        id: 'testJRender_react',
+        target: 'npmExample:testJRender',
+        templateName: 'parametersReact',
+        displayName: 'test Render (parameters react)'
 }
 
 let css = `

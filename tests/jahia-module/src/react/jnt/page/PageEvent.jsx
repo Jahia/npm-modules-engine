@@ -2,7 +2,7 @@ import React from 'react';
 import {JArea, JRender, JAddResources} from '@jahia/server-jsx';
 import {calendar, facets, footer, login, navMenu, header} from "./pageComponents";
 
-export default () => {
+export const PageEvent = () => {
     return (<>
         <head>
             <JAddResources type={'css'} resources={'styles.css'}/>
@@ -37,4 +37,15 @@ export default () => {
         </div>
         </body>
     </>)
+}
+
+PageEvent.jahiaComponent = {
+    id: 'page_event_react',
+    target: 'jnt:page',
+    templateName: 'eventsReact',
+    displayName: 'Events page (react)',
+    properties: {
+        template: 'true',
+        'cache.requestParameters': 'N-*'
+    }
 }

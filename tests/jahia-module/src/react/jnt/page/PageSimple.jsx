@@ -2,7 +2,7 @@ import React from 'react';
 import {JArea, JRender, JAddResources} from '@jahia/server-jsx';
 import {footer, login, navMenu, header} from "./pageComponents";
 
-export default () => {
+export const PageSimple = () => {
     return (<>
         <head>
             <JAddResources type={'css'} resources={'styles.css'}/>
@@ -36,4 +36,14 @@ export default () => {
         </div>
         </body>
     </>)
+}
+
+PageSimple = {
+    id: 'page_simple_react',
+    target: 'jnt:page',
+    templateName: 'simpleReact',
+    displayName: 'Simple page (react)',
+    properties: {
+        template: 'true'
+    }
 }

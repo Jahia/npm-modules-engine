@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext} from '@jahia/server-jsx';
 
-export default () => {
+export const TestJRenderParameters = () => {
     const {currentResource} = useServerContext();
     return (
         <>
@@ -17,4 +17,11 @@ export default () => {
             </div>
         </>
     )
+}
+
+TestJRenderParameters.jahiaComponent = {
+    id: 'testJRender_parametersReact',
+    target: 'npmExample:testJRender',
+    templateName: 'parametersReact',
+    displayName: 'test Render (parameters react)'
 }
