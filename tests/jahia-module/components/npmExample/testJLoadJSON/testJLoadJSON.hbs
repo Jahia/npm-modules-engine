@@ -1,0 +1,14 @@
+{{jLoadJSON 'test.components.json' 'components'}}
+
+<h3>loadJSON</h3>
+Load an absolute JSON file : <strong>/test.globalComponents.json</strong>
+{{jLoadJSON '/test.globalComponents.json' 'globalComponents'}}
+<div data-testid="loadJSON-absolute">
+    global component loaded: {{globalComponents.absolute.properties.[j:prop]}}
+</div>
+
+Load a view relative JSON file : <strong>test.components.json</strong>
+<div data-testid="loadJSON-viewRelative">
+    view relative component loaded: {{components.viewRelative.properties.[j:prop]}}
+</div>
+<hr/>

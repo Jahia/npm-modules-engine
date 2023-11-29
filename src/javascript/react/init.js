@@ -1,12 +1,16 @@
 import {registry, gql} from '@jahia/server-helpers';
 import React from 'react';
 import JRender from './JRender';
-import JCreateContentButtons from './JCreateContentButtons';
+import JAddContentButtons from './JAddContentButtons';
+import jBuildNavMenu from './jBuildNavMenu';
+import jAddCacheDependency from './jAddCacheDependency';
+import jUrl from './jUrl';
 import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
 import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
-import {registerJahiaComponents} from './register';
+import JArea from './JArea';
+import JAddResources from './JAddResources';
 
 export default () => {
     // Hack to expose react to other modules
@@ -21,7 +25,12 @@ export default () => {
     registry.add('module', 'jahia-server-jsx', {
         exports: {
             JRender,
-            JCreateContentButtons,
+            JArea,
+            JAddContentButtons,
+            JAddResources,
+            jBuildNavMenu,
+            jAddCacheDependency,
+            jUrl,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();

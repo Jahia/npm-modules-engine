@@ -12,7 +12,33 @@ module.exports = env => {
         },
         externalsPresets: {node: true},
         externals: {
-            '@jahia/server-helpers': 'jahiaHelpers'
+            '@jahia/server-helpers': 'jahiaHelpers',
+            '@jahia/server-jsx': 'jahiaHelpers.registry.get(\'module\', \'jahia-server-jsx\').exports',
+            react: 'jahiaHelpers.registry.get(\'module\', \'react\').exports',
+            'styled-jsx/style': 'jahiaHelpers.registry.get(\'module\', \'styled-jsx\').exports'
+        },
+        resolve: {
+            extensions: ['.js', '.jsx']
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.jsx$/,
+                    include: [path.join(__dirname, 'src')],
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                ['@babel/preset-env', {modules: false, targets: {safari: '7', ie: '10'}}],
+                                '@babel/preset-react'
+                            ],
+                            plugins: [
+                                'styled-jsx/babel'
+                            ]
+                        }
+                    }
+                }
+            ]
         },
         plugins: [
             new ExtraWatchWebpackPlugin({

@@ -2,6 +2,9 @@ import {registry} from '@jahia/server-helpers';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
 import {menuEntryCss} from './helpers/menuEntryCss';
+import {initReact} from './react/init';
+
+initReact();
 
 registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTemplate, {
     target: 'jnt:yourHandlebarTemplate',
@@ -19,6 +22,7 @@ Handlebars.exports.registerHelper('menuEntryCss', menuEntryCss);
 Handlebars.exports.registerHelper('toJson', obj => JSON.stringify(obj));
 Handlebars.exports.registerHelper('debug', obj => {
     console.log(obj);
+    /* eslint-disable-next-line no-debugger */
     debugger;
 });
 Handlebars.exports.registerHelper('param', (param, options) => {
