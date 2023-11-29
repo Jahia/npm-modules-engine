@@ -11,6 +11,7 @@ import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
 import JAddResources from './JAddResources';
+import {registerJahiaComponents} from './register';
 
 export default () => {
     // Hack to expose react to other modules
