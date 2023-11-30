@@ -9,8 +9,12 @@
     "isolatedModules": false,
     "types": [
       "cypress",
+      "node",
       "@jahia/cypress",
-      "cypress-iframe"
-    ]
+      "@4tw/cypress-drag-drop",
+      "cypress-iframe",
+      "cypress-real-events"
+    ],
+    "lib": [ "es2015" ]
   }
 }
