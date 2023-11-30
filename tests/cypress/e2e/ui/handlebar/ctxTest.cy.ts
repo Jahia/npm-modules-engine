@@ -1,61 +1,64 @@
-import { addNode, deleteNode, publishAndWaitJobEnding } from '@jahia/cypress'
-import { addSimplePage } from '../../../utils/Utils'
+import {addNode, deleteNode, publishAndWaitJobEnding} from '@jahia/cypress';
+import {addSimplePage} from '../../../utils/Utils';
 
 describe('Test on ctx injected in views', () => {
     before('Create test page and contents', () => {
-        addSimplePage(`/sites/npmTestSite/home`, 'testCtx', 'testCtx', 'en', 'simple', [
+        addSimplePage('/sites/npmTestSite/home', 'testCtx', 'testCtx', 'en', 'simple', [
             {
                 name: 'pagecontent',
-                primaryNodeType: 'jnt:contentList',
-            },
+                primaryNodeType: 'jnt:contentList'
+            }
         ]).then(() => {
             addNode({
-                parentPathOrId: `/sites/npmTestSite/home/testCtx/pagecontent`,
+                parentPathOrId: '/sites/npmTestSite/home/testCtx/pagecontent',
                 name: 'test',
-                primaryNodeType: 'npmExample:testCtx',
-            })
+                primaryNodeType: 'npmExample:testCtx'
+            });
 
-            publishAndWaitJobEnding('/sites/npmTestSite')
-        })
-    })
+            publishAndWaitJobEnding('/sites/npmTestSite');
+        });
+    });
 
     after('Clean', () => {
-        deleteNode('/sites/npmTestSite/home/testCtx')
-        publishAndWaitJobEnding('/sites/npmTestSite')
-    })
+        deleteNode('/sites/npmTestSite/home/testCtx');
+        publishAndWaitJobEnding('/sites/npmTestSite');
+    });
 
-    const testCtxMode = (modeValue) => {
+    const testCtxMode = modeValue => {
         const mode = {
             value: 'value',
             isEdit: 'edit',
             isPreview: 'preview',
             isLive: 'live',
-            isFrame: 'frame',
-        }
+            isFrame: 'frame'
+        };
         for (const key in mode) {
-            switch (key) {
-                case 'value':
-                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${modeValue}`)
-                    break
-                default:
-                    cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${mode[key] === modeValue}`)
-                    break
+            if ({}.hasOwnProperty.call(mode, key)) {
+                switch (key) {
+                    case 'value':
+                        cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${modeValue}`);
+                        break;
+                    default:
+                        cy.get(`li[data-testid="ctx_mode_${key}"]`).should('contain', `${mode[key] === modeValue}`);
+                        break;
+                }
             }
         }
-    }
-    const testCtxEntries = (entries) => {
+    };
+
+    const testCtxEntries = entries => {
         for (const key in entries) {
             if (key === 'mode') {
-                testCtxMode(entries[key])
+                testCtxMode(entries[key]);
             } else {
-                cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key])
+                cy.get(`div[data-testid="ctx_${key}"]`).should('contain', entries[key]);
             }
         }
-    }
+    };
 
     it('test ctx in preview', function () {
-        cy.login()
-        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testCtx.html`)
+        cy.login();
+        cy.visit('/cms/render/default/en/sites/npmTestSite/home/testCtx.html');
         testCtxEntries({
             isAjaxRequest: 'false',
             isLoggedIn: 'true',
@@ -64,15 +67,15 @@ describe('Test on ctx injected in views', () => {
             workspace: 'default',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example',
-        })
-        cy.logout()
-    })
+            currentModule: '/modules/npm-module-example'
+        });
+        cy.logout();
+    });
 
     it('test ctx in edit', function () {
-        cy.login()
-        cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/testCtx`)
-        cy.iframe('[data-sel-role="page-builder-frame-active"]', { timeout: 90000, log: true }).within(() => {
+        cy.login();
+        cy.visit('/jahia/jcontent/npmTestSite/en/pages/home/testCtx');
+        cy.iframe('[data-sel-role="page-builder-frame-active"]', {timeout: 90000, log: true}).within(() => {
             testCtxEntries({
                 isAjaxRequest: 'false',
                 isLoggedIn: 'true',
@@ -81,14 +84,14 @@ describe('Test on ctx injected in views', () => {
                 workspace: 'default',
                 contentLanguage: 'en',
                 uiLanguage: 'en',
-                currentModule: '/modules/npm-module-example',
-            })
-        })
-        cy.logout()
-    })
+                currentModule: '/modules/npm-module-example'
+            });
+        });
+        cy.logout();
+    });
 
     it('test ctx in live guest', function () {
-        cy.visit(`/sites/npmTestSite/home/testCtx.html`)
+        cy.visit('/sites/npmTestSite/home/testCtx.html');
         testCtxEntries({
             isAjaxRequest: 'false',
             isLoggedIn: 'false',
@@ -97,13 +100,13 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example',
-        })
-    })
+            currentModule: '/modules/npm-module-example'
+        });
+    });
 
     it('test ctx in live logged', function () {
-        cy.login()
-        cy.visit(`/sites/npmTestSite/home/testCtx.html`)
+        cy.login();
+        cy.visit('/sites/npmTestSite/home/testCtx.html');
         testCtxEntries({
             isAjaxRequest: 'false',
             isLoggedIn: 'true',
@@ -112,13 +115,13 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example',
-        })
-        cy.logout()
-    })
+            currentModule: '/modules/npm-module-example'
+        });
+        cy.logout();
+    });
 
     it('test ctx in ajax rendered content', function () {
-        cy.visit(`/sites/npmTestSite/home/testCtx/pagecontent/test.html.ajax`)
+        cy.visit('/sites/npmTestSite/home/testCtx/pagecontent/test.html.ajax');
         testCtxEntries({
             isAjaxRequest: 'true',
             isLoggedIn: 'false',
@@ -127,7 +130,7 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example',
-        })
-    })
-})
+            currentModule: '/modules/npm-module-example'
+        });
+    });
+});

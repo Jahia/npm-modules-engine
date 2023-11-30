@@ -456,8 +456,8 @@ exports.stackTraceFilter = function () {
         cwd = exports.cwd() + slash;
     } else {
         cwd = (typeof location === "undefined"
-            ? window.location
-            : location
+                ? window.location
+                : location
         ).href.replace(/\/[^/]*$/, "/");
         slash = "/";
     }
