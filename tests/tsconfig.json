@@ -6,7 +6,8 @@
   "compilerOptions": {
     "types": [
       "@jahia/cypress",
-      "cypress-iframe"
+      "cypress-iframe",
+      "cypress-wait-until"
     ]
   },
 }
