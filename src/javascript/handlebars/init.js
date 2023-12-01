@@ -35,10 +35,42 @@ export default () => {
         exports: Handlebars
     });
 
-    registry.add('view', 'handlebars', {
+    registry.add('viewBuilder', 'handlebars', {
+        build: bundle => {
+            const hbsTemplateFiles = osgi.lookupComponentPaths(bundle, '.hbs');
+            if (!hbsTemplateFiles.isEmpty()) {
+                for (const hbsTemplateFile of hbsTemplateFiles) {
+                    const parts = hbsTemplateFile.split('/');
+                    const templateType = parts.length === 4 ? 'html' : parts[3];
+                    const fileName = parts[parts.length - 1];
+                    const fileNameParts = fileName.split('.');
+                    const nodeType = parts[1] + ':' + fileNameParts[0];
+                    const templateName = fileNameParts.length > 2 ? fileNameParts[1] : 'default';
+                    const propertiesFilePath = hbsTemplateFile.substring(0, hbsTemplateFile.lastIndexOf('.hbs')) + '.properties';
+                    const registryKey = bundle.getSymbolicName() + '_' + hbsTemplateFile;
+
+                    const loadedProperties = osgi.loadPropertiesResource(bundle, propertiesFilePath);
+                    const properties = loadedProperties ? loadedProperties : {};
+
+                    const hbsTemplateStr = osgi.loadResource(bundle, hbsTemplateFile, false);
+                    const hbsTemplateCompiled = Handlebars.compile(hbsTemplateStr);
+                    registry.add('view', registryKey, {
+                        viewRendered: 'handlebars',
+                        displayName: properties.name ? properties.name : templateName,
+                        target: nodeType,
+                        templateType: templateType,
+                        templateName: templateName,
+                        properties: properties,
+                        hbsTemplateCompiled: hbsTemplateCompiled,
+                        hbsTemplateFile: hbsTemplateFile
+                    });
+                }
+            }
+        }
+    });
+
+    registry.add('viewRendered', 'handlebars', {
         render: (currentResource, renderContext, view) => {
-            const templateStr = osgi.loadResource(view.bundle, view.templateFile, false);
-            const template = Handlebars.compile(templateStr);
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
             const mode = renderContext.getMode();
             i18next.loadNamespaces(view.bundle.getSymbolicName());
@@ -70,7 +102,7 @@ export default () => {
                 currentModule: renderContext.getURLGenerator().getCurrentModule()
             };
             const renderParameters = render.getRenderParameters(currentResource);
-            return template({
+            return view.hbsTemplateCompiled({
                 ctx,
                 renderParameters,
                 currentResource,

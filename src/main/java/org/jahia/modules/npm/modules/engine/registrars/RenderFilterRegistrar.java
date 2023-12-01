@@ -64,7 +64,7 @@ public class RenderFilterRegistrar implements Registrar {
         List<Map<String, Object>> renderFilters = graalVMEngine.doWithContext(contextProvider -> {
             Map<String, Object> filter = new HashMap<>();
             filter.put("type", "render-filter");
-            filter.put("bundle", Value.asValue(bundle));
+            filter.put("bundleKey", bundle.getSymbolicName());
             return contextProvider.getRegistry().find(filter);
         });
 

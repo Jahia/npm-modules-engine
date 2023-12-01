@@ -16,6 +16,7 @@
 package org.jahia.modules.npm.modules.engine.helpers;
 
 
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
@@ -27,6 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class OSGiHelper {
     private static final Logger logger = LoggerFactory.getLogger(OSGiHelper.class);
@@ -61,5 +67,55 @@ public class OSGiHelper {
             logger.error("Unable to load resource: {} from bundle: {}", path, bundle.getSymbolicName());
         }
         return result;
+    }
+
+    public ProxyObject loadPropertiesResource(Bundle bundle, String path) throws RenderException {
+        URL url = bundle.getResource(path);
+        if (url != null) {
+            Properties properties = new Properties();
+            try (InputStream inStream = url.openStream()) {
+                properties.load(inStream);
+                return ProxyObject.fromMap(properties.entrySet().stream().collect(
+                        Collectors.toMap(
+                                e -> String.valueOf(e.getKey()),
+                                e -> String.valueOf(e.getValue()),
+                                (prev, next) -> next, HashMap::new
+                        )));
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        return null;
+    }
+
+    public Collection<String> lookupComponentPaths(Bundle bundle, String extension) {
+        Enumeration<String> namespaces = bundle.getEntryPaths("components");
+        Set<String> components = new HashSet<>();
+        if (namespaces != null) {
+            while (namespaces.hasMoreElements()) {
+                String namespace = namespaces.nextElement();
+                components.addAll(parseNamespace(bundle, namespace, extension));
+            }
+        }
+        return components;
+    }
+
+    private Set<String> parseNamespace(Bundle bundle, String namespace, String extension) {
+        Enumeration<String> componentsName = bundle.getEntryPaths(namespace);
+        Set<String> components = new HashSet<>();
+        while (componentsName.hasMoreElements()) {
+            String componentName = componentsName.nextElement();
+            Enumeration<String> filePaths = bundle.getEntryPaths(componentName);
+            if (filePaths != null) {
+                while (filePaths.hasMoreElements()) {
+                    String filePath = filePaths.nextElement();
+                    if (filePath.endsWith(extension)) {
+                        components.add(filePath);
+                    }
+                }
+            }
+        }
+        return components;
     }
 }

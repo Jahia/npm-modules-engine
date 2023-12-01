@@ -16,11 +16,12 @@
 package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
+import org.jahia.data.templates.JahiaTemplatesPackage;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.modules.npm.modules.engine.views.JSScript;
 import org.jahia.modules.npm.modules.engine.views.JSView;
-import org.jahia.modules.npm.modules.engine.views.ViewParser;
-import org.jahia.modules.npm.modules.engine.views.hbs.HandlebarsParser;
+import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
@@ -30,8 +31,6 @@ import org.jahia.services.render.scripting.ScriptResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -39,14 +38,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
+
 @Component(immediate = true, service = {Registrar.class, ScriptResolver.class})
 public class ViewsRegistrar implements ScriptResolver, Registrar {
-    private static final Logger logger = LoggerFactory.getLogger(ViewsRegistrar.class);
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
-    private List<ViewParser> parsers;
     private final Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
 
     @Reference
@@ -64,8 +63,6 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         List<ScriptResolver> l = new ArrayList<>(renderService.getScriptResolvers());
         l.add(0, this);
         renderService.setScriptResolvers(l);
-
-        parsers = List.of(new HandlebarsParser());
     }
 
     @Deactivate
@@ -78,8 +75,10 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     public void register(Bundle bundle) {
         Set<JSView> views = new HashSet<>();
 
-        views.addAll(parseBundleFolder(bundle));
-        views.addAll(getRegistryViewsSet(bundle));
+        graalVMEngine.doWithContext(contextProvider -> {
+            callViewBuilders(bundle, contextProvider);
+            views.addAll(getRegistryViewsSet(bundle, contextProvider));
+        });
 
         viewsPerBundle.put(bundle, views);
     }
@@ -89,50 +88,27 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         viewsPerBundle.remove(bundle);
     }
 
-    private Collection<JSView> getRegistryViewsSet(Bundle bundle) {
-        return graalVMEngine.doWithContext(contextProvider -> {
-            Map<String, Object> filter = new HashMap<>();
-            filter.put("type", "view");
-            filter.put("bundle", Value.asValue(bundle));
-            return contextProvider.getRegistry().find(filter).stream().map(JSView::new).collect(Collectors.toSet());
-        });
-    }
-
-    private Collection<JSView> parseBundleFolder(Bundle bundle) {
-        return parseComponentsFolder(bundle);
-    }
-
-    private Set<JSView> parseComponentsFolder(Bundle bundle) {
-        Enumeration<String> namespaces = bundle.getEntryPaths("components");
-        Set<JSView> views = new HashSet<>();
-        if (namespaces != null) {
-            while (namespaces.hasMoreElements()) {
-                String namespace = namespaces.nextElement();
-                views.addAll(parseNamespace(bundle, namespace));
-            }
+    private void callViewBuilders(Bundle bundle, ContextProvider contextProvider) {
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("type", "viewBuilder");
+        List<Map<String, Object>> parsers = contextProvider.getRegistry().find(filter);
+        contextProvider.getContext().getBindings(JS).putMember("bundle", bundle);
+        for (Map<String, Object> parser : parsers) {
+            Value.asValue(parser.get("build")).execute(bundle);
         }
-        return views;
+        contextProvider.getContext().getBindings(JS).removeMember("bundle");
     }
 
-    private Set<JSView> parseNamespace(Bundle bundle, String namespace) {
-        Enumeration<String> componentsName = bundle.getEntryPaths(namespace);
-        Set<JSView> views = new HashSet<>();
-        while (componentsName.hasMoreElements()) {
-            String componentName = componentsName.nextElement();
-            Enumeration<String> filePaths = bundle.getEntryPaths(componentName);
-            if (filePaths != null) {
-                while (filePaths.hasMoreElements()) {
-                    String filePath = filePaths.nextElement();
-                    parsers.stream().filter(parser -> parser.canHandle(filePath)).findFirst().ifPresent(viewParser -> {
-                        JSView view = viewParser.parseView(bundle, filePath);
-                        if (view != null) {
-                            views.add(view);
-                        }
-                    });
-                }
-            }
-        }
-        return views;
+    private Collection<JSView> getRegistryViewsSet(Bundle bundle, ContextProvider contextProvider) {
+        JahiaTemplatesPackage module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("type", "view");
+        filter.put("bundleKey", bundle.getSymbolicName());
+        return contextProvider.getRegistry()
+                .find(filter)
+                .stream()
+                .map(registryEntry -> new JSView(registryEntry, module))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -189,7 +165,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         return getFilesViewsSet()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
-                .filter(v -> extendedNodeType.isNodeType(v.getTarget()))
+                .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 

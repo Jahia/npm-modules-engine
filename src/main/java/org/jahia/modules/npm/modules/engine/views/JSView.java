@@ -15,68 +15,39 @@
  */
 package org.jahia.modules.npm.modules.engine.views;
 
-import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
-import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.render.View;
-import org.osgi.framework.Bundle;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
 public class JSView implements View, Comparable<View> {
-    protected String registryKey;
-    protected String key;
-    protected JahiaTemplatesPackage module;
-    protected Properties properties;
-    protected Properties defaultProperties;
-    protected String path;
-    protected String displayName;
-    protected String target;
-    protected String templateType;
-    protected boolean requireNewJSContext;
 
-    public JSView(String registryKey, String viewName, JahiaTemplatesPackage module, String target, String templateType) {
-        this.registryKey = registryKey;
-        this.key = viewName;
+    private final JahiaTemplatesPackage module;
+    private final Map<String, Object> jsValues;
+    private Properties properties;
+    private Properties defaultProperties;
+    private final String path;
+
+    public JSView(Map<String, Object> jsValues, JahiaTemplatesPackage module) {
         this.module = module;
-        this.target = target;
-        this.templateType = templateType;
-        this.requireNewJSContext = false;
-    }
-
-    public JSView(Map<String, Object> jsValue) {
-        registryKey = jsValue.get("key").toString();
-        key = jsValue.get("templateName") != null ? jsValue.get("templateName").toString() : "default";
-
-        Bundle bundle = ((Value) jsValue.get("bundle")).asHostObject();
-        module = ServicesRegistry.getInstance().getJahiaTemplateManagerService().getTemplatePackageById(bundle.getSymbolicName());
-
-        target = jsValue.get("target").toString();
-        templateType = jsValue.get("templateType").toString();
-
-        displayName = jsValue.containsKey("displayName") ? jsValue.get("displayName").toString() : getKey();
-
-        properties = new Properties();
-        if (jsValue.containsKey("properties")) {
-            properties.putAll((Map<?, ?>) jsValue.get("properties"));
+        this.jsValues = jsValues;
+        this.properties = new Properties();
+        if (jsValues.containsKey("properties")) {
+            this.properties.putAll((Map<?, ?>) jsValues.get("properties"));
         }
-        defaultProperties = new Properties();
-        path = getModule().getBundleKey() + "/" + getRegistryKey();
-        requireNewJSContext = jsValue.containsKey("requireNewJSContext") &&
-                jsValue.get("requireNewJSContext") instanceof Boolean &&
-                ((Boolean) jsValue.get("requireNewJSContext"));
+        this.defaultProperties = new Properties();
+        this.path = getModule().getBundleKey() + "/" + getRegistryKey();
     }
 
-    public Map<String, Object> getValue(ContextProvider contextProvider) {
-        return contextProvider.getRegistry().get("view", getRegistryKey());
+    public Map<String, Object> getValues() {
+        return jsValues;
     }
 
     @Override
     public String getKey() {
-        return key;
+        return jsValues.containsKey("templateName") ? jsValues.get("templateName").toString() : "default";
     }
 
     @Override
@@ -91,7 +62,7 @@ public class JSView implements View, Comparable<View> {
 
     @Override
     public String getDisplayName() {
-        return displayName;
+        return jsValues.containsKey("displayName") ? jsValues.get("displayName").toString() : getKey();
     }
 
     @Override
@@ -128,19 +99,15 @@ public class JSView implements View, Comparable<View> {
     }
 
     public String getRegistryKey() {
-        return registryKey;
+        return jsValues.get("key").toString();
     }
 
-    public String getTarget() {
-        return target;
+    public String getNodeType() {
+        return jsValues.get("target").toString();
     }
 
     public String getTemplateType() {
-        return templateType;
-    }
-
-    public boolean isRequireNewJSContext() {
-        return requireNewJSContext;
+        return jsValues.get("templateType").toString();
     }
 
     @Override
@@ -148,12 +115,17 @@ public class JSView implements View, Comparable<View> {
         if (this == o) return true;
         if (!(o instanceof JSView)) return false;
         JSView jsView = (JSView) o;
-        return registryKey.equals(jsView.registryKey) && key.equals(jsView.key) && module.equals(jsView.module) && Objects.equals(path, jsView.path) && target.equals(jsView.target) && templateType.equals(jsView.templateType);
+        return getRegistryKey().equals(jsView.getRegistryKey()) &&
+                getKey().equals(jsView.getKey()) &&
+                module.equals(jsView.module) &&
+                Objects.equals(path, jsView.path) &&
+                getNodeType().equals(jsView.getNodeType()) &&
+                getTemplateType().equals(jsView.getTemplateType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(registryKey, key, module, path, target, templateType);
+        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType());
     }
 
     @Override
@@ -162,7 +134,7 @@ public class JSView implements View, Comparable<View> {
             if (otherView.getModule() != null) {
                 return 1;
             } else {
-                return key.compareTo(otherView.getKey());
+                return getKey().compareTo(otherView.getKey());
             }
         } else {
             if (otherView.getModule() == null) {
@@ -170,7 +142,7 @@ public class JSView implements View, Comparable<View> {
             } else if (!module.equals(otherView.getModule())) {
                 return module.getName().compareTo(otherView.getModule().getName());
             } else {
-                return key.compareTo(otherView.getKey());
+                return getKey().compareTo(otherView.getKey());
             }
         }
     }

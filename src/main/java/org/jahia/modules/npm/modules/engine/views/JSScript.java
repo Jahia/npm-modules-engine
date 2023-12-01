@@ -25,6 +25,7 @@ import org.jahia.services.render.View;
 import org.jahia.services.render.scripting.Script;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.touk.throwing.ThrowingFunction;
 
 import java.util.Map;
 
@@ -39,20 +40,30 @@ public class JSScript implements Script {
         this.graalVMEngine = graalVMEngine;
     }
 
-    public interface Thenable {
-        void then(Value onResolve, Value onReject);
-    }
-
     @Override
     public String execute(Resource resource, RenderContext renderContext) throws RenderException {
-        return graalVMEngine.doWithContext(contextProvider -> {
-            Map<String, Object> viewValue = jsView.getValue(contextProvider);
+        return graalVMEngine.doWithContext(ThrowingFunction.unchecked(contextProvider -> {
+            Map<String, Object> viewValues = jsView.getValues();
 
-            logger.debug("Calling JS Engine for view {}", resource.getTemplate());
-            Object executionResult = Value.asValue(viewValue.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValue));
+            if (!viewValues.containsKey("viewRendered")) {
+                throw new RenderException(String.format("Missing view rendered for view: %s", jsView.getRegistryKey()));
+            }
+
+            String viewRenderedStr = viewValues.get("viewRendered").toString();
+            Map<String, Object> viewRendered = contextProvider.getRegistry().get("viewRendered", viewRenderedStr);
+            if (viewRendered == null) {
+                throw new RenderException(String.format("Unknown view rendered: %s for view: %s", viewRenderedStr, jsView.getRegistryKey()));
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Calling JS Engine for view {}", resource.getTemplate());
+            }
+
+            viewValues.put("bundle", Value.asValue(jsView.getModule().getBundle()));
+            Object executionResult = Value.asValue(viewRendered.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValues));
             Value value = Value.asValue(executionResult);
             return value.asString();
-        });
+        }));
     }
 
     @Override
