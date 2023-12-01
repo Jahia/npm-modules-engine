@@ -104,7 +104,6 @@ public class NpmProtocolConnection extends URLConnection {
                     if (jahiaProps.containsKey("server")){
                         instructions.put(BUNDLE_HEADER_NPM_INIT_SCRIPT, jahiaProps.get("server"));
                     }
-                    instructions.put("Jahia-NPM-Type", jahiaProps.getOrDefault("module-type", "module"));
                     instructions.put("Jahia-Javascript-Name", name);
                     instructions.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
                     instructions.put("-removeheaders", "Private-Package, Export-Package");
