@@ -38,7 +38,7 @@ export const PageSimple = () => {
     </>)
 }
 
-PageSimple = {
+PageSimple.jahiaComponent = {
     id: 'page_simple_react',
     target: 'jnt:page',
     templateName: 'simpleReact',

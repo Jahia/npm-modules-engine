@@ -2,10 +2,10 @@ import {registry} from '@jahia/server-helpers';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
 import {menuEntryCss} from './helpers/menuEntryCss';
-import {regiterJahiaComponent} from '@jahia/server-jsx';
+import {registerJahiaComponents} from '@jahia/server-jsx';
 import * as reactComponents from './react';
 
-regiterJahiaComponent(reactComponents);
+registerJahiaComponents(reactComponents);
 
 
 registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTemplate, {
