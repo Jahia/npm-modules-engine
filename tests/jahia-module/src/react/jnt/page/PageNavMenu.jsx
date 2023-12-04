@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext, jBuildNavMenu} from '@jahia/server-jsx';
 
-export default () => {
+export const PageNavMenu = () => {
     const {renderContext} = useServerContext();
     const baseNode = renderContext.getRequest().getParameter('baseline');
     const maxDepth = renderContext.getRequest().getParameter('maxDepth') ? parseInt(renderContext.getRequest().getParameter('maxDepth'), 10) : 10;
@@ -11,4 +11,14 @@ export default () => {
             __html: JSON.stringify(jBuildNavMenu(maxDepth, baseNode, 'menuComponent', startLevel))
         }}/>
     )
+}
+
+PageNavMenu.jahiaComponent = {
+    id: 'page_navMenu_react',
+    target: 'jnt:page',
+    templateName: 'navMenuReact',
+    displayName: 'Nav Menu (react)',
+    properties: {
+        template: 'true'
+    }
 }

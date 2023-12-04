@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext} from '@jahia/server-jsx';
 
-export default () => {
+export const TestCurrentContent = () => {
     const {currentResource} = useServerContext();
     const mixins = currentResource.getNode().getMixinNodeTypes().map((e) => {return e.getName()}).join(",");
     const propMultiple = currentResource.getNode().getProperty('propMultiple').getValues().map((e) => {return e.getString()}).join(",");
@@ -27,4 +27,11 @@ export default () => {
             <hr/>
         </>
     )
+}
+
+TestCurrentContent.jahiaComponent = {
+    id: 'testCurrentContent_react',
+    target: 'npmExample:testCurrentContent',
+    templateName: 'react',
+    displayName: 'test currentContent (react)'
 }

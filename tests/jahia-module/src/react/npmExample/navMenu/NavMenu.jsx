@@ -21,7 +21,7 @@ const NavMenuEntry = ({menuEntry, fist, last, level}) => {
     )
 }
 
-export default () => {
+export const NavMenu = () => {
     const {currentResource} = useServerContext();
 
     const base = currentResource.getNode().getPropertyAsString('j:baselineNode');
@@ -38,4 +38,14 @@ export default () => {
             </ul>
         </div>
     )
+}
+
+NavMenu.jahiaComponent = {
+    id: 'navMenu_react',
+    target: 'npmExample:navMenu',
+    templateName: 'react',
+    displayName: 'navMenu (react)',
+    properties: {
+        'cache.mainResource': 'true'
+    }
 }

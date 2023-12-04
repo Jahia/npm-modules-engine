@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext, jUrl, jAddCacheDependency} from '@jahia/server-jsx';
 
-export default () => {
+export const TestJUrl = () => {
     const {currentResource, renderContext} = useServerContext();
     const currentModule = renderContext.getURLGenerator().getCurrentModule();
 
@@ -65,4 +65,11 @@ export default () => {
             </div>
         </>
     )
+}
+
+TestJUrl.jahiaComponent = {
+    id: 'testJUrl_react',
+    target: 'npmExample:testJUrl',
+    templateName: 'react',
+    displayName: 'test jUrl (react)'
 }

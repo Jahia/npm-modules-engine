@@ -1,7 +1,7 @@
 import React from 'react';
 import {JArea} from '@jahia/server-jsx';
 
-export default () => {
+export const TestJAreas = () => {
     return (
         <>
             <h2>jArea heper testing component</h2>
@@ -32,4 +32,11 @@ export default () => {
             </div>
         </>
     )
+}
+
+TestJAreas.jahiaComponent = {
+    id: 'testJAreas_react',
+    target: 'npmExample:testJAreas',
+    templateName: 'react',
+    displayName: 'test Areas (react)'
 }

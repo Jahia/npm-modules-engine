@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext} from '@jahia/server-jsx';
 
-export default () => {
+export const TestJRenderSub = () => {
     const {currentResource} = useServerContext();
     return (
         <div>
@@ -9,4 +9,11 @@ export default () => {
             prop1={currentResource.getNode().getPropertyAsString('prop1')}
         </div>
     )
+}
+
+TestJRenderSub.jahiaComponent = {
+    id: 'testJRender_subReact',
+    target: 'npmExample:testJRender',
+    templateName: 'subReact',
+    displayName: 'test Render (sub react)'
 }

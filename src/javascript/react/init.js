@@ -11,6 +11,7 @@ import {ServerContextProvider, useServerContext} from './ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
 import JAddResources from './JAddResources';
+import {registerJahiaComponents} from './register';
 
 export default () => {
     // Hack to expose react to other modules
@@ -35,7 +36,8 @@ export default () => {
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();
                 return gql.executeQuerySync({query, variables, operationName, renderContext});
-            }
+            },
+            registerJahiaComponents
         }
     });
 
