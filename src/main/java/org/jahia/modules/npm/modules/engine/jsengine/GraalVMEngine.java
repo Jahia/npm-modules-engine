@@ -15,7 +15,6 @@
  */
 package org.jahia.modules.npm.modules.engine.jsengine;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,18 +24,12 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.graalvm.polyglot.*;
-import org.jahia.data.templates.JahiaTemplatesPackage;
-import org.jahia.osgi.BundleUtils;
-import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRTemplate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.touk.throwing.ThrowingSupplier;
 
-import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -45,7 +38,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static org.jahia.modules.npm.modules.engine.npmhandler.NpmProtocolConnection.BUNDLE_HEADER_NPM_INIT_SCRIPT;
 
 /**
  * Base JS engine based on GraalVM
@@ -67,26 +61,26 @@ public class GraalVMEngine {
     private final AtomicInteger version = new AtomicInteger(0);
 
     private BundleContext bundleContext;
+    public BundleContext getBundleContext() {
+        return bundleContext;
+    }
 
     @Reference(service = JSGlobalVariableFactory.class, cardinality = ReferenceCardinality.MANDATORY)
     public void bindVariable(JSGlobalVariableFactory globals) {
         this.globals = globals;
     }
 
-    public void enableBundle(Bundle bundle) {
-        String script = getBundleScript(bundle);
-        if (script != null) {
-            try {
-                initScripts.put(bundle, getGraalSource(bundle, script));
-                version.incrementAndGet();
-                logger.info("Registered bundle {} in GraalVM engine", bundle.getSymbolicName());
-            } catch (IOException ioe) {
-                logger.error("Error enabling bundle {}", bundle.getSymbolicName(), ioe);
-            }
+    public void enableNpmModule(Bundle bundle) {
+        try {
+            initScripts.put(bundle, getGraalSource(bundle, bundle.getHeaders().get(BUNDLE_HEADER_NPM_INIT_SCRIPT)));
+            version.incrementAndGet();
+            logger.info("Registered bundle {} in GraalVM engine", bundle.getSymbolicName());
+        } catch (IOException ioe) {
+            logger.error("Error enabling bundle {}", bundle.getSymbolicName(), ioe);
         }
     }
 
-    public void disableBundle(Bundle bundle) {
+    public void disableNpmModule(Bundle bundle) {
         if (initScripts.remove(bundle) != null) {
             version.incrementAndGet();
             logger.info("Unregistered bundle {} from GraalVM engine", bundle.getSymbolicName());
@@ -179,35 +173,6 @@ public class GraalVMEngine {
             throw new RuntimeException(e);
         }
         pool = new GenericObjectPool<>(new ContextPoolFactory(), config);
-    }
-
-    private String getBundleScript(Bundle bundle) {
-        URL url = bundle.getResource("package.json");
-        if (url != null) {
-            try {
-                String content = IOUtils.toString(url);
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?, ?> json = mapper.readValue(content, Map.class);
-                Map<?, ?> jahia = (Map<?, ?>) json.get("jahia");
-                if (jahia != null && jahia.containsKey("server")) {
-                    return (String) jahia.get("server");
-                }
-            } catch (IOException ioe) {
-                logger.error("Error accessing bundle {} package.json file", bundle.getSymbolicName(), ioe);
-            }
-        }
-        return null;
-    }
-
-    public List<Bundle> getNPMBundles() {
-        return Arrays.stream(bundleContext.getBundles())
-                .filter(bundle -> bundle.getState() == Bundle.ACTIVE && isNPMBundle(bundle))
-                .collect(Collectors.toList());
-    }
-
-    public boolean isNPMBundle(Bundle bundle) {
-        return bundle.getBundleId() != bundleContext.getBundle().getBundleId() &&
-                        getBundleScript(bundle) != null;
     }
 
     class ContextPoolFactory extends BasePooledObjectFactory<ContextProvider> {

@@ -1,3 +1,5 @@
+# !!!! OUTDATED to be update or remove !!!! 
+
 # Handlebars templating
 
 Handlebars support is done directly in npm-modules-engine modules, by registering an extendable base view 'handlebars' which implements the render method and automatic registration of .hbs files.

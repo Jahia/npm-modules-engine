@@ -10,7 +10,7 @@ export default function (path, varName, options) {
             resourcePath = path.substring(1);
         } else {
             // Handle relative path to current rendered view
-            const templateViewFile = currentView.templateFile;
+            const templateViewFile = currentView.hbsTemplateFile;
             const templateViewFolder = templateViewFile.substring(0, templateViewFile.lastIndexOf('/'));
             resourcePath = templateViewFolder + '/' + path;
         }

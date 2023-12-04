@@ -39,6 +39,8 @@ import java.util.zip.ZipEntry;
  * Transform npm pack into bundle
  */
 public class NpmProtocolConnection extends URLConnection {
+    public static final String BUNDLE_HEADER_NPM_INIT_SCRIPT = "Jahia-NPM-InitScript";
+
     private static final Logger logger = LoggerFactory.getLogger(NpmProtocolConnection.class);
 
     private final URL wrappedUrl;
@@ -99,6 +101,9 @@ public class NpmProtocolConnection extends URLConnection {
                     instructions.put("Jahia-GroupId", "org.jahia.npm");
                     instructions.put("Jahia-Required-Version", "8.0.0.0");
                     instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
+                    if (jahiaProps.containsKey("server")){
+                        instructions.put(BUNDLE_HEADER_NPM_INIT_SCRIPT, jahiaProps.get("server"));
+                    }
                     instructions.put("Jahia-Javascript-Name", name);
                     instructions.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
                     instructions.put("-removeheaders", "Private-Package, Export-Package");

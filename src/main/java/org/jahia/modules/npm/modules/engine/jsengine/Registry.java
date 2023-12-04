@@ -16,6 +16,7 @@
 package org.jahia.modules.npm.modules.engine.jsengine;
 
 import org.graalvm.polyglot.Context;
+import org.osgi.framework.Bundle;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,7 +65,10 @@ public class Registry {
 
         object.put("key", key);
         object.put("type", type);
-        object.put("bundle", context.getBindings(JS).getMember("bundle"));
+        // We inject in each registry entry the bundle symbolic name, in order to be able to query
+        // the registry per bundle basis
+        Bundle bundle = context.getBindings(JS).getMember("bundle").asHostObject();
+        object.put("bundleKey", bundle.getSymbolicName());
         registryMap.put(type + "-" + key, object);
     }
 
