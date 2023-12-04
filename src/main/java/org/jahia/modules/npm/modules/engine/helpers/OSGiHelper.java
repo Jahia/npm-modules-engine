@@ -79,10 +79,10 @@ public class OSGiHelper {
                         Collectors.toMap(
                                 e -> String.valueOf(e.getKey()),
                                 e -> String.valueOf(e.getValue()),
-                                (prev, next) -> next, HashMap::new
+                                (prev, next) -> next
                         )));
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                logger.error("Error while loading properties {} for bundle {}", path, bundle.getSymbolicName(), e);
             }
         }
 

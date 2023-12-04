@@ -53,15 +53,15 @@ export default () => {
                     const properties = loadedProperties ? loadedProperties : {};
 
                     const hbsTemplateStr = osgi.loadResource(bundle, hbsTemplateFile, false);
-                    const hbsTemplateCompiled = Handlebars.compile(hbsTemplateStr);
+                    const hbsCompiledTemplate = Handlebars.compile(hbsTemplateStr);
                     registry.add('view', registryKey, {
-                        viewRendered: 'handlebars',
+                        viewRenderer: 'handlebars',
                         displayName: properties.name ? properties.name : templateName,
                         target: nodeType,
                         templateType: templateType,
                         templateName: templateName,
                         properties: properties,
-                        hbsTemplateCompiled: hbsTemplateCompiled,
+                        hbsCompiledTemplate: hbsCompiledTemplate,
                         hbsTemplateFile: hbsTemplateFile
                     });
                 }
@@ -69,7 +69,7 @@ export default () => {
         }
     });
 
-    registry.add('viewRendered', 'handlebars', {
+    registry.add('viewRenderer', 'handlebars', {
         render: (currentResource, renderContext, view) => {
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
             const mode = renderContext.getMode();
@@ -102,7 +102,7 @@ export default () => {
                 currentModule: renderContext.getURLGenerator().getCurrentModule()
             };
             const renderParameters = render.getRenderParameters(currentResource);
-            return view.hbsTemplateCompiled({
+            return view.hbsCompiledTemplate({
                 ctx,
                 renderParameters,
                 currentResource,

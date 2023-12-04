@@ -40,10 +40,10 @@ export default () => {
     });
 
     registry.add('view', 'react', {
-        viewRendered: 'react'
+        viewRenderer: 'react'
     });
 
-    registry.add('viewRendered', 'react', {
+    registry.add('viewRenderer', 'react', {
         render: (currentResource, renderContext, view) => {
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
             const props = {

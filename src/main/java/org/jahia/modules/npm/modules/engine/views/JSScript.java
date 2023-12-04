@@ -45,14 +45,14 @@ public class JSScript implements Script {
         return graalVMEngine.doWithContext(ThrowingFunction.unchecked(contextProvider -> {
             Map<String, Object> viewValues = jsView.getValues();
 
-            if (!viewValues.containsKey("viewRendered")) {
+            if (!viewValues.containsKey("viewRenderer")) {
                 throw new RenderException(String.format("Missing view rendered for view: %s", jsView.getRegistryKey()));
             }
 
-            String viewRenderedStr = viewValues.get("viewRendered").toString();
-            Map<String, Object> viewRendered = contextProvider.getRegistry().get("viewRendered", viewRenderedStr);
-            if (viewRendered == null) {
-                throw new RenderException(String.format("Unknown view rendered: %s for view: %s", viewRenderedStr, jsView.getRegistryKey()));
+            String viewRendererStr = viewValues.get("viewRenderer").toString();
+            Map<String, Object> viewRenderer = contextProvider.getRegistry().get("viewRenderer", viewRendererStr);
+            if (viewRenderer == null) {
+                throw new RenderException(String.format("Unknown view rendered: %s for view: %s", viewRendererStr, jsView.getRegistryKey()));
             }
 
             if (logger.isDebugEnabled()) {
@@ -60,7 +60,7 @@ public class JSScript implements Script {
             }
 
             viewValues.put("bundle", Value.asValue(jsView.getModule().getBundle()));
-            Object executionResult = Value.asValue(viewRendered.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValues));
+            Object executionResult = Value.asValue(viewRenderer.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValues));
             Value value = Value.asValue(executionResult);
             return value.asString();
         }));
