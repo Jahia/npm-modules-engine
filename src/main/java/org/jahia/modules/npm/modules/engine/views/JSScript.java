@@ -52,7 +52,7 @@ public class JSScript implements Script {
             String viewRendererStr = viewValues.get("viewRenderer").toString();
             Map<String, Object> viewRenderer = contextProvider.getRegistry().get("viewRenderer", viewRendererStr);
             if (viewRenderer == null) {
-                throw new RenderException(String.format("Unknown view rendered: %s for view: %s", viewRendererStr, jsView.getRegistryKey()));
+                throw new RenderException(String.format("Unknown view renderer: %s for view: %s", viewRendererStr, jsView.getRegistryKey()));
             }
 
             if (logger.isDebugEnabled()) {
