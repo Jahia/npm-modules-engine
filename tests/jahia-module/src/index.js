@@ -7,7 +7,6 @@ import * as reactComponents from './react';
 
 registerJahiaComponents(reactComponents);
 
-
 registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTemplate, {
     target: 'jnt:yourHandlebarTemplate',
     templateType: 'html',

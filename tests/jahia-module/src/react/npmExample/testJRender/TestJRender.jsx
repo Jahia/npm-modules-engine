@@ -117,7 +117,7 @@ export const TestJRender = () => {
 TestJRender.jahiaComponent = {
         id: 'testJRender_react',
         target: 'npmExample:testJRender',
-        templateName: 'parametersReact',
+        templateName: 'react',
         displayName: 'test Render (parameters react)'
 }
 
