@@ -15,7 +15,6 @@
  */
 package org.jahia.modules.npm.modules.engine.registrars;
 
-import org.graalvm.polyglot.Value;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
@@ -76,7 +75,6 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         Set<JSView> views = new HashSet<>();
 
         graalVMEngine.doWithContext(contextProvider -> {
-            callViewBuilders(bundle, contextProvider);
             views.addAll(getRegistryViewsSet(bundle, contextProvider));
         });
 
@@ -86,17 +84,6 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     @Override
     public void unregister(Bundle bundle) {
         viewsPerBundle.remove(bundle);
-    }
-
-    private void callViewBuilders(Bundle bundle, ContextProvider contextProvider) {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("type", "viewBuilder");
-        List<Map<String, Object>> parsers = contextProvider.getRegistry().find(filter);
-        contextProvider.getContext().getBindings(JS).putMember("bundle", bundle);
-        for (Map<String, Object> parser : parsers) {
-            Value.asValue(parser.get("build")).execute(bundle);
-        }
-        contextProvider.getContext().getBindings(JS).removeMember("bundle");
     }
 
     private Collection<JSView> getRegistryViewsSet(Bundle bundle, ContextProvider contextProvider) {

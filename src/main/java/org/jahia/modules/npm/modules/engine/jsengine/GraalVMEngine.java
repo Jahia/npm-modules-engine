@@ -205,6 +205,24 @@ public class GraalVMEngine {
                 }
             }
 
+            // Initialize context with bundleInitializers
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("type", "bundleInitializer");
+            List<Map<String, Object>> parsers = contextProvider.getRegistry().find(filter);
+            if (!parsers.isEmpty()) {
+                for (Map.Entry<Bundle, Source> entry : initScripts.entrySet()) {
+                    try {
+                        contextProvider.getContext().getBindings(JS).putMember("bundle", entry.getKey());
+                        for (Map<String, Object> parser : parsers) {
+                            Value.asValue(parser.get("init")).execute(entry.getKey());
+                        }
+                        contextProvider.getContext().getBindings(JS).removeMember("bundle");
+                    } catch (Exception e) {
+                        logger.error("Cannot execute init script {}", entry.getValue(), e);
+                    }
+                }
+            }
+
             return contextProvider;
         }
 

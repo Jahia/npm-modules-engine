@@ -43,7 +43,7 @@ public class JSScript implements Script {
     @Override
     public String execute(Resource resource, RenderContext renderContext) throws RenderException {
         return graalVMEngine.doWithContext(ThrowingFunction.unchecked(contextProvider -> {
-            Map<String, Object> viewValues = jsView.getValues();
+            Map<String, Object> viewValues = jsView.getRegistryInstance(contextProvider);
 
             if (!viewValues.containsKey("viewRenderer")) {
                 throw new RenderException(String.format("Missing view rendered for view: %s", jsView.getRegistryKey()));
