@@ -35,8 +35,8 @@ export default () => {
         exports: Handlebars
     });
 
-    registry.add('viewBuilder', 'handlebars', {
-        build: bundle => {
+    registry.add('bundleInitializer', 'handlebars-views', {
+        init: bundle => {
             const hbsTemplateFiles = osgi.lookupComponentPaths(bundle, '.hbs');
             if (!hbsTemplateFiles.isEmpty()) {
                 for (const hbsTemplateFile of hbsTemplateFiles) {

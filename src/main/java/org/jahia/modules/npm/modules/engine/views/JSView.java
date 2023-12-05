@@ -16,6 +16,7 @@
 package org.jahia.modules.npm.modules.engine.views;
 
 import org.jahia.data.templates.JahiaTemplatesPackage;
+import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.render.View;
 
 import java.util.Map;
@@ -41,8 +42,8 @@ public class JSView implements View, Comparable<View> {
         this.path = getModule().getBundleKey() + "/" + getRegistryKey();
     }
 
-    public Map<String, Object> getValues() {
-        return jsValues;
+    public Map<String, Object> getRegistryInstance(ContextProvider contextProvider) {
+        return contextProvider.getRegistry().get("view", getRegistryKey());
     }
 
     @Override
