@@ -34,10 +34,9 @@ import org.osgi.service.component.annotations.*;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
 
 @Component(immediate = true, service = {Registrar.class, ScriptResolver.class})
 public class ViewsRegistrar implements ScriptResolver, Registrar {
@@ -46,6 +45,8 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
     private GraalVMEngine graalVMEngine;
 
     private final Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
+
+    private static final Map<String, SortedSet<View>> viewSetCache = new ConcurrentHashMap<>(512);
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -79,11 +80,13 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         });
 
         viewsPerBundle.put(bundle, views);
+        clearCache();
     }
 
     @Override
     public void unregister(Bundle bundle) {
         viewsPerBundle.remove(bundle);
+        clearCache();
     }
 
     private Collection<JSView> getRegistryViewsSet(Bundle bundle, ContextProvider contextProvider) {
@@ -148,17 +151,31 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
 
     @Override
     public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType) {
+        final String cacheKey = extendedNodeType.getName() + "_" +
+                "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "__" +
+                templateType + "_";
+
+        if (viewSetCache.containsKey(cacheKey)) {
+            return viewSetCache.get(cacheKey);
+        }
+
         Set<String> modulesWithAllDependencies = jcrSiteNode.getInstalledModulesWithAllDependencies();
-        return getFilesViewsSet()
+        SortedSet<View> viewsSet = getFilesViewsSet()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
                 .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
                 .collect(Collectors.toCollection(TreeSet::new));
+        viewSetCache.put(cacheKey, viewsSet);
+        return viewsSet;
     }
 
     private Stream<JSView> getFilesViewsSet() {
         return viewsPerBundle.values().stream()
                 .flatMap(Collection::stream);
+    }
+
+    public void clearCache() {
+        viewSetCache.clear();
     }
 
 }
