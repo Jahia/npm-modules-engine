@@ -176,7 +176,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
                 .flatMap(Collection::stream);
     }
 
-    public void clearCache() {
+    private void clearCache() {
         viewSetCache.clear();
     }
 
