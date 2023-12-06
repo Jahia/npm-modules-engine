@@ -24,9 +24,11 @@ import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
+import org.jahia.services.observation.JahiaEventListener;
 import org.jahia.services.render.*;
 import org.jahia.services.render.scripting.Script;
 import org.jahia.services.render.scripting.ScriptResolver;
+import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
@@ -34,18 +36,19 @@ import org.osgi.service.component.annotations.*;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine.JS;
-
-@Component(immediate = true, service = {Registrar.class, ScriptResolver.class})
-public class ViewsRegistrar implements ScriptResolver, Registrar {
+@Component(immediate = true, service = {Registrar.class, ScriptResolver.class, JahiaEventListener.class})
+public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventListener<EventObject> {
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
     private final Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
+
+    private static final Map<String, SortedSet<View>> viewSetCache = new ConcurrentHashMap<>(512);
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -79,11 +82,13 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         });
 
         viewsPerBundle.put(bundle, views);
+        clearCache();
     }
 
     @Override
     public void unregister(Bundle bundle) {
         viewsPerBundle.remove(bundle);
+        clearCache();
     }
 
     private Collection<JSView> getRegistryViewsSet(Bundle bundle, ContextProvider contextProvider) {
@@ -148,12 +153,22 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
 
     @Override
     public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType) {
+        final String cacheKey = extendedNodeType.getName() + "_" +
+                "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "__" +
+                templateType + "_";
+
+        if (viewSetCache.containsKey(cacheKey)) {
+            return viewSetCache.get(cacheKey);
+        }
+
         Set<String> modulesWithAllDependencies = jcrSiteNode.getInstalledModulesWithAllDependencies();
-        return getFilesViewsSet()
+        SortedSet<View> viewsSet = getFilesViewsSet()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
                 .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
                 .collect(Collectors.toCollection(TreeSet::new));
+        viewSetCache.put(cacheKey, viewsSet);
+        return viewsSet;
     }
 
     private Stream<JSView> getFilesViewsSet() {
@@ -161,4 +176,16 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
                 .flatMap(Collection::stream);
     }
 
+    private void clearCache() {
+        viewSetCache.clear();
+    }
+
+    @Override
+    public void onEvent(EventObject eventObject) {
+        if (eventObject instanceof JahiaTemplateManagerService.TemplatePackageRedeployedEvent
+                || eventObject instanceof JahiaTemplateManagerService.ModuleDeployedOnSiteEvent
+                || eventObject instanceof JahiaTemplateManagerService.ModuleDependenciesEvent) {
+            clearCache();
+        }
+    }
 }
