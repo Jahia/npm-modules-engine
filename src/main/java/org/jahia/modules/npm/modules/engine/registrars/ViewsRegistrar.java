@@ -24,9 +24,11 @@ import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
+import org.jahia.services.observation.JahiaEventListener;
 import org.jahia.services.render.*;
 import org.jahia.services.render.scripting.Script;
 import org.jahia.services.render.scripting.ScriptResolver;
+import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
@@ -38,8 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(immediate = true, service = {Registrar.class, ScriptResolver.class})
-public class ViewsRegistrar implements ScriptResolver, Registrar {
+@Component(immediate = true, service = {Registrar.class, ScriptResolver.class, JahiaEventListener.class})
+public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventListener<EventObject> {
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
@@ -178,4 +180,12 @@ public class ViewsRegistrar implements ScriptResolver, Registrar {
         viewSetCache.clear();
     }
 
+    @Override
+    public void onEvent(EventObject eventObject) {
+        if (eventObject instanceof JahiaTemplateManagerService.TemplatePackageRedeployedEvent
+                || eventObject instanceof JahiaTemplateManagerService.ModuleDeployedOnSiteEvent
+                || eventObject instanceof JahiaTemplateManagerService.ModuleDependenciesEvent) {
+            clearCache();
+        }
+    }
 }
