@@ -140,7 +140,8 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
 
     private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
         return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, renderContext.getSite(), resource.getTemplateType()).stream())
-                .filter(v -> v.getKey().equals(resource.getResolvedTemplate()))
+                .filter(v -> v.getKey().equals(resource.getResolvedTemplate()) ||
+                        ((resource.getResolvedTemplate() == null || "default".equals(resource.getResolvedTemplate())) && "page".equals(resource.getContextConfiguration()) && v.getProperties().containsKey("applyOn")))
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
     }
@@ -165,7 +166,9 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
         SortedSet<View> viewsSet = getFilesViewsSet()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
-                .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
+                .filter(v -> extendedNodeType.isNodeType(v.getNodeType()) ||
+                        (v.getProperties().containsKey("applyOn") &&
+                                Arrays.stream(v.getProperties().getProperty("applyOn").split(",")).anyMatch(nodeType -> extendedNodeType.isNodeType(nodeType))))
                 .collect(Collectors.toCollection(TreeSet::new));
         viewSetCache.put(cacheKey, viewsSet);
         return viewsSet;
