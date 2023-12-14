@@ -15,7 +15,10 @@
  */
 package org.jahia.modules.npm.modules.engine.helpers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.taglibs.standard.tag.common.core.ParamParent;
 import org.graalvm.polyglot.proxy.ProxyArray;
@@ -35,12 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.jcr.ItemExistsException;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -72,32 +75,57 @@ public class RenderHelper {
     }
 
     public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
-        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
-                renderContext.getMainResource().getLocale(), session -> {
+        return jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(), renderContext.getMainResource().getLocale(), session -> {
+            JCRNodeWrapper node = null;
+            try {
+                node = JSNodeMapper.toVirtualNode((Map<String, ?>) attr.get("content"), session, renderContext);
 
-            JCRNodeWrapper node = JSNodeMapper.toVirtualNode((Map<String, ?>) attr.get("content"), session, renderContext);
-            String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
-            String templateType = attr.get("templateType") != null ? (String) attr.get("templateType") : "html";
+                String renderConfig = attr.get("advanceRenderingConfig") != null ? (String) attr.get("advanceRenderingConfig") : "";
+                String templateType = attr.get("templateType") != null ? (String) attr.get("templateType") : "html";
 
-            if ("OPTION".equals(renderConfig)) {
-                Map<String, Object> optionAttr = new HashMap<>();
-                optionAttr.put("node", node);
-                optionAttr.put("templateType", templateType);
-                optionAttr.put("view", attr.get("view"));
-                optionAttr.put("parameters", attr.get("parameters"));
-                optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
-                try {
-                    return renderTag(new OptionTag(), optionAttr, renderContext);
-                } catch (IllegalAccessException | InvocationTargetException | JspException e) {
-                    throw new RepositoryException(e);
-                }
-            } else {
-                Resource r = new Resource(node, templateType, (String) attr.get("view"),
-                        "INCLUDE".equals(renderConfig) ? "include" : "module");
-                // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
-                r.getModuleParams().put("toCacheWithParentFragment", true);
+                if (!StringUtils.isEmpty(renderConfig)) {
+                    TagSupport tag = new ModuleTag();
+                    Map<String, Object> optionAttr = new HashMap<>();
+                    if ("OPTION".equals(renderConfig)) {
+                        tag = new OptionTag();
+                    } else if ("PLACEHOLDER_NODE".equals(renderConfig)) {
+                        if (!renderContext.isEditMode()) {
+                            return "";
+                        }
 
-                try {
+                        tag = new ModuleTag() {
+                            @Override
+                            protected String getModuleType(RenderContext renderContext) throws RepositoryException {
+                                return "placeholdernode";
+                            }
+
+                            @Override
+                            protected void appendExtraAdditionalParameters(StringBuilder additionalParameters) {
+                                try {
+                                    ObjectMapper objectMapper = new ObjectMapper();
+                                    String attrAsJson = objectMapper.writeValueAsString(attr.get("content"));
+                                    additionalParameters.append(" data-content=\"" + StringEscapeUtils.escapeHtml(attrAsJson) + "\"");
+                                } catch (JsonProcessingException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        };
+                    } else {
+                        return "";
+                    }
+                    optionAttr.put("node", node);
+                    optionAttr.put("templateType", templateType);
+                    optionAttr.put("view", attr.get("view"));
+                    optionAttr.put("parameters", attr.get("parameters"));
+                    optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
+
+                    return renderTag(tag, optionAttr, renderContext);
+                } else {
+                    Resource r = new Resource(node, templateType, (String) attr.get("view"),
+                            "INCLUDE".equals(renderConfig) ? "include" : "module");
+                    // TODO TECH-1335 use TO_CACHE_WITH_PARENT_FRAGMENT constant once minimal jahia version >= 8.2.0.0
+                    r.getModuleParams().put("toCacheWithParentFragment", true);
+
                     // handle render parameters for JSON rendering
                     Map<String, Object> renderParameters = (Map<String, Object>) attr.get("parameters");
                     if (renderParameters != null && !renderParameters.isEmpty()) {
@@ -112,8 +140,14 @@ public class RenderHelper {
                     }
 
                     return renderService.render(r, renderContext);
-                } catch (RenderException | IOException e) {
-                    throw new RepositoryException(e);
+                }
+            } catch (ItemExistsException e) {
+                return "";
+            } catch (IllegalAccessException | RenderException | InvocationTargetException | JspException | IOException e) {
+                throw new RepositoryException(e);
+            } finally {
+                if (node != null) {
+                    node.remove();
                 }
             }
         });
