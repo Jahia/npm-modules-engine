@@ -1,4 +1,4 @@
-import {registry, gql} from '@jahia/server-helpers';
+import {gql, registry} from '@jahia/server-helpers';
 import React from 'react';
 import JRender from './JRender';
 import JAddContentButtons from './JAddContentButtons';
@@ -69,9 +69,9 @@ export default () => {
 
             // SSR
             const styleRegistry = createStyleRegistry();
-            const element =
-                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource}, React.createElement(view.component, {...props})
-                ));
+            const currentNode = currentResource.getNode();
+            const mainNode = renderContext.getMainResource().getNode();
+            const element = React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode}, React.createElement(view.component, {...props})));
             const renderedElement = ReactDOMServer.renderToString(element);
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
             const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
