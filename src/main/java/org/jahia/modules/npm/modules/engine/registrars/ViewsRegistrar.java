@@ -122,7 +122,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
 
     @Override
     public Template resolveTemplate(Resource resource, RenderContext renderContext) throws RepositoryException {
-        if ("page".equals(resource.getContextConfiguration())) {
+        if ("page".equals(resource.getContextConfiguration()) && !renderContext.isAjaxRequest()) {
             // JS templates are just JS views, so we just read already resolved script for resource.
             Script script = resource.getScript(renderContext);
             if (script != null && Boolean.parseBoolean(script.getView().getProperties().getProperty("template"))) {
@@ -162,7 +162,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
 
     private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
         // Are we rendering the page level node (main resource) ?
-        boolean pageRendering = "page".equals(resource.getContextConfiguration());
+        boolean pageRendering = "page".equals(resource.getContextConfiguration()) && !renderContext.isAjaxRequest();
 
         // Check what is the template key of the current resource
         // in case of full page rendering we need to check for j:templateName prop, mostly used on jnt:page
