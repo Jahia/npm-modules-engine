@@ -118,10 +118,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jahia/cypress@^3.17.4":
-  version "3.17.4"
-  resolved "https://npm.jahia.com/@jahia%2fcypress/-/cypress-3.17.4.tgz#901d6bfd6cfd6998a6452bec02a8254f89f79e64"
-  integrity sha512-CAvYKbSYMyHiZWNfxdUglH90+Pn7mytfefAtDIFCo3g83zQcSM82v0CBV26jpqZlxE5sv6xbVMggHM9YTwOGfQ==
+"@jahia/cypress@^3.17.6":
+  version "3.17.6"
+  resolved "https://registry.yarnpkg.com/@jahia/cypress/-/cypress-3.17.6.tgz#bfce6d93ccc70e2285ac48001d67168d25b7eedc"
+  integrity sha512-MZo0ZG8z8WLbkTzd85oQLXp0TpFG6Z0hp5/saq5xAtqE6YtZYlL6XxwEjneuEeWzxcbZAyIHM9LP0Doamp6G8A==
   dependencies:
     "@apollo/client" "^3.4.9"
     cypress-real-events "^1.11.0"
@@ -160,6 +160,13 @@
     typescript "^4.4.4"
     uuid "^8.3.1"
     xml-js "^1.6.11"
+
+"@jahia/jcontent-cypress@^3.0.0-tests.2":
+  version "3.0.0-tests.2"
+  resolved "https://registry.yarnpkg.com/@jahia/jcontent-cypress/-/jcontent-cypress-3.0.0-tests.2.tgz#3ca8af0fe650765fc7730f890c02d9af28a249ca"
+  integrity sha512-flR2qavITEYXrNKhrTOLXpOXycdDfoAavAdQtdZktHkufpADIYrrD3QVhvRT7i5jaFtz2rNQRaFZfUWgXYVS3g==
+  dependencies:
+    cypress-real-events "^1.7.6"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"

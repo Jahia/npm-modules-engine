@@ -119,8 +119,8 @@ public class NpmProtocolConnection extends URLConnection {
                     jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
                 } else if (path.equals("import.xml")) {
                     jos.putNextEntry(new ZipEntry("META-INF/" + path));
-                } else if (path.startsWith("configurations/")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/" + path));
+                } else if (path.startsWith("settings/")) {
+                    jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(path, "settings/")));
                 } else if (path.startsWith("components") && path.endsWith(".png")) {
                     String[] parts = StringUtils.split(path, "/");
                     String nodeTypeName = parts[2];
