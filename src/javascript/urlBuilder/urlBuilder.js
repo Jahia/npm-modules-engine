@@ -1,5 +1,5 @@
 import getNodeFromPathOrId from '../utils/getNodeFromPathOrId';
-import {node, registry} from '@jahia/server-helpers';
+import {render, registry} from '@jahia/server-helpers';
 
 const absoluteUrlRegExp = /^(?:[a-z+]+:)?\/\//i;
 
@@ -31,7 +31,7 @@ export const initUrlBuilder = () => {
             let workspace = mode ?
                 ((mode === 'edit' || mode === 'preview') ? 'default' : 'live') :
                 currentResource.getWorkspace();
-            return '/files/' + workspace + node.escapePath(jcrNode.getCanonicalPath());
+            return '/files/' + workspace + render.escapePath(jcrNode.getCanonicalPath());
         }
     });
     registry.add('urlBuilder', '*', {
@@ -60,7 +60,7 @@ export const initUrlBuilder = () => {
             }
 
             return servletPath + '/' + workspace + '/' + (language ? language : currentResource.getLocale().toString()) +
-                node.escapePath(jcrNode.getPath()) + (extension ? extension : '.html');
+                render.escapePath(jcrNode.getPath()) + (extension ? extension : '.html');
         }
     });
 };

@@ -1,5 +1,5 @@
-import {addNode, enableModule, publishAndWaitJobEnding} from '@jahia/cypress';
-import {addSimplePage} from '../../utils/Utils';
+import {enableModule, publishAndWaitJobEnding} from '@jahia/cypress';
+import {addEvent, addEventPageAndEvents} from '../../utils/Utils';
 
 describe('Check on bound components', () => {
     const siteKey = 'npmTestSite';
@@ -9,59 +9,8 @@ describe('Check on bound components', () => {
         enableModule('event', siteKey);
     });
 
-    const addEvent = event => {
-        addNode({
-            parentPathOrId: `/sites/${siteKey}/home/${event.pageName}/events`,
-            name: event.name,
-            primaryNodeType: 'jnt:event',
-            properties: [
-                {name: 'jcr:title', value: event.title, language: 'en'},
-                {name: 'startDate', type: 'DATE', value: event.startDate},
-                {name: 'endDate', type: 'DATE', value: event.endDate},
-                {name: 'eventsType', value: event.eventsType ? event.eventsType : 'meeting'}
-            ]
-        });
-    };
-
     const validateNumberOfEventInCalendar = (expectedNumber: number) => {
         cy.get(`span[class*="fc-event-title"]:contains("${expectedNumber}")`).should('exist');
-    };
-
-    const addEventPageAndEvents = (reactTest: boolean, pageName: string, thenFunction: () => void) => {
-        return addSimplePage(
-            `/sites/${siteKey}/home`,
-            pageName,
-            'Events page',
-            'en',
-            reactTest ? 'eventsReact' : 'events',
-            [
-                {
-                    name: 'events',
-                    primaryNodeType: 'jnt:contentList'
-                }
-            ]
-        ).then(() => {
-            const today = new Date();
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-
-            addEvent({
-                pageName,
-                name: 'event-a',
-                title: 'The first event',
-                startDate: today,
-                endDate: tomorrow
-            });
-            addEvent({
-                pageName,
-                name: 'event-b',
-                title: 'The second event',
-                startDate: today
-            });
-            if (thenFunction) {
-                thenFunction();
-            }
-        });
     };
 
     [false, true].forEach(reactTest => {
@@ -70,7 +19,8 @@ describe('Check on bound components', () => {
         }: Verify calendar (.jsp content in the template) is correctly bound to the events list`, function () {
             cy.login();
             const pageName = 'test1' + (reactTest ? 'React' : '');
-            addEventPageAndEvents(reactTest, pageName, () => {
+            const pageTemplate = reactTest ? 'eventsReact' : 'events';
+            addEventPageAndEvents(siteKey, pageTemplate, pageName, () => {
                 cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${pageName}.html`);
                 cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageName}.html`);
                 validateNumberOfEventInCalendar(2);
@@ -83,13 +33,14 @@ describe('Check on bound components', () => {
         }: Verify that the calendar is correctly refreshed once a new event is added`, function () {
             cy.login();
             const pageName = 'test2' + (reactTest ? 'React' : '');
-            addEventPageAndEvents(reactTest, pageName, () => {
+            const pageTemplate = reactTest ? 'eventsReact' : 'events';
+            addEventPageAndEvents(siteKey, pageTemplate, pageName, () => {
                 publishAndWaitJobEnding(`/sites/${siteKey}/home/${pageName}`);
                 cy.visit(`/sites/${siteKey}/home/${pageName}.html`, {failOnStatusCode: false});
 
                 const inTwoDays = new Date();
                 inTwoDays.setDate(inTwoDays.getDate() + 2);
-                addEvent({
+                addEvent(siteKey, {
                     pageName,
                     name: 'event-c',
                     title: 'The third event',
@@ -110,12 +61,13 @@ describe('Check on bound components', () => {
         it(`${reactTest ? 'React' : 'Handlebar'}: Verify that the facets is working correctly`, function () {
             cy.login();
             const pageName = 'test3' + (reactTest ? 'React' : '');
-            addEventPageAndEvents(reactTest, pageName, () => {
+            const pageTemplate = reactTest ? 'eventsReact' : 'events';
+            addEventPageAndEvents(siteKey, pageTemplate, pageName, () => {
                 // Create events with event type for facets
                 const today = new Date();
                 const tomorrow = new Date();
                 tomorrow.setDate(tomorrow.getDate() + 1);
-                addEvent({
+                addEvent(siteKey, {
                     pageName,
                     name: 'event-meeting',
                     title: 'The meeting event',
@@ -123,7 +75,7 @@ describe('Check on bound components', () => {
                     endDate: tomorrow,
                     eventsType: 'meeting'
                 });
-                addEvent({
+                addEvent(siteKey, {
                     pageName,
                     name: 'event-consumerShow',
                     title: 'The consumerShow event',

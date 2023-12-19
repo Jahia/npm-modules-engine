@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component(immediate = true, service = {Registrar.class, ScriptResolver.class, JahiaEventListener.class})
-public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventListener<EventObject> {
+public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
 
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
@@ -62,16 +62,24 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
 
     @Activate
     public void activate(BundleContext context) {
-        List<ScriptResolver> l = new ArrayList<>(renderService.getScriptResolvers());
-        l.add(0, this);
-        renderService.setScriptResolvers(l);
+        List<ScriptResolver> scriptResolvers = new ArrayList<>(renderService.getScriptResolvers());
+        scriptResolvers.add(0, this);
+        renderService.setScriptResolvers(scriptResolvers);
+
+        List<TemplateResolver> templateResolvers = new ArrayList<>(renderService.getTemplateResolvers());
+        templateResolvers.add(0, this);
+        renderService.setTemplateResolvers(templateResolvers);
     }
 
     @Deactivate
     public void deactivate(BundleContext context) {
-        List<ScriptResolver> l = new ArrayList<>(renderService.getScriptResolvers());
-        l.remove(this);
-        renderService.setScriptResolvers(l);
+        List<ScriptResolver> scriptResolvers = new ArrayList<>(renderService.getScriptResolvers());
+        scriptResolvers.remove(this);
+        renderService.setScriptResolvers(scriptResolvers);
+
+        List<TemplateResolver> templateResolvers = new ArrayList<>(renderService.getTemplateResolvers());
+        templateResolvers.remove(this);
+        renderService.setTemplateResolvers(templateResolvers);
     }
     @Override
     public void register(Bundle bundle) {
@@ -112,6 +120,20 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
         }
     }
 
+    @Override
+    public Template resolveTemplate(Resource resource, RenderContext renderContext) throws RepositoryException {
+        if ("page".equals(resource.getContextConfiguration()) && !renderContext.isAjaxRequest()) {
+            // JS templates are just JS views, so we just read already resolved script for resource.
+            Script script = resource.getScript(renderContext);
+            if (script != null && Boolean.parseBoolean(script.getView().getProperties().getProperty("template"))) {
+                Template template = new Template(script.getView().getKey(), null, null, resource.getResolvedTemplate(), 0);
+                template.setExternal(true);
+                return template;
+            }
+        }
+        return null;
+    }
+
     private JSView resolveView(Resource resource, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
         ExtendedNodeType nt = resource.getNode().getPrimaryNodeType();
         List<ExtendedNodeType> nodeTypeList = getNodeTypeList(nt);
@@ -139,12 +161,48 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
     }
 
     private JSView resolveView(Resource resource, List<ExtendedNodeType> nodeTypeList, RenderContext renderContext) throws RepositoryException, TemplateNotFoundException {
+        // Are we rendering the page level node (main resource) ?
+        boolean pageRendering = "page".equals(resource.getContextConfiguration()) && !renderContext.isAjaxRequest();
+
+        // Check what is the template key of the current resource
+        // in case of full page rendering we need to check for j:templateName prop, mostly used on jnt:page
+        String template;
+        if (pageRendering && "default".equals(resource.getTemplate()) && resource.getNode().hasProperty("j:templateName")) {
+            template = resource.getNode().getProperty("j:templateName").getString();
+        } else {
+            template = resource.getResolvedTemplate();
+        }
+
         return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, renderContext.getSite(), resource.getTemplateType()).stream())
-                .filter(v -> v.getKey().equals(resource.getResolvedTemplate()))
+                .filter(v -> {
+                    boolean viewMatch = v.getKey().equals(template);
+                    if (pageRendering) {
+                        // Template resolution here
+                        if (isTemplate(v)) {
+                            // Template matching view key
+                            if (viewMatch) {
+                                return true;
+                            }
+                            // Template view is configured as default no matter the template view key
+                            return "default".equals(template) && isDefaultTemplate(v);
+                        }
+                        return false;
+                    } else {
+                        // View resolution here
+                        return !isTemplate(v) && viewMatch;
+                    }
+                })
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
     }
 
+    private boolean isTemplate(View view) {
+        return "true".equals(view.getProperties().getProperty("template"));
+    }
+
+    private boolean isDefaultTemplate(View view) {
+        return "true".equals(view.getProperties().getProperty("default"));
+    }
 
     @Override
     public boolean hasView(ExtendedNodeType nt, String viewName, JCRSiteNode site, String templateType) {
@@ -162,7 +220,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
         }
 
         Set<String> modulesWithAllDependencies = jcrSiteNode.getInstalledModulesWithAllDependencies();
-        SortedSet<View> viewsSet = getFilesViewsSet()
+        SortedSet<View> viewsSet = getAllViews()
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
                 .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
@@ -171,7 +229,7 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
         return viewsSet;
     }
 
-    private Stream<JSView> getFilesViewsSet() {
+    private Stream<JSView> getAllViews() {
         return viewsPerBundle.values().stream()
                 .flatMap(Collection::stream);
     }
@@ -187,5 +245,11 @@ public class ViewsRegistrar implements ScriptResolver, Registrar, JahiaEventList
                 || eventObject instanceof JahiaTemplateManagerService.ModuleDependenciesEvent) {
             clearCache();
         }
+    }
+
+    @Override
+    public void flushCache(String modulePath) {
+        // Do nothing
+        // this was originally made to flush JCR Template nodes for Jahia templating resolution.
     }
 }

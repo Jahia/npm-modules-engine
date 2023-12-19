@@ -43,7 +43,6 @@ public class CoreHelperFactory implements JSGlobalVariableFactory {
         helpers.put("render", new RenderHelper(contextProvider));
         helpers.put("gql", new GQLHelper(contextProvider));
         helpers.put("osgi", new OSGiHelper(contextProvider));
-        helpers.put("node", new NodeHelper(contextProvider));
         helpers.put("config", new ConfigHelper(contextProvider));
 
         for (Map.Entry<String, Object> entry : helpers.entrySet()) {
