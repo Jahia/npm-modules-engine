@@ -173,7 +173,8 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
             template = resource.getResolvedTemplate();
         }
 
-        return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, renderContext.getSite(), resource.getTemplateType()).stream())
+        JCRSiteNode site = renderContext.getSite() != null ? renderContext.getSite() : resource.getNode().getResolveSite();
+        return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, site, resource.getTemplateType()).stream())
                 .filter(v -> {
                     boolean viewMatch = v.getKey().equals(template);
                     if (pageRendering) {
