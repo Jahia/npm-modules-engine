@@ -60,6 +60,9 @@ describe('Test on currentContent injected data', () => {
         it(`${pageName}: Check currentContent injected JSON node in current view`, function () {
             cy.login();
             cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
+            cy.get('div[data-testid="currentContent_resourcePath"]').should('contain', `/sites/npmTestSite/home/${pageName}/pagecontent/test`);
+            cy.get('div[data-testid="currentContent_nodePath"]').should('contain', `/sites/npmTestSite/home/${pageName}/pagecontent/test`);
+            cy.get('div[data-testid="currentContent_mainNodePath"]').should('contain', `/sites/npmTestSite/home/${pageName}`);
             cy.get('div[data-testid="currentContent_properties_prop1"]').should('contain', 'prop1 value');
             cy.get('div[data-testid="currentContent_properties_jcr:title"]').should('contain', 'NPM test component');
             cy.get('div[data-testid="currentContent_properties_propMultiple"]').should(

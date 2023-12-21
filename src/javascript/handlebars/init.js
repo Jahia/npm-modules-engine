@@ -82,6 +82,7 @@ export default () => {
             };
 
             const currentContent = render.transformToJsNode(currentResource.getNode(), false, false, false);
+            const mainContent = render.transformToJsNode(renderContext.getMainResource().getNode(), false, false, false);
 
             // Build a simplified ctx for handlebars template usage.
             const ctx = {
@@ -109,7 +110,8 @@ export default () => {
                 renderContext,
                 i18next: i18nextValues,
                 view,
-                currentContent
+                currentContent,
+                mainContent
             });
         }
     });
