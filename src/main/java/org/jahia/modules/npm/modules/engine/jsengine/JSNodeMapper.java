@@ -146,8 +146,17 @@ public class JSNodeMapper {
      * @throws RepositoryException in case something bad happens related to JCR
      */
     public static JCRNodeWrapper toVirtualNode(Map<String, ?> jsonNode, JCRSessionWrapper session, RenderContext renderContext) throws RepositoryException {
-        JCRNodeWrapper parent = jsonNode.containsKey("parent") ? session.getNode((String) jsonNode.get("parent")) : session.getNode("/");
-        return toVirtualNode(jsonNode, parent, renderContext);
+        return toVirtualNode(jsonNode, getParent(session, renderContext, (String) jsonNode.get("parent")), renderContext);
+    }
+
+    private static JCRNodeWrapper getParent(JCRSessionWrapper session, RenderContext renderContext, String parentPath) throws RepositoryException {
+        if (parentPath == null) {
+            return session.getNode("/");
+        } else if (parentPath.startsWith("/")) {
+            return session.getNode(parentPath);
+        }
+
+        return renderContext.getMainResource().getNode().getNode(parentPath);
     }
 
     private static JCRNodeWrapper toVirtualNode(Map<String, ?> jsonNode, JCRNodeWrapper parent, RenderContext renderContext) throws RepositoryException {
