@@ -12,6 +12,7 @@ import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import JArea from './JArea';
 import JAddResources from './JAddResources';
 import {registerJahiaComponents} from './register';
+import getNodeProps from '../utils/getNodeProps';
 
 export default () => {
     // Hack to expose react to other modules
@@ -32,6 +33,7 @@ export default () => {
             jBuildNavMenu,
             jAddCacheDependency,
             jUrl,
+            nodeProps: getNodeProps,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();
