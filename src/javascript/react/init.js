@@ -33,7 +33,7 @@ export default () => {
             jBuildNavMenu,
             jAddCacheDependency,
             jUrl,
-            nodeProps: getNodeProps,
+            getNodeProps,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();

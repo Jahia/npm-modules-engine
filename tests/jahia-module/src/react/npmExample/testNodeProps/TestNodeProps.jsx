@@ -1,10 +1,10 @@
 import React from 'react';
-import {useServerContext, nodeProps} from '@jahia/server-jsx';
+import {useServerContext, getNodeProps} from '@jahia/server-jsx';
 
 export const TestNodeProps = () => {
     const {currentNode} = useServerContext();
-    const props = nodeProps(currentNode, ['propNotSet', 'propNotExists', 'smallText', 'textarea', 'choicelist', 'long', 'double', 'boolean', 'weakreference', 'bigtext', 'date', 'decimal', 'uri', 'name', 'path', 'password']);
-    const multipleProps = nodeProps(currentNode, ['multipleSmallText', 'multipleTextarea','multipleChoicelist', 'multipleLong', 'multipleDouble', 'multipleBoolean', 'multipleWeakreference', 'multipleBigtext', 'multipleDate', 'multipleDecimal', 'multipleUri', 'multipleName', 'multiplePath', 'multiplePassword']);
+    const props = getNodeProps(currentNode, ['propNotSet', 'propNotExists', 'smallText', 'textarea', 'choicelist', 'long', 'double', 'boolean', 'weakreference', 'bigtext', 'date', 'decimal', 'uri', 'name', 'path', 'password']);
+    const multipleProps = getNodeProps(currentNode, ['multipleSmallText', 'multipleTextarea','multipleChoicelist', 'multipleLong', 'multipleDouble', 'multipleBoolean', 'multipleWeakreference', 'multipleBigtext', 'multipleDate', 'multipleDecimal', 'multipleUri', 'multipleName', 'multiplePath', 'multiplePassword']);
 
     const printMultiValuedProp = (selector, values, richText = false, ref = false) => {
         return values && values.map(function(value, i){
