@@ -5,7 +5,7 @@
 
 [npmExampleMix:npmExampleComponent] > jmix:droppableContent, jmix:accessControllableContent mixin
 
-[npmExample:testNodeProps] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testGetNodeProps] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
     - propNotSet (string)
     - smallText (string)
     - textarea (string, textarea)
@@ -33,3 +33,6 @@
     - multipleUri (uri) multiple
     - multipleName (name) multiple
     - multiplePath (path) multiple
+
+[npmExample:testGetChildNodes] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+    + * (jmix:droppableContent)

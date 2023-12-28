@@ -60,7 +60,7 @@ const extractPropValue = (session, value, type) => {
 
 export default (node, props) => {
     let result = {};
-    if (props && props.length > 0) {
+    if (node && props && props.length > 0) {
         for (const prop of props) {
             if (node.hasProperty(prop)) {
                 result[prop] = extractProp(node, prop);
