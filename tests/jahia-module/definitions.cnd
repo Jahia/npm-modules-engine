@@ -4,3 +4,32 @@
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
 [npmExampleMix:npmExampleComponent] > jmix:droppableContent, jmix:accessControllableContent mixin
+
+[npmExample:testNodeProps] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+    - propNotSet (string)
+    - smallText (string)
+    - textarea (string, textarea)
+    - choicelist (string, choicelist[resourceBundle]) = 'choice1' < 'choice1', 'choice2', 'choice3'
+    - long (long)
+    - double (double)
+    - boolean (boolean)
+    - weakreference (weakreference)
+    - bigtext (string, richtext)
+    - date (date)
+    - decimal (decimal)
+    - uri (uri)
+    - name (name)
+    - path (path)
+	- multipleSmallText (string) multiple
+    - multipleTextarea (string, textarea) multiple
+    - multipleChoicelist (string, choicelist[resourceBundle]) = 'choice1' multiple < 'choice1', 'choice2', 'choice3'
+    - multipleLong (long) multiple
+    - multipleDouble (double) multiple
+    - multipleBoolean (boolean) multiple
+    - multipleWeakreference (weakreference) multiple
+    - multipleBigtext (string, richtext) multiple
+    - multipleDate (date) multiple
+    - multipleDecimal (decimal) multiple
+    - multipleUri (uri) multiple
+    - multipleName (name) multiple
+    - multiplePath (path) multiple
