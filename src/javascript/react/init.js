@@ -13,6 +13,7 @@ import JArea from './JArea';
 import JAddResources from './JAddResources';
 import {registerJahiaComponents} from './register';
 import getNodeProps from '../utils/getNodeProps';
+import getChildNodes from '../utils/getChildNodes';
 
 export default () => {
     // Hack to expose react to other modules
@@ -34,6 +35,7 @@ export default () => {
             jAddCacheDependency,
             jUrl,
             getNodeProps,
+            getChildNodes,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();

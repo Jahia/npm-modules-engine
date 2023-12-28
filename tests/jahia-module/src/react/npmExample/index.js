@@ -5,4 +5,5 @@ export * from './testJConfig/TestJConfig';
 export * from './testJFindDisplayableContent/TestJFindDisplayableContent';
 export * from './testJRender';
 export * from './testJUrl/TestJUrl';
-export * from './testNodeProps/TestNodeProps';
+export * from './testGetNodeProps/TestGetNodeProps';
+export * from './testGetChildNodes/TestGetChildNodes';
