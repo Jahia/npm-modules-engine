@@ -1,5 +1,5 @@
 import React from 'react';
-import {useServerContext, getNodeProps} from '@jahia/server-jsx';
+import {getNodeProps, useServerContext} from '@jahia/js-server-engine';
 
 export const TestGetNodeProps = () => {
     const {currentNode} = useServerContext();

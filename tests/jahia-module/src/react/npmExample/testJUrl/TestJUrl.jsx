@@ -1,5 +1,5 @@
 import React from 'react';
-import {useServerContext, jUrl, jAddCacheDependency} from '@jahia/server-jsx';
+import {jAddCacheDependency, jUrl, useServerContext} from '@jahia/js-server-engine';
 
 export const TestJUrl = () => {
     const {currentResource, renderContext} = useServerContext();

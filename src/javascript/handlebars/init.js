@@ -1,5 +1,5 @@
 import {osgi, registry, render} from '@jahia/server-helpers';
-import * as helpers from './helpers';
+import * as helpers from '@jahia/js-server-engine/handlebars/helpers';
 import Handlebars from 'handlebars';
 import array from 'handlebars-helpers/lib/array';
 import collection from 'handlebars-helpers/lib/collection';

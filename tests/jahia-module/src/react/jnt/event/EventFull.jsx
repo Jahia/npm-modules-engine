@@ -1,6 +1,6 @@
 import React from 'react';
-import {JArea, JRender, JAddResources, useServerContext} from '@jahia/server-jsx';
-import {footer, login, navMenu, header} from "../page/pageComponents";
+import {JAddResources, JArea, JRender, useServerContext} from '@jahia/js-server-engine';
+import {footer, header, login, navMenu} from "../page/pageComponents";
 
 export const EventFull = () => {
     const {currentResource} = useServerContext();

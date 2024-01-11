@@ -1,19 +1,19 @@
 import {gql, registry} from '@jahia/server-helpers';
 import React from 'react';
-import JRender from './JRender';
-import JAddContentButtons from './JAddContentButtons';
-import jBuildNavMenu from './jBuildNavMenu';
-import jAddCacheDependency from './jAddCacheDependency';
-import jUrl from './jUrl';
+import JRender from '@jahia/js-server-engine/react/JRender';
+import JAddContentButtons from '@jahia/js-server-engine/react/JAddContentButtons';
+import jBuildNavMenu from '@jahia/js-server-engine/react/jBuildNavMenu';
+import jAddCacheDependency from '@jahia/js-server-engine/react/jAddCacheDependency';
+import jUrl from '@jahia/js-server-engine/react/jUrl';
 import ReactDOMServer from 'react-dom/server';
 import styledJsx from 'styled-jsx/style';
-import {ServerContextProvider, useServerContext} from './ServerContext';
+import {ServerContextProvider, useServerContext} from '@jahia/js-server-engine/react/ServerContext';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
-import JArea from './JArea';
-import JAddResources from './JAddResources';
-import {registerJahiaComponents} from './register';
-import getNodeProps from '../utils/getNodeProps';
-import getChildNodes from '../utils/getChildNodes';
+import JArea from '@jahia/js-server-engine/react/JArea';
+import JAddResources from '@jahia/js-server-engine/react/JAddResources';
+import {registerJahiaComponents} from '@jahia/js-server-engine/react/register';
+import getNodeProps from '@jahia/js-server-engine/utils/getNodeProps';
+import getChildNodes from '@jahia/js-server-engine/utils/getChildNodes';
 
 export default () => {
     // Hack to expose react to other modules
@@ -25,7 +25,7 @@ export default () => {
     });
 
     // Expose Jahia JSX functions/components
-    registry.add('module', 'jahia-server-jsx', {
+    registry.add('module', 'jahia-js-server-engine', {
         exports: {
             JRender,
             JArea,
@@ -36,12 +36,12 @@ export default () => {
             jUrl,
             getNodeProps,
             getChildNodes,
+            registerJahiaComponents,
             useServerContext,
             useQuery: ({query, variables, operationName}) => {
                 const {renderContext} = useServerContext();
                 return gql.executeQuerySync({query, variables, operationName, renderContext});
-            },
-            registerJahiaComponents
+            }
         }
     });
 

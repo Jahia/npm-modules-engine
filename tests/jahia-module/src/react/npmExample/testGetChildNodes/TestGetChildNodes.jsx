@@ -1,5 +1,6 @@
 import React from 'react';
-import {useServerContext, getChildNodes, JAddContentButtons} from '@jahia/server-jsx';
+import {getChildNodes, JAddContentButtons, useServerContext} from '@jahia/js-server-engine';
+
 export const TestGetChildNodes = () => {
     const {currentNode} = useServerContext();
     const allChildren = getChildNodes(currentNode)
