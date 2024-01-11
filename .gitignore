@@ -29,5 +29,9 @@ src/main/resources/META-INF/js
 /tests/node_modules
 yarn-error.log
 
-# Yarn files
-.yarn
+# yarn v2
+**/.yarn/cache
+**/.yarn/unplugged
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+**/.pnp.*
