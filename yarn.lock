@@ -1035,24 +1035,18 @@
     eslint-plugin-react "^7.16.0"
     eslint-plugin-react-hooks "^2.2.0"
 
-"@jahia/js-server-engine@file:../../../../javascript/projects/jahia/jahia-js-server-engine":
+"@jahia/js-server-engine@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.0.0.tgz#1be4a8b4e2f6245cdfde14f6c012142e6466c1b4"
+  integrity sha512-b2P29kB0Q1XN54sriAwhBiz9bTf/w3i1rcQEB7iKxsj7Omd2hIMVa0pDMIw6g+3Mpmo2LN0P+ZGXvkY81Hozlg==
   dependencies:
     "@apollo/client" "^3.5.5"
-    "@jahia/ui-extender" "^1.0.1"
     dayjs "^1.10.4"
-    fast-text-encoding "^1.0.6"
     graphql "^16.0.1"
     handlebars "^4.7.7"
-    handlebars-helpers "^0.10.0"
-    handlebars-i18next "^1.0.1"
     handlebars-utils "^1.0.6"
-    husky "^4.2.5"
-    i18next "^20.2.2"
     prop-types "^15.8.1"
     react "^18.2.0"
-    react-dom "^18.2.0"
-    styled-jsx "^5.1.2"
 
 "@jahia/ui-extender@^1.0.1":
   version "1.1.0"
