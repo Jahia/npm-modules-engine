@@ -33,7 +33,10 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.jsx$/,
-                    include: [path.join(__dirname, 'src')],
+                    include: [
+                        path.join(__dirname, 'src'),
+                        path.resolve(__dirname, "node_modules/@jahia/js-server-engine")
+                    ],
                     use: {
                         loader: 'babel-loader',
                         options: {

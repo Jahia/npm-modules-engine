@@ -2,7 +2,7 @@ import 'fast-text-encoding'; // Required for React 18 to work (normally provided
 import initI18next from './i18next/init';
 import initHandlebars from './handlebars/init';
 import initReact from './react/init';
-import {initUrlBuilder} from './urlBuilder';
+import {initUrlBuilder} from '@jahia/js-server-engine/urlBuilder';
 
 initI18next();
 initUrlBuilder();

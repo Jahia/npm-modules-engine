@@ -13,7 +13,7 @@ module.exports = env => {
         externalsPresets: {node: true},
         externals: {
             '@jahia/server-helpers': 'jahiaHelpers',
-            '@jahia/server-jsx': 'jahiaHelpers.registry.get(\'module\', \'jahia-server-jsx\').exports',
+            '@jahia/js-server-engine': 'jahiaHelpers.registry.get(\'module\', \'jahia-js-server-engine\').exports',
             react: 'jahiaHelpers.registry.get(\'module\', \'react\').exports',
             'styled-jsx/style': 'jahiaHelpers.registry.get(\'module\', \'styled-jsx\').exports'
         },

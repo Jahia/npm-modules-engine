@@ -1,5 +1,5 @@
 import React from 'react';
-import {useServerContext} from '@jahia/server-jsx';
+import {useServerContext} from '@jahia/js-server-engine';
 
 export const TestCurrentContent = () => {
     const {currentResource,currentNode,mainNode} = useServerContext();

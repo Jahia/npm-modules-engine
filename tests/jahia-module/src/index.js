@@ -2,7 +2,7 @@ import {registry} from '@jahia/server-helpers';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
 import {menuEntryCss} from './helpers/menuEntryCss';
-import {registerJahiaComponents} from '@jahia/server-jsx';
+import {registerJahiaComponents} from '@jahia/js-server-engine';
 import * as reactComponents from './react';
 
 registerJahiaComponents(reactComponents);

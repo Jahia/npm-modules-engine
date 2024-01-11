@@ -1,6 +1,6 @@
 import React from 'react';
-import {JArea, JRender, JAddResources} from '@jahia/server-jsx';
-import {footer, login, navMenu, header} from "./pageComponents";
+import {JAddResources, JArea, JRender} from '@jahia/js-server-engine';
+import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageSimple = () => {
     return (<>

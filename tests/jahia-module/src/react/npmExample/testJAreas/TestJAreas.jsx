@@ -1,5 +1,5 @@
 import React from 'react';
-import {JArea} from '@jahia/server-jsx';
+import {JArea} from '@jahia/js-server-engine';
 
 export const TestJAreas = () => {
     return (

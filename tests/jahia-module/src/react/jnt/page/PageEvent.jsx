@@ -1,6 +1,6 @@
 import React from 'react';
-import {JArea, JRender, JAddResources} from '@jahia/server-jsx';
-import {calendar, facets, footer, login, navMenu, header} from "./pageComponents";
+import {JAddResources, JArea, JRender} from '@jahia/js-server-engine';
+import {calendar, facets, footer, header, login, navMenu} from "./pageComponents";
 
 export const PageEvent = () => {
     return (<>
