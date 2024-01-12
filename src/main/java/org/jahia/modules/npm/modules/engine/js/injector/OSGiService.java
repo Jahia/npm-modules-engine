@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jahia.modules.npm.modules.engine.helpers.injector;
+package org.jahia.modules.npm.modules.engine.js.injector;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

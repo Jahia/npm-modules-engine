@@ -1,6 +1,5 @@
 import React from 'react';
-import {useServerContext} from '@jahia/js-server-engine';
-import {render} from '@jahia/server-helpers';
+import {useServerContext, server} from '@jahia/js-server-engine';
 
 export const TestJFindDisplayableContent = () => {
     const {currentResource, renderContext} = useServerContext();
@@ -10,7 +9,7 @@ export const TestJFindDisplayableContent = () => {
         currentResource.getNode().getProperty('target').getValue().getNode() :
         undefined;
     if (targetNodeRef) {
-        const displayableNode = render.findDisplayableNode(targetNodeRef, renderContext, null);
+        const displayableNode = server.render.findDisplayableNode(targetNodeRef, renderContext, null);
         if (displayableNode) {
             displayableNodePath = displayableNode.getPath();
         }

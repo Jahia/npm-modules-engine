@@ -1,5 +1,5 @@
-import {osgi, registry, render} from '@jahia/server-helpers';
-import * as helpers from '@jahia/js-server-engine/handlebars/helpers';
+import {server} from '@jahia/js-server-engine-private';
+import {handlebars} from '@jahia/js-server-engine';
 import Handlebars from 'handlebars';
 import array from 'handlebars-helpers/lib/array';
 import collection from 'handlebars-helpers/lib/collection';
@@ -18,8 +18,8 @@ import i18next from 'i18next';
 import registerI18nHelper from 'handlebars-i18next';
 
 export default () => {
-    Object.keys(helpers).forEach(k => {
-        Handlebars.registerHelper(k, helpers[k]);
+    Object.keys(handlebars.helpers).forEach(k => {
+        Handlebars.registerHelper(k, handlebars.helpers[k]);
     });
 
     [array, collection, comparison, html, match, math, misc, number, object, path, regex, string, url].forEach(lib => {
@@ -30,14 +30,9 @@ export default () => {
 
     registerI18nHelper(Handlebars, i18next);
 
-    // Hack to expose handlebars to other modules
-    registry.add('module', 'handlebars', {
-        exports: Handlebars
-    });
-
-    registry.add('bundleInitializer', 'handlebars-views', {
+    server.registry.add('bundleInitializer', 'handlebars-views', {
         init: bundle => {
-            const hbsTemplateFiles = osgi.lookupComponentPaths(bundle, '.hbs');
+            const hbsTemplateFiles = server.osgi.lookupComponentPaths(bundle, '.hbs');
             if (!hbsTemplateFiles.isEmpty()) {
                 for (const hbsTemplateFile of hbsTemplateFiles) {
                     const parts = hbsTemplateFile.split('/');
@@ -49,12 +44,12 @@ export default () => {
                     const propertiesFilePath = hbsTemplateFile.substring(0, hbsTemplateFile.lastIndexOf('.hbs')) + '.properties';
                     const registryKey = bundle.getSymbolicName() + '_' + hbsTemplateFile;
 
-                    const loadedProperties = osgi.loadPropertiesResource(bundle, propertiesFilePath);
+                    const loadedProperties = server.osgi.loadPropertiesResource(bundle, propertiesFilePath);
                     const properties = loadedProperties ? loadedProperties : {};
 
-                    const hbsTemplateStr = osgi.loadResource(bundle, hbsTemplateFile, false);
+                    const hbsTemplateStr = server.osgi.loadResource(bundle, hbsTemplateFile, false);
                     const hbsCompiledTemplate = Handlebars.compile(hbsTemplateStr);
-                    registry.add('view', registryKey, {
+                    server.registry.add('view', registryKey, {
                         viewRenderer: 'handlebars',
                         displayName: properties.name ? properties.name : templateName,
                         target: nodeType,
@@ -69,7 +64,7 @@ export default () => {
         }
     });
 
-    registry.add('viewRenderer', 'handlebars', {
+    server.registry.add('viewRenderer', 'handlebars', {
         render: (currentResource, renderContext, view) => {
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
             const mode = renderContext.getMode();
@@ -81,8 +76,8 @@ export default () => {
                 lng: locale.getLanguage()
             };
 
-            const currentContent = render.transformToJsNode(currentResource.getNode(), false, false, false);
-            const mainContent = render.transformToJsNode(renderContext.getMainResource().getNode(), false, false, false);
+            const currentContent = server.render.transformToJsNode(currentResource.getNode(), false, false, false);
+            const mainContent = server.render.transformToJsNode(renderContext.getMainResource().getNode(), false, false, false);
 
             // Build a simplified ctx for handlebars template usage.
             const ctx = {
@@ -102,7 +97,7 @@ export default () => {
                 requestLanguage: renderContext.getRequest().getLocale().getLanguage(),
                 currentModule: renderContext.getURLGenerator().getCurrentModule()
             };
-            const renderParameters = render.getRenderParameters(currentResource);
+            const renderParameters = server.render.getRenderParameters(currentResource);
             return view.hbsCompiledTemplate({
                 ctx,
                 renderParameters,

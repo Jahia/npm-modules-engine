@@ -1,4 +1,4 @@
-package org.jahia.modules.npm.modules.engine.helpers;
+package org.jahia.modules.npm.modules.engine.js.server;
 
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;

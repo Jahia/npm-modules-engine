@@ -1,4 +1,4 @@
-import {osgi} from '@jahia/server-helpers';
+import {server} from '@jahia/js-server-engine-private';
 
 const backend = {
     type: 'backend',
@@ -7,10 +7,10 @@ const backend = {
     },
 
     read: function (language, namespace, callback) {
-        const bundle = osgi.getBundle(namespace);
+        const bundle = server.osgi.getBundle(namespace);
         if (bundle) {
-            let content = osgi.loadResource(bundle, 'locales/' + language + '.json', true) ||
-                osgi.loadResource(bundle, 'javascript/locales/' + language + '.json', true);
+            let content = server.osgi.loadResource(bundle, 'locales/' + language + '.json', true) ||
+                server.osgi.loadResource(bundle, 'javascript/locales/' + language + '.json', true);
             if (content) {
                 callback(null, JSON.parse(content));
             } else {
