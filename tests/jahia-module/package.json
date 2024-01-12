@@ -1,7 +1,9 @@
 {
-  "name": "npm-module-example",
+  "name": "@jahia/npm-module-examplée",
+  "description": "Jahia NPM Test module",
   "version": "1.0.0",
   "license": "MIT",
+  "author": "Jahia Solutions Group SA",
   "scripts": {
     "build": "webpack --mode=development",
     "deploy": "jahia-deploy pack",
@@ -10,9 +12,6 @@
     "test": "yarn lint"
   },
   "jahia": {
-    "module-type": "templatesSet",
-    "server": "dist/main.js",
-    "Jahia-Depends": "calendar,event",
     "maven": {
       "groupId": "org.jahia.modules.npm",
       "distributionManagement": {
@@ -25,7 +24,11 @@
           "url": "https://devtools.jahia.com/nexus/content/repositories/jahia-snapshots"
         }
       }
-    }
+    },
+    "module-dependencies": "calendar,event",
+    "module-type": "templatesSet",
+    "required-version": "8.2.0.0-SNAPSHOT",
+    "server": "dist/main.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",
