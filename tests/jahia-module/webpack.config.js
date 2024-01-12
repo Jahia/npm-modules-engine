@@ -15,7 +15,7 @@ module.exports = env => {
             '@jahia/js-server-engine': 'jsServerEngineLibraryBuilder.getLibrary()',
             react: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react\')',
             'styled-jsx/style': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
-            'handlebars': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'handlebars\')'
+            handlebars: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'handlebars\')'
         },
         resolve: {
             extensions: ['.js', '.jsx']

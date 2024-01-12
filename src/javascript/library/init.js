@@ -1,4 +1,4 @@
-import * as jsServerEngine from "@jahia/js-server-engine";
+import * as jsServerEngine from '@jahia/js-server-engine';
 import jsServerEngineBuilder from '@jahia/js-server-engine-builder';
 import Handlebars from 'handlebars';
 import React from 'react';
@@ -14,4 +14,4 @@ export default () => {
     jsServerEngineBuilder.addSharedLibrary('handlebars', Handlebars);
     jsServerEngineBuilder.addSharedLibrary('react', React);
     jsServerEngineBuilder.addSharedLibrary('styled-jsx', styledJsx);
-}
+};

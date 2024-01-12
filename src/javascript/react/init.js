@@ -2,7 +2,7 @@ import {server} from '@jahia/js-server-engine-private';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
-import {ServerContextProvider} from "@jahia/js-server-engine";
+import {ServerContextProvider} from '@jahia/js-server-engine';
 
 export default () => {
     server.registry.add('view', 'react', {
