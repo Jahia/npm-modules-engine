@@ -49,5 +49,6 @@
   },
   "dependencies": {
     "cypress-real-events": "^1.7.6"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

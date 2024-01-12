@@ -1048,6 +1048,19 @@
     prop-types "^15.8.1"
     react "^18.2.0"
 
+"@jahia/js-server-engine@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.0.3.tgz#315cdbdd4fe3086b25c4b012a7ed6f2a0925443f"
+  integrity sha512-CHD/coXo3BirFWrO2oONE5potXtxPIZni4naSL7j6SSpuowBTgD97PYUj/8MHqChx4iiP7aO6aH+Pm26LenzOw==
+  dependencies:
+    "@apollo/client" "^3.5.5"
+    dayjs "^1.10.4"
+    graphql "^16.0.1"
+    handlebars "^4.7.7"
+    handlebars-utils "^1.0.6"
+    prop-types "^15.8.1"
+    react "^18.2.0"
+
 "@jahia/ui-extender@^1.0.1":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@jahia/ui-extender/-/ui-extender-1.1.0.tgz#845d3d57d82335f8c4128016b2c696a88a6c69a4"
