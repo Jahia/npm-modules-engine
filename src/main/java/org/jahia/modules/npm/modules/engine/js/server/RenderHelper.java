@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jahia.modules.npm.modules.engine.helpers;
+package org.jahia.modules.npm.modules.engine.js.server;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +21,8 @@ import org.apache.jackrabbit.util.Text;
 import org.apache.taglibs.standard.tag.common.core.ParamParent;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
-import org.jahia.modules.npm.modules.engine.helpers.injector.OSGiService;
+import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
+import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
 import org.jahia.services.content.JCRContentUtils;
@@ -43,7 +44,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.Collection;

@@ -12,10 +12,10 @@ module.exports = env => {
         },
         externalsPresets: {node: true},
         externals: {
-            '@jahia/server-helpers': 'jahiaHelpers',
-            '@jahia/js-server-engine': 'jahiaHelpers.registry.get(\'module\', \'jahia-js-server-engine\').exports',
-            react: 'jahiaHelpers.registry.get(\'module\', \'react\').exports',
-            'styled-jsx/style': 'jahiaHelpers.registry.get(\'module\', \'styled-jsx\').exports'
+            '@jahia/js-server-engine': 'jsServerEngineLibraryBuilder.getLibrary()',
+            react: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react\')',
+            'styled-jsx/style': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
+            handlebars: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'handlebars\')'
         },
         resolve: {
             extensions: ['.js', '.jsx']

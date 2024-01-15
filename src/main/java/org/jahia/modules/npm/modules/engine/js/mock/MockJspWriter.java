@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jahia.modules.npm.modules.engine.helpers;
+package org.jahia.modules.npm.modules.engine.js.mock;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;

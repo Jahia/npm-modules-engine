@@ -1,4 +1,4 @@
-package org.jahia.modules.npm.modules.engine.helpers.injector;
+package org.jahia.modules.npm.modules.engine.js.injector;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;

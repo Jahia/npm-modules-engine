@@ -1035,23 +1035,10 @@
     eslint-plugin-react "^7.16.0"
     eslint-plugin-react-hooks "^2.2.0"
 
-"@jahia/js-server-engine@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.0.0.tgz#1be4a8b4e2f6245cdfde14f6c012142e6466c1b4"
-  integrity sha512-b2P29kB0Q1XN54sriAwhBiz9bTf/w3i1rcQEB7iKxsj7Omd2hIMVa0pDMIw6g+3Mpmo2LN0P+ZGXvkY81Hozlg==
-  dependencies:
-    "@apollo/client" "^3.5.5"
-    dayjs "^1.10.4"
-    graphql "^16.0.1"
-    handlebars "^4.7.7"
-    handlebars-utils "^1.0.6"
-    prop-types "^15.8.1"
-    react "^18.2.0"
-
-"@jahia/js-server-engine@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.0.3.tgz#315cdbdd4fe3086b25c4b012a7ed6f2a0925443f"
-  integrity sha512-CHD/coXo3BirFWrO2oONE5potXtxPIZni4naSL7j6SSpuowBTgD97PYUj/8MHqChx4iiP7aO6aH+Pm26LenzOw==
+"@jahia/js-server-engine@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.0.5.tgz#47ac2136152ee43a6e70856307749bb27b62a456"
+  integrity sha512-Nebed1k7VyPbo3BNG7w68Qw4fuqraMW2UNt3HaD6udOAlAMoy49j3bQSj+/CKA2gAy121FRwLwR1ACg6dQvGAw==
   dependencies:
     "@apollo/client" "^3.5.5"
     dayjs "^1.10.4"

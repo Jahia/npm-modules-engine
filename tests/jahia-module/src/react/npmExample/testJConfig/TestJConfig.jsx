@@ -1,10 +1,10 @@
 import React from 'react';
-import {config} from '@jahia/server-helpers';
+import {server} from '@jahia/js-server-engine';
 
 export const TestJConfig = () => {
-    const configValues = config.getConfigValues('org.jahia.modules.test');
-    const defaultFactoryConfigs = config.getConfigFactoryValues('org.jahia.modules.test.factory', 'default');
-    const complexObject = config.getConfigValues('org.jahia.modules.test.complex');
+    const configValues = server.config.getConfigValues('org.jahia.modules.test');
+    const defaultFactoryConfigs = server.config.getConfigFactoryValues('org.jahia.modules.test.factory', 'default');
+    const complexObject = server.config.getConfigValues('org.jahia.modules.test.complex');
 
     return (
         <>
@@ -15,7 +15,7 @@ export const TestJConfig = () => {
             <p data-testid="configValues.configKey1">configValues.configKey1={configValues.configKey1}</p>
             <p data-testid="configValues.configKey2">configValues.configKey2={configValues.configKey2}</p>
 
-            <p data-testid="configKey1">configKey1={config.getConfigValue('org.jahia.modules.test', 'configKey1')}</p>
+            <p data-testid="configKey1">configKey1={server.config.getConfigValue('org.jahia.modules.test', 'configKey1')}</p>
 
             <h3>OSGi Config Factory tests</h3>
 
@@ -26,11 +26,11 @@ export const TestJConfig = () => {
 
             <h3>OSGi Test Module Factory Config Identifiers</h3>
             <p data-testid="testModuleFactoryIdentifiers">
-                testModuleFactoryIdentifiers={config.getConfigFactoryIdentifiers('org.jahia.modules.test.factory').join(',')}
+                testModuleFactoryIdentifiers={server.config.getConfigFactoryIdentifiers('org.jahia.modules.test.factory').join(',')}
             </p>
 
             <h3>All Config PIDs</h3>
-            <p data-testid="allConfigPIDs">allConfigPIDs={config.getConfigPids()}</p>
+            <p data-testid="allConfigPIDs">allConfigPIDs={server.config.getConfigPids()}</p>
 
             <h3>OSGi Config Complex Values</h3>
             {Object.keys(complexObject).map(function(key, i){
