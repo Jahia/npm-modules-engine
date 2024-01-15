@@ -93,20 +93,7 @@ public class NpmProtocolConnection extends URLConnection {
                     Map<String, Object> properties = mapper.readValue(file, Map.class);
                     Map<String, Object> jahiaProps = (Map<String, Object>) properties.getOrDefault("jahia", new HashMap<>());
 
-                    String name = (String) properties.get("name");
-                    instructions.put("Bundle-Name", name + " (npm module)");
-                    instructions.put("Bundle-SymbolicName", name.replace("@", "").replace('/', '-'));
-                    instructions.put("Bundle-Version", properties.get("version"));
-                    instructions.put("Bundle-Category", "jahia-module");
-                    instructions.put("Jahia-GroupId", "org.jahia.npm");
-                    instructions.put("Jahia-Required-Version", "8.0.0.0");
-                    instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
-                    if (jahiaProps.containsKey("server")){
-                        instructions.put(BUNDLE_HEADER_NPM_INIT_SCRIPT, jahiaProps.get("server"));
-                    }
-                    instructions.put("Jahia-Javascript-Name", name);
-                    instructions.put("Jahia-Static-Resources", "/css,/icons,/images,/img,/javascript");
-                    instructions.put("-removeheaders", "Private-Package, Export-Package");
+                    instructions.putAll(generateInstructions(properties, jahiaProps));
                 }
                 if (path.startsWith("jahia-views/")) {
                     path = path.substring("jahia-views/".length());
@@ -158,6 +145,45 @@ public class NpmProtocolConnection extends URLConnection {
         }
 
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
+    }
+
+    private Properties generateInstructions(Map<String, Object> properties, Map<String, Object> jahiaProps) {
+        Properties instructions = new Properties();
+
+        // First let's setup Bundle headers
+
+        instructions.put("Bundle-Category", jahiaProps.getOrDefault("category", "jahia-npm-module"));
+        setIfPresent(properties, "description", instructions, "Bundle-Description");
+        String name = (String) properties.get("name");
+        instructions.put("Bundle-Name", name + " (npm module)");
+        instructions.put("Bundle-SymbolicName", name.replace("@", "")
+                .replace('/', '-')
+                .replaceAll("[^a-zA-Z0-9\\-\\.\\s]", "_"));
+        setIfPresent(properties, "author", instructions, "Bundle-Vendor");
+        instructions.put("Bundle-Version", properties.get("version"));
+        setIfPresent(properties, "license", instructions, "Bundle-License");
+
+        // Next lets setup Jahia headers
+
+        instructions.put("Jahia-Depends", jahiaProps.getOrDefault("module-dependencies", "default"));
+        setIfPresent(jahiaProps, "deploy-on-site", instructions, "Jahia-Deploy-On-Site");
+        instructions.put("Jahia-GroupId", jahiaProps.getOrDefault("group-id", "org.jahia.npm"));
+        setIfPresent(jahiaProps,"module-signature", instructions, "Jahia-Module-Signature");
+        setIfPresent(jahiaProps, "module-priority", instructions, "Jahia-Module-Priority");
+        instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
+        setIfPresent(jahiaProps, "private-app-store", instructions, "Jahia-Private-App-Store");
+        instructions.put("Jahia-Required-Version", jahiaProps.getOrDefault("required-version", "8.2.0.0"));
+        setIfPresent(jahiaProps, "server", instructions, BUNDLE_HEADER_NPM_INIT_SCRIPT);
+        instructions.put("Jahia-Static-Resources", jahiaProps.getOrDefault("static-resources", "/css,/icons,/images,/img,/javascript"));
+
+        instructions.put("-removeheaders", "Private-Package, Export-Package");
+        return instructions;
+    }
+
+    private void setIfPresent(Map<String, Object> inputProperties,String propertyName, Properties instructions, String instructionName) {
+        if (inputProperties.containsKey(propertyName)) {
+            instructions.put(instructionName, inputProperties.get(propertyName));
+        }
     }
 
     private File getMergedDefinitionFile(Collection<File> npmFiles, File packageDir) {
