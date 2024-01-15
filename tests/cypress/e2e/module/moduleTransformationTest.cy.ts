@@ -8,8 +8,8 @@ describe('Check that the NPM module has been transformed properly and has the pr
                     expect(result).to.contain('Bundle-Description: Jahia NPM Test module');
                     expect(result).to.contain('Jahia-GroupId: org.jahia.npm');
                     expect(result).to.contain('Bundle-License: MIT');
-                    expect(result).to.contain('Bundle-Name: @jahia/npm-module-examplée (npm module)');
-                    expect(result).to.contain('Bundle-SymbolicName: jahia-npm-module-exampl_e');
+                    expect(result).to.contain('Bundle-Name: npm-module-example (npm module)');
+                    expect(result).to.contain('Bundle-SymbolicName: npm-module-example');
                     expect(result).to.contain('Bundle-Vendor: Jahia Solutions Group SA');
                     expect(result).to.contain('Bundle-Version: 1.0.0');
                     expect(result).to.contain('Jahia-Depends: default');
