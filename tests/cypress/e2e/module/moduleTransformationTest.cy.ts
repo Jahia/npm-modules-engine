@@ -1,7 +1,7 @@
 describe('Check that the NPM module has been transformed properly and has the proper header values',
     () => {
         it('Check the transformed module headers', () => {
-            cy.executeGroovy('groovy/getBundleHeaders.groovy', {BUNDLE_SYMBOLIC_NAME: 'jahia-npm-module-exampl_e', BUNDLE_VERSION: '1.0.0'})
+            cy.executeGroovy('groovy/getBundleHeaders.groovy', {BUNDLE_SYMBOLIC_NAME: 'npm-module-example', BUNDLE_VERSION: '1.0.0'})
                 .then(result => {
                     console.log(result);
                     expect(result).to.contain('Bundle-Category: jahia-npm-module');
