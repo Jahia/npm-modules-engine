@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@jahia/data-helper": "^1.0.3",
-    "@jahia/js-server-engine": "^1.0.5",
+    "@jahia/js-server-engine": "^1.1.0",
     "handlebars": "^4.7.7",
     "react": "^18.2.0"
   },
