@@ -176,10 +176,11 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         JCRSiteNode site = renderContext.getSite() != null ? renderContext.getSite() : resource.getNode().getResolveSite();
         return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, site, resource.getTemplateType()).stream())
                 .filter(v -> {
+                    JSView jsv = (JSView) v;
                     boolean viewMatch = v.getKey().equals(template);
                     if (pageRendering) {
                         // Template resolution here
-                        if (isTemplate(v)) {
+                        if (jsv.isTemplate()) {
                             // Template matching view key
                             if (viewMatch) {
                                 return true;
@@ -190,15 +191,11 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
                         return false;
                     } else {
                         // View resolution here
-                        return !isTemplate(v) && viewMatch;
+                        return !jsv.isTemplate() && viewMatch;
                     }
                 })
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
-    }
-
-    private boolean isTemplate(View view) {
-        return "true".equals(view.getProperties().getProperty("template"));
     }
 
     private boolean isDefaultTemplate(View view) {

@@ -44,7 +44,8 @@ export const TestJConfig = () => {
 
 TestJConfig.jahiaComponent = {
     id: 'testConfig_react',
-    target: 'npmExample:testJConfig',
-    templateName: 'react',
-    displayName: 'test jConfig (react)'
+    nodeType: 'npmExample:testJConfig',
+    name: 'react',
+    displayName: 'test jConfig (react)',
+    componentType: 'view'
 }

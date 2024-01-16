@@ -89,8 +89,9 @@ export const TestGetNodeProps = () => {
 }
 
 TestGetNodeProps.jahiaComponent = {
-    id: 'testGetNodeProps',
-    target: 'npmExample:testGetNodeProps',
-    templateName: 'default',
-    displayName: 'test getNodeProps'
+    id: 'testGetNodeProps_react',
+    nodeType: 'npmExample:testGetNodeProps',
+    name: 'default',
+    displayName: 'test getNodeProps',
+    componentType: 'view'
 }

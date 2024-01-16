@@ -9,9 +9,11 @@ import Handlebars from 'handlebars';
 registerJahiaComponents(reactComponents);
 
 server.registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTemplate, {
-    target: 'jnt:yourHandlebarTemplate',
+    nodeType: 'jnt:yourHandlebarTemplate',
     templateType: 'html',
-    displayName: 'Default template'
+    name: 'Default template',
+    componentType: 'template'
+
 });
 
 server.registry.add('render-filter', 'test', renderFilterTest, {

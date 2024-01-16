@@ -41,10 +41,8 @@ export const EventFull = () => {
 
 EventFull.jahiaComponent = {
     id: 'event_full_react',
-    target: 'jnt:event',
-    templateName: 'fullReact',
+    nodeType: 'jnt:event',
+    name: 'fullReact',
     displayName: 'Full event (react)',
-    properties: {
-        template: 'true'
-    }
+    componentType: 'template'
 }

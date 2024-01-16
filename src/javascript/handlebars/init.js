@@ -52,12 +52,13 @@ export default () => {
                     server.registry.add('view', registryKey, {
                         viewRenderer: 'handlebars',
                         displayName: properties.name ? properties.name : templateName,
-                        target: nodeType,
-                        templateType: templateType,
-                        templateName: templateName,
-                        properties: properties,
-                        hbsCompiledTemplate: hbsCompiledTemplate,
-                        hbsTemplateFile: hbsTemplateFile
+                        componentType: properties.componentType ? properties.componentType : 'view',
+                        nodeType,
+                        templateType,
+                        name: templateName,
+                        properties,
+                        hbsCompiledTemplate,
+                        hbsTemplateFile
                     });
                 }
             }

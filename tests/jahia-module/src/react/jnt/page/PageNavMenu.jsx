@@ -15,10 +15,8 @@ export const PageNavMenu = () => {
 
 PageNavMenu.jahiaComponent = {
     id: 'page_navMenu_react',
-    target: 'jnt:page',
-    templateName: 'navMenuReact',
+    nodeType: 'jnt:page',
+    name: 'navMenuReact',
     displayName: 'Nav Menu (react)',
-    properties: {
-        template: 'true'
-    }
+    componentType: 'template'
 }
