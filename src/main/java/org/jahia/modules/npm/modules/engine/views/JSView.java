@@ -18,6 +18,8 @@ package org.jahia.modules.npm.modules.engine.views;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.services.render.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +33,8 @@ public class JSView implements View, Comparable<View> {
     private Properties defaultProperties;
     private final String path;
 
+    private static final Logger logger = LoggerFactory.getLogger(JSView.class);
+
     public JSView(Map<String, Object> jsValues, JahiaTemplatesPackage module) {
         this.module = module;
         this.jsValues = jsValues;
@@ -38,6 +42,7 @@ public class JSView implements View, Comparable<View> {
         if (jsValues.containsKey("properties")) {
             this.properties.putAll((Map<?, ?>) jsValues.get("properties"));
         }
+        this.properties.put("template", isTemplate() ? "true" : "false");
         this.defaultProperties = new Properties();
         this.path = getModule().getBundleKey() + "/" + getRegistryKey();
     }
@@ -46,9 +51,18 @@ public class JSView implements View, Comparable<View> {
         return contextProvider.getRegistry().get("view", getRegistryKey());
     }
 
+    public boolean isTemplate() {
+        String componentType = jsValues.containsKey("componentType") ? jsValues.get("componentType").toString() : null;
+
+        if((!"template".equals(componentType) && !"view".equals(componentType))) {
+            logger.warn("Unrecognized componentType '{}' for view '{}', will be considered as a view", componentType, this.getKey());
+        }
+        return "template".equals(componentType);
+    }
+
     @Override
     public String getKey() {
-        return jsValues.containsKey("templateName") ? jsValues.get("templateName").toString() : "default";
+        return jsValues.containsKey("name") ? jsValues.get("name").toString() : "default";
     }
 
     @Override
@@ -104,7 +118,7 @@ public class JSView implements View, Comparable<View> {
     }
 
     public String getNodeType() {
-        return jsValues.get("target").toString();
+        return jsValues.get("nodeType").toString();
     }
 
     public String getTemplateType() {

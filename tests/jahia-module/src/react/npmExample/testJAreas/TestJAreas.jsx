@@ -36,7 +36,8 @@ export const TestJAreas = () => {
 
 TestJAreas.jahiaComponent = {
     id: 'testJAreas_react',
-    target: 'npmExample:testJAreas',
-    templateName: 'react',
-    displayName: 'test Areas (react)'
+    nodeType: 'npmExample:testJAreas',
+    name: 'react',
+    displayName: 'test Areas (react)',
+    componentType: 'view'
 }
