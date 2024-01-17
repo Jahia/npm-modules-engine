@@ -43,13 +43,13 @@ describe('jRender should be editable', () => {
     it('With parameter set to false, text should not be editable', () => {
         cy.iframe('#page-builder-frame-1').within(() => {
             cy.get('div[data-testid="npm-render-not-editable"]').find('div[class="childs"]>div>div[jahiatype="module"]').should('not.exist');
-        });  
+        });
     });
 
     it('With parameter set to true, text should be editable', () => {
         cy.iframe('#page-builder-frame-1').within(() => {
             cy.get('div[data-testid="npm-render-editable"]').find('div[class="childs"]>div>div[jahiatype="module"]').should('exist');
-        }); 
+        });
     });
 
     afterEach('Logout', () => cy.logout());
