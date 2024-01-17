@@ -1,5 +1,5 @@
-import { addNode } from '@jahia/cypress';
-import { addSimplePage } from '../../../utils/Utils';
+import {addNode} from '@jahia/cypress';
+import {addSimplePage} from '../../../utils/Utils';
 
 describe('jRender should be editable', () => {
     before('Create test contents', () => {
@@ -16,14 +16,14 @@ describe('jRender should be editable', () => {
             addNode({
                 parentPathOrId: '/sites/npmTestSite/home/testRenderEditable/pagecontent',
                 name: 'test',
-                primaryNodeType: 'npmExample:testRenderEditable',
+                primaryNodeType: 'npmExample:testRenderEditable'
             });
             addNode({
                 parentPathOrId: '/sites/npmTestSite/home/testRenderEditable/pagecontent/test',
                 name: 'text',
                 primaryNodeType: 'npmExample:simpleText',
                 properties: [
-                    { name: 'text', value: 'Testing editable', language: 'en' }
+                    {name: 'text', value: 'Testing editable', language: 'en'}
                 ]
             });
         });
@@ -37,19 +37,19 @@ describe('jRender should be editable', () => {
     it('Without parameter, text should be editable', () => {
         cy.iframe('#page-builder-frame-1').within(() => {
             cy.get('div[data-testid="npm-render-editable-default"]').find('div[class="childs"]>div>div[jahiatype="module"]').should('exist');
-        })
+        });
     });
 
     it('With parameter set to false, text should not be editable', () => {
         cy.iframe('#page-builder-frame-1').within(() => {
             cy.get('div[data-testid="npm-render-not-editable"]').find('div[class="childs"]>div>div[jahiatype="module"]').should('not.exist');
-        })    
+        });  
     });
 
     it('With parameter set to true, text should be editable', () => {
         cy.iframe('#page-builder-frame-1').within(() => {
             cy.get('div[data-testid="npm-render-editable"]').find('div[class="childs"]>div>div[jahiatype="module"]').should('exist');
-        })    
+        }); 
     });
 
     afterEach('Logout', () => cy.logout());
