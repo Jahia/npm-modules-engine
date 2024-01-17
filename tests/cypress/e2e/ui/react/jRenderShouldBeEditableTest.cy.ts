@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import {addNode} from '@jahia/cypress';
 import {addSimplePage} from '../../../utils/Utils';
+=======
+import { addNode } from '@jahia/cypress';
+import { addSimplePage } from '../../../utils/Utils';
+>>>>>>> 3c48b34 (Add tests for JRender edit default)
 
 describe('jRender should be editable', () => {
     before('Create test contents', () => {
@@ -16,14 +21,22 @@ describe('jRender should be editable', () => {
             addNode({
                 parentPathOrId: '/sites/npmTestSite/home/testRenderEditable/pagecontent',
                 name: 'test',
+<<<<<<< HEAD
                 primaryNodeType: 'npmExample:testRenderEditable'
+=======
+                primaryNodeType: 'npmExample:testRenderEditable',
+>>>>>>> 3c48b34 (Add tests for JRender edit default)
             });
             addNode({
                 parentPathOrId: '/sites/npmTestSite/home/testRenderEditable/pagecontent/test',
                 name: 'text',
                 primaryNodeType: 'npmExample:simpleText',
                 properties: [
+<<<<<<< HEAD
                     {name: 'text', value: 'Testing editable', language: 'en'}
+=======
+                    { name: 'text', value: 'Testing editable', language: 'en' }
+>>>>>>> 3c48b34 (Add tests for JRender edit default)
                 ]
             });
         });
