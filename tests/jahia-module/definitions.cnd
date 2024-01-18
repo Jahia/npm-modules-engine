@@ -36,3 +36,9 @@
 
 [npmExample:testGetChildNodes] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
     + * (jmix:droppableContent)
+
+[npmExample:testRenderEditable] > jnt:content, npmExampleMix:npmExampleComponent
+    + * (npmExample:simpleText)
+
+[npmExample:simpleText] > jnt:content
+ - text (string) = 'Hello world !' i18n
