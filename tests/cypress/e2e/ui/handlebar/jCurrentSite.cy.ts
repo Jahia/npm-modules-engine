@@ -7,7 +7,7 @@ describe('Test on jCurrentSite helper', () => {
         path: '/sites/npmTestSite',
         parent: '/sites',
         nodeType: 'jnt:virtualsite',
-        'property_j:installedModules': 'npm-module-example',
+        'property_j:installedModules': 'jahia-npm-module-example',
         'property_j:defaultLanguage': 'en',
         'property_j:mixLanguage': 'false',
         'property_j:title': 'npmTestSite',
@@ -16,7 +16,7 @@ describe('Test on jCurrentSite helper', () => {
         'property_j:wcagCompliance': 'true',
         'property_j:mandatoryLanguages': '',
         'property_j:languages': 'en',
-        'property_j:templatesSet': 'npm-module-example'
+        'property_j:templatesSet': 'jahia-npm-module-example'
     };
 
     before('Create test page and contents', () => {

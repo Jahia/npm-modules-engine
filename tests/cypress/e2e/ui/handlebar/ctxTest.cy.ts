@@ -67,7 +67,7 @@ describe('Test on ctx injected in views', () => {
             workspace: 'default',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example'
+            currentModule: '/modules/jahia-npm-module-example'
         });
         cy.logout();
     });
@@ -84,7 +84,7 @@ describe('Test on ctx injected in views', () => {
                 workspace: 'default',
                 contentLanguage: 'en',
                 uiLanguage: 'en',
-                currentModule: '/modules/npm-module-example'
+                currentModule: '/modules/jahia-npm-module-example'
             });
         });
         cy.logout();
@@ -100,7 +100,7 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example'
+            currentModule: '/modules/jahia-npm-module-example'
         });
     });
 
@@ -115,7 +115,7 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example'
+            currentModule: '/modules/jahia-npm-module-example'
         });
         cy.logout();
     });
@@ -130,7 +130,7 @@ describe('Test on ctx injected in views', () => {
             workspace: 'live',
             contentLanguage: 'en',
             uiLanguage: 'en',
-            currentModule: '/modules/npm-module-example'
+            currentModule: '/modules/jahia-npm-module-example'
         });
     });
 });
