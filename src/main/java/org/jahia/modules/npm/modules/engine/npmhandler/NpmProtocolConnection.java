@@ -24,9 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarOutputStream;
@@ -65,8 +66,39 @@ public class NpmProtocolConnection extends URLConnection {
         connect();
 
         File outputDir = Files.createTempDirectory("npm.").toFile();
-        TarUtils.unTar(new GZIPInputStream(wrappedUrl.openStream()), outputDir);
 
+        InputStream inputStream;
+        if ("http".equals(wrappedUrl.getProtocol()) || "https".equals(wrappedUrl.getProtocol())) {
+            URL finalUrl = wrappedUrl;
+            HttpClient client;
+            try {
+                if (wrappedUrl.getUserInfo() != null) {
+                    String user = wrappedUrl.getUserInfo().split(":")[0];
+                    String password = wrappedUrl.getUserInfo().split(":")[1];
+                    finalUrl = new URL(wrappedUrl.toString().replace(user + ":" + password + "@", ""));
+
+                    client = HttpClient.newBuilder().authenticator(new Authenticator() {
+                        @Override
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new java.net.PasswordAuthentication(user, password.toCharArray());
+                        }
+                    }).build();
+                } else {
+                    client = HttpClient.newHttpClient();
+                }
+
+                HttpResponse<InputStream> response = client.send(
+                        HttpRequest.newBuilder(finalUrl.toURI()).build(),
+                        HttpResponse.BodyHandlers.ofInputStream());
+                inputStream = response.body();
+            } catch (URISyntaxException | InterruptedException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+        } else {
+            inputStream = wrappedUrl.openStream();
+        }
+
+        TarUtils.unTar(new GZIPInputStream(inputStream), outputDir);
         Properties instructions = new Properties();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
