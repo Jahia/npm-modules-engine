@@ -1708,9 +1708,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/js-server-engine@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@jahia/js-server-engine@npm:1.1.0"
+"@jahia/js-server-engine@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@jahia/js-server-engine@npm:1.2.1"
   dependencies:
     "@apollo/client": "npm:^3.5.5"
     dayjs: "npm:^1.10.4"
@@ -1719,7 +1719,7 @@ __metadata:
     handlebars-utils: "npm:^1.0.6"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
-  checksum: 5059b312b6379db195fb05a0979f7ded5c1d8b74d44a67541e7518aa1ec918b8a5c6861c81501dbff514d1341cf555d99e39af777af447145669645e671eb7cd
+  checksum: 8f5cd3617e870dec8044b81bde5c90bfbac3f3c9fe07a304bff22c764bcd20902d98ff21a1f4b368eef984a815c6b17270f3a79ccb87df35d84a1f8f3a27594d
   languageName: node
   linkType: hard
 
