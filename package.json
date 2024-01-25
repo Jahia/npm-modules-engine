@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.5",
-    "@jahia/js-server-engine": "1.2.0",
+    "@jahia/js-server-engine": "^1.2.2",
     "@jahia/ui-extender": "^1.0.1",
     "dayjs": "^1.10.4",
     "fast-text-encoding": "^1.0.6",
