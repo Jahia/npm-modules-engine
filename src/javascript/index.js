@@ -3,7 +3,7 @@ import initI18next from './i18next/init';
 import initHandlebars from './handlebars/init';
 import initReact from './react/init';
 import initJsServerEngineLibrary from './library/init';
-import {initUrlBuilder} from '@jahia/js-server-engine/urlBuilder';
+import {initUrlBuilder} from '@jahia/js-server-engine';
 
 initI18next();
 initUrlBuilder();
