@@ -14,9 +14,9 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-import { addNode, createSite, deleteSite } from '@jahia/cypress'
-import { addSimplePage } from '../utils/Utils'
+import './commands';
+import {addNode, createSite, deleteSite} from '@jahia/cypress';
+import {addSimplePage} from '../utils/Utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('cypress-terminal-report/src/installLogsCollector')({
@@ -28,7 +28,7 @@ require('cypress-terminal-report/src/installLogsCollector')({
     collectTypes: ['cons:log', 'cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
 });
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-require('@jahia/cypress/dist/support/registerSupport').registerSupport()
+require('@jahia/cypress/dist/support/registerSupport').registerSupport();
 Cypress.on('uncaught:exception', (err, runnable) => {
     // Returning false here prevents Cypress from
     // failing the test
@@ -38,32 +38,32 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 before('Create NPM test site', () => {
     createSite('npmTestSite', {
         languages: 'en',
-        templateSet: 'npm-module-example',
+        templateSet: 'jahia-npm-module-example',
         locale: 'en',
-        serverName: 'localhost',
-    })
+        serverName: 'localhost'
+    });
 
-    addSimplePage(`/sites/npmTestSite/home`, 'testPage', 'testPage', 'en', 'simple', [
+    addSimplePage('/sites/npmTestSite/home', 'testPage', 'testPage', 'en', 'simple', [
         {
             name: 'pagecontent',
-            primaryNodeType: 'jnt:contentList',
-        },
+            primaryNodeType: 'jnt:contentList'
+        }
     ]).then(() => {
         addNode({
-            parentPathOrId: `/sites/npmTestSite/home/testPage/pagecontent`,
+            parentPathOrId: '/sites/npmTestSite/home/testPage/pagecontent',
             name: 'test',
             primaryNodeType: 'npmExample:test',
             properties: [
-                { name: 'jcr:title', value: 'NPM test component' },
-                { name: 'prop1', value: 'prop1 value' },
-                { name: 'propMultiple', values: ['value 1', 'value 2', 'value 3'] },
-                { name: 'propRichText', value: '<p data-testid="propRichTextValue">Hello this is a sample rich text</p>' }
-            ],
-        })
-    })
-})
+                {name: 'jcr:title', value: 'NPM test component'},
+                {name: 'prop1', value: 'prop1 value'},
+                {name: 'propMultiple', values: ['value 1', 'value 2', 'value 3']},
+                {name: 'propRichText', value: '<p data-testid="propRichTextValue">Hello this is a sample rich text</p>'}
+            ]
+        });
+    });
+});
 
 after('Clean', () => {
-    cy.visit('/start', {failOnStatusCode: false})
-    deleteSite('npmTestSite')
-})
+    cy.visit('/start', {failOnStatusCode: false});
+    deleteSite('npmTestSite');
+});

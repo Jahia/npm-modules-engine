@@ -1,5 +1,5 @@
 {
-  "name": "npm-module-example",
+  "name": "@jahia/npm-module-example",
   "description": "Jahia NPM Test module",
   "version": "1.0.0",
   "license": "MIT",
