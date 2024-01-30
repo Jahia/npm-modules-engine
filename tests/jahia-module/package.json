@@ -5,6 +5,7 @@
   "license": "MIT",
   "author": "Jahia Solutions Group SA",
   "scripts": {
+    "postinstall": "yarn dlx @yarnpkg/sdks vscode",
     "build": "webpack --mode=development",
     "deploy": "jahia-deploy pack",
     "watch": "yarn build --env deploy=true --watch",
@@ -50,6 +51,7 @@
     "extra-watch-webpack-plugin": "^1.0.3",
     "handlebars-loader": "^1.7.3",
     "styled-jsx": "^5.1.2",
+    "typescript": "^5.3.3",
     "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4",
     "webpack-node-externals": "^3.0.0",
