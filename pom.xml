@@ -40,8 +40,12 @@
     <properties>
         <jahia-module-signature>MC0CFQCHvCc9BAYHTZloGXAUXHhbxmJv/gIUVCuU1oiLUd/fbm0HJ22vwkqyulc=</jahia-module-signature>
         <import-package>
-             graphql.annotations.annotationTypes;version="[7.2,99)",
-             graphql.schema;version="[13.0,22)"
+            graphql.annotations.annotationTypes;version="[7.2,99)",
+            graphql.schema;version="[13.0,22)",
+            org.jahia.modules.graphql.provider.dxm;version="[2.7,4)",
+            org.jahia.modules.graphql.provider.dxm.node;version="[2.7,4)",
+            org.jahia.modules.graphql.provider.dxm.osgi.annotations;version="[2.7,4)",
+            org.jahia.modules.graphql.provider.dxm.util;version="[2.7,4)",
         </import-package>
     </properties>
 
