@@ -77,7 +77,7 @@ jobs:
           module_id: npm-modules-engine
           testrail_project: NPM Modules Engine
           tests_manifest: provisioning-manifest-build.yml
-          jahia_image: jahia/jahia-npm-alpha-dev:8-SNAPSHOT
+          jahia_image: jahia/jahia-ee-dev:8-SNAPSHOT
           jahia_license: ${{ secrets.JAHIA_LICENSE_8X_FULL }}
           should_use_build_artifacts: true
           github_artifact_name: npm-eng-${{ github.run_number }}
