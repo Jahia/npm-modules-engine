@@ -16,9 +16,19 @@ server.registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTempla
 
 });
 
-server.registry.add('render-filter', 'test', renderFilterTest, {
-    target: 'render:50',
-    applyOnNodeTypes: 'jnt:bigText'
+var filterTest = Java.extend(Java.type("org.jahia.services.render.filter.AbstractFilter"));
+var impl = new filterTest({
+    execute: function(out, renderContext, resource, renderChain) {
+        return out.replace('toto', 'tutu');
+    },
+    prepare: function(renderContext, resource, renderChain) {
+        return null;
+    }
+});
+impl.setPriority(5);
+impl.setApplyOnNodeTypes('jnt:bigText');
+server.registry.add('render-filter', 'test', {
+    filter: impl
 });
 
 Handlebars.registerHelper('menuEntryCss', menuEntryCss);
