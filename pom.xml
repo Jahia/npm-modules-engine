@@ -47,6 +47,7 @@
             org.jahia.modules.graphql.provider.dxm.osgi.annotations;version="[2.7,4)",
             org.jahia.modules.graphql.provider.dxm.util;version="[2.7,4)",
         </import-package>
+        <export-package>org.jahia.modules.npm.modules.engine.rules</export-package>
     </properties>
 
     <repositories>
