@@ -16,11 +16,15 @@
 package org.jahia.modules.npm.modules.engine.registrars;
 
 import org.graalvm.polyglot.Value;
+import org.jahia.bin.Action;
+import org.jahia.bin.ActionResult;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
+import org.jahia.services.render.URLResolver;
 import org.jahia.services.render.filter.AbstractFilter;
 import org.jahia.services.render.filter.RenderChain;
 import org.jahia.services.render.filter.RenderFilter;
@@ -32,7 +36,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component(service = Registrar.class, immediate = true)
 public class RenderFilterRegistrar implements Registrar {
@@ -71,10 +78,8 @@ public class RenderFilterRegistrar implements Registrar {
         Set<ServiceRegistration<RenderFilter>> set = new HashSet<>();
         registrations.put(bundle, set);
         for (Map<String, Object> renderFilter : renderFilters) {
-            RenderFilterBridge renderFilterImpl = new RenderFilterBridge(renderFilter, graalVMEngine);
+            RenderFilter renderFilterImpl = (RenderFilter) renderFilter.get("filter");
             renderFilterImpl.setRenderService(renderService);
-            renderFilterImpl.setPriority(0);
-
             set.add(bundleContext.registerService(RenderFilter.class, renderFilterImpl, new Hashtable<>()));
         }
     }
@@ -86,55 +91,6 @@ public class RenderFilterRegistrar implements Registrar {
             for (ServiceRegistration<RenderFilter> registration : set) {
                 registration.unregister();
             }
-        }
-    }
-
-    public static class RenderFilterBridge extends AbstractFilter {
-        private final GraalVMEngine engine;
-        private final String key;
-
-        public RenderFilterBridge(Map<String, Object> value, GraalVMEngine engine) {
-            this.engine = engine;
-            this.key = (String) value.get("key");
-            if (value.containsKey("priority")) {
-                setPriority(Integer.parseInt(value.get("priority").toString()));
-            }
-            if (value.containsKey("description")) {
-                setDescription(value.get("description").toString());
-            }
-            if (value.containsKey("applyOnConfigurations")) {
-                this.setApplyOnConfigurations(value.get("applyOnConfigurations").toString());
-            }
-            if (value.containsKey("applyOnModes")) {
-                this.setApplyOnModes(value.get("applyOnModes").toString());
-            }
-            if (value.containsKey("applyOnNodeTypes")) {
-                this.setApplyOnNodeTypes(value.get("applyOnNodeTypes").toString());
-            }
-            if (value.containsKey("applyOnTemplates")) {
-                this.setApplyOnTemplates(value.get("applyOnTemplates").toString());
-            }
-            if (value.containsKey("applyOnTemplateTypes")) {
-                this.setApplyOnTemplateTypes(value.get("applyOnTemplateTypes").toString());
-            }
-        }
-
-        @Override
-        public String execute(String s, RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return engine.doWithContext(contextProvider -> {
-                return Value.asValue(getJsFilter(contextProvider).get("execute")).execute(s, renderContext, resource, renderChain).asString();
-            });
-        }
-
-        @Override
-        public String prepare(RenderContext renderContext, Resource resource, RenderChain renderChain) throws Exception {
-            return engine.doWithContext(contextProvider -> {
-                return Value.asValue(getJsFilter(contextProvider).get("prepare")).execute(renderContext, resource, renderChain).asString();
-            });
-        }
-
-        private Map<String, Object> getJsFilter(ContextProvider contextProvider) {
-            return contextProvider.getRegistry().get("render-filter", key);
         }
     }
 }
