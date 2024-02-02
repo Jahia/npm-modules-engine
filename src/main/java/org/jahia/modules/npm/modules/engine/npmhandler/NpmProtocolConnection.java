@@ -150,8 +150,10 @@ public class NpmProtocolConnection extends URLConnection {
     private Properties generateInstructions(Map<String, Object> properties, Map<String, Object> jahiaProps) {
         Properties instructions = new Properties();
 
-        // First let's setup Bundle headers
+        // Automatically import rule global object for JS rules to works
+        instructions.put("Import-Package", "org.jahia.modules.npm.modules.engine.rules;version=\"[1.0.0,99)\"");
 
+        // Then let's setup Bundle headers
         instructions.put("Bundle-Category", jahiaProps.getOrDefault("category", "jahia-npm-module"));
         setIfPresent(properties, "description", instructions, "Bundle-Description");
         String name = (String) properties.get("name");

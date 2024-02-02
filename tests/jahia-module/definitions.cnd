@@ -10,6 +10,7 @@
     - smallText (string)
     - textarea (string, textarea)
     - choicelist (string, choicelist[resourceBundle]) = 'choice1' < 'choice1', 'choice2', 'choice3'
+    - jsChoicelist (string, choicelist[jsChoiceListInitializerTest])
     - long (long)
     - double (double)
     - boolean (boolean)

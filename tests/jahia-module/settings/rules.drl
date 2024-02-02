@@ -1,4 +1,4 @@
-package org.jahia.modules.npmExample
+package org.jahia.modules.npm.modules.engine.rules
 
 // list any import classes here.
 import org.jahia.services.content.rules.*
@@ -10,6 +10,7 @@ expander rules.dsl
 global User user
 global Service service
 global Logger logger
+global JSGlobalObject jsModuleGlobalObject
 
 rule "Npm module - testing rule deployement"
     salience 25
@@ -18,4 +19,11 @@ rule "Npm module - testing rule deployement"
              - the node has the type npmExample:testRule
     then
         Set the property resultProp of the node with the value "It works"
+end
+
+rule "Test usage of JS global module object"
+    when
+>        node: AddedNodeFact ( types contains "jnt:bigText" )
+    then
+>        jsModuleGlobalObject.call("hello", node);
 end
