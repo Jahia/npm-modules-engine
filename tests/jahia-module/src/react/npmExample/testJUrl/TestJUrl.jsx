@@ -1,5 +1,5 @@
 import React from 'react';
-import {jAddCacheDependency, jUrl, useServerContext} from '@jahia/js-server-engine';
+import {jAddCacheDependency, jUrl, useServerContext, server} from '@jahia/js-server-engine';
 
 export const TestJUrl = () => {
     const {currentResource, renderContext} = useServerContext();
@@ -26,7 +26,14 @@ export const TestJUrl = () => {
             {imageNodeRef &&
                 <div data-testid="image_reference">
                     <img height="150" src={jUrl({path: imageNodeRef.getPath()})} alt="image"/>
-                </div>}
+                </div>
+            }
+
+            {imageNodeRef &&
+                <div data-testid="image_mimeType_usingOSGIService">
+                    <span>image mimeType using Jahia OSGI service: {server.osgi.getService("org.jahia.services.image.JahiaImageService").getImage(imageNodeRef).getMimeType()}</span>
+                </div>
+            }
 
             <div data-testid="image_static_resource">
                 <img height="150" src={jUrl({value: currentModule + '/images/goat.jpg'})} alt="goat"/>
