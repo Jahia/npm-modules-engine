@@ -51,6 +51,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.login();
             cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
             cy.get('div[data-testid="component-text-json-node"]').should('contain', 'JSON node rendered');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -61,6 +62,7 @@ describe('Test on render and createContentButtons helpers', () => {
                 'contain',
                 'JSON node rendered with option config'
             );
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -68,6 +70,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.login();
             cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
             cy.get('div[data-testid="component-npm-json-node-option"]').should('contain', 'prop1 value it is');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -75,6 +78,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.login();
             cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
             cy.get('div[data-testid="component-npm-node-include"]').should('contain', 'prop1 value');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -83,6 +87,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
             cy.get('div[data-testid="component-json-node-with-mixin"]').should('contain', 'tag1');
             cy.get('div[data-testid="component-json-node-with-mixin"]').should('contain', 'tag2');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -98,6 +103,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.get(
                 'div[data-testid="component-json-node-with-parameters"] div[data-testid="renderParam-notString-notSupported"]'
             ).should('contain', 'objectParam not supported=');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -113,6 +119,7 @@ describe('Test on render and createContentButtons helpers', () => {
             cy.get(
                 'div[data-testid="component-npm-node-with-parameters"] div[data-testid="renderParam-notString-notSupported"]'
             ).should('contain', 'objectParam not supported=');
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
 
@@ -129,6 +136,7 @@ describe('Test on render and createContentButtons helpers', () => {
                 'contain',
                 'Child node rendered using relative path'
             );
+            cy.get('unwanteddiv').should('not.exist')
             cy.logout();
         });
     });

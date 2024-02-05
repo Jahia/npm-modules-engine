@@ -36,14 +36,20 @@ export default () => {
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
             const element = React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode}, React.createElement(view.component, {...props})));
-            const renderedElement = ReactDOMServer.renderToString(element);
+
+            // Some server side components are using dangerouslySetInnerHTML to render their content,
+            // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)
+            const cleanedRenderedElement = ReactDOMServer.renderToString(element)
+                .replace(/<unwanteddiv>/g, '')
+                .replace(/<\/unwanteddiv>/g, '');
+
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
             const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
             if (currentResource.getContextConfiguration() === 'page') {
-                return `<html>${renderedElement}${stylesResource}</html>`;
+                return `<html>${cleanedRenderedElement}${stylesResource}</html>`;
             }
 
-            return `${renderedElement}${stylesResource}`;
+            return `${cleanedRenderedElement}${stylesResource}`;
         }
     });
 };
