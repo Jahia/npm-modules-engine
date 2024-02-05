@@ -42,3 +42,5 @@
 
 [npmExample:simpleText] > jnt:content
  - text (string) = 'Hello world !' i18n
+
+[npmExample:testReactContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title

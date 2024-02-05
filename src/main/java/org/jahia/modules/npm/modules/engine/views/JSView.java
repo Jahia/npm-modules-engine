@@ -33,6 +33,10 @@ public class JSView implements View, Comparable<View> {
     private Properties defaultProperties;
     private final String path;
 
+    private final boolean isTemplate;
+
+    private final boolean isDefaultTemplate;
+
     private static final Logger logger = LoggerFactory.getLogger(JSView.class);
 
     public JSView(Map<String, Object> jsValues, JahiaTemplatesPackage module) {
@@ -42,7 +46,15 @@ public class JSView implements View, Comparable<View> {
         if (jsValues.containsKey("properties")) {
             this.properties.putAll((Map<?, ?>) jsValues.get("properties"));
         }
-        this.properties.put("template", isTemplate() ? "true" : "false");
+
+        // init some system info, like componentType: template or view
+        String componentType = jsValues.containsKey("componentType") ? jsValues.get("componentType").toString() : null;
+        if((!"template".equals(componentType) && !"view".equals(componentType))) {
+            logger.warn("Unrecognized componentType '{}' for view '{}', will be considered as a view", componentType, this.getKey());
+        }
+        this.isTemplate = "template".equals(componentType);
+        this.isDefaultTemplate = "true".equals(properties.getProperty("default"));
+
         this.defaultProperties = new Properties();
         this.path = getModule().getBundleKey() + "/" + getRegistryKey();
     }
@@ -52,12 +64,11 @@ public class JSView implements View, Comparable<View> {
     }
 
     public boolean isTemplate() {
-        String componentType = jsValues.containsKey("componentType") ? jsValues.get("componentType").toString() : null;
+        return isTemplate;
+    }
 
-        if((!"template".equals(componentType) && !"view".equals(componentType))) {
-            logger.warn("Unrecognized componentType '{}' for view '{}', will be considered as a view", componentType, this.getKey());
-        }
-        return "template".equals(componentType);
+    public boolean isDefaultTemplate() {
+        return isDefaultTemplate;
     }
 
     @Override
