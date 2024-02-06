@@ -95,7 +95,7 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
 
     private List<ChoiceListValue> addTemplates(JCRSiteNode site, JCRSessionWrapper session, ExtendedNodeType nodetype, String defaultTemplate, ExtendedPropertyDefinition propertyDefinition, Locale locale, Map<String, Object> context) throws RepositoryException {
         return RenderService.getInstance().getViewsSet(nodetype, site, "html").stream()
-                .filter(v -> "true".equals(v.getProperties().getProperty("template")))
+                .filter(v -> v instanceof JSView && ((JSView) v).isTemplate())
                 .map(v -> new ChoiceListValue(v.getDisplayName(), getProperties(v, defaultTemplate), session.getValueFactory().createValue(v.getKey())))
                 .sorted()
                 .collect(Collectors.toList());

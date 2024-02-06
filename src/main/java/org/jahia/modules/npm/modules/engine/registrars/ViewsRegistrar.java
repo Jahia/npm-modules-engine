@@ -125,7 +125,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         if ("page".equals(resource.getContextConfiguration()) && !renderContext.isAjaxRequest()) {
             // JS templates are just JS views, so we just read already resolved script for resource.
             Script script = resource.getScript(renderContext);
-            if (script != null && Boolean.parseBoolean(script.getView().getProperties().getProperty("template"))) {
+            if (script != null && script.getView() instanceof JSView && ((JSView) script.getView()).isTemplate()) {
                 Template template = new Template(script.getView().getKey(), null, null, resource.getResolvedTemplate(), 0);
                 template.setExternal(true);
                 return template;
@@ -167,8 +167,12 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         // Check what is the template key of the current resource
         // in case of full page rendering we need to check for j:templateName prop, mostly used on jnt:page
         String template;
-        if (pageRendering && "default".equals(resource.getTemplate()) && resource.getNode().hasProperty("j:templateName")) {
-            template = resource.getNode().getProperty("j:templateName").getString();
+        if (pageRendering && "default".equals(resource.getTemplate())) {
+            if (resource.getNode().hasProperty("j:templateName")) {
+                template = resource.getNode().getProperty("j:templateName").getString();
+            } else {
+                template = "default";
+            }
         } else {
             template = resource.getResolvedTemplate();
         }
@@ -186,7 +190,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
                                 return true;
                             }
                             // Template view is configured as default no matter the template view key
-                            return "default".equals(template) && isDefaultTemplate(v);
+                            return "default".equals(template) && jsv.isDefaultTemplate();
                         }
                         return false;
                     } else {
@@ -196,10 +200,6 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
                 })
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));
-    }
-
-    private boolean isDefaultTemplate(View view) {
-        return "true".equals(view.getProperties().getProperty("default"));
     }
 
     @Override
