@@ -1708,9 +1708,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/js-server-engine@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "@jahia/js-server-engine@npm:1.2.2"
+"@jahia/js-server-engine@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@jahia/js-server-engine@npm:1.2.3"
   dependencies:
     "@apollo/client": "npm:^3.5.5"
     dayjs: "npm:^1.10.4"
@@ -1719,7 +1719,7 @@ __metadata:
     handlebars-utils: "npm:^1.0.6"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
-  checksum: b648f90a0f88f69f4c23ef5ce4b30f66b711e67135654208618e772d94cef6d430cdd2563a29acd56837a616572af493222fdd3a9a7787190db1791e592244a8
+  checksum: 90aa2c70454334b64ceb3231940776cf1fe3a3264c66d7428e55923b5d38a156ab6665373a9a7faf06f05820b94b1eebcc27313925635b3e8b70d6d1463bdf96
   languageName: node
   linkType: hard
 
@@ -1734,7 +1734,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.21.5"
     "@jahia/data-helper": "npm:^1.0.3"
     "@jahia/eslint-config": "npm:^2.1.0"
-    "@jahia/js-server-engine": "npm:^1.2.2"
+    "@jahia/js-server-engine": "npm:^1.2.3"
     "@jahia/scripts": "npm:^1.3.3"
     babel-loader: "npm:^9.1.3"
     clean-webpack-plugin: "npm:^4.0.0"
