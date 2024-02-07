@@ -1,8 +1,11 @@
 {{jLoadJSON 'page.components.json' 'components'}}
 <html>
-    <head></head>
-    <body>
+    <head>
         {{jAddResources type="css" resources="styles.css"}}
+    </head>
+    <body>
+        {{jAddResources type="javascript" resources="head-script.js"}}
+        {{jAddResources type="javascript" resources="body-script.js" targetTag="body"}}
         <div class="page">
             <div class="header">
                 <div class="headerContent">{{jRender content=components.header}}</div>
