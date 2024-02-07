@@ -8,6 +8,8 @@ export const PageSimple = () => {
             <JAddResources type={'css'} resources={'styles.css'}/>
         </head>
         <body>
+        <JAddResources type={'javascript'} resources={'body-script.js'} targetTag={'body'}/>
+        <JAddResources type={'javascript'} resources={'head-script.js'} />
         <div className="page">
             <div className="header">
                 <div className="headerContent">
