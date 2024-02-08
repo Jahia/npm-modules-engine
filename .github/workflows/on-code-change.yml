@@ -20,14 +20,9 @@ jobs:
 
   build:
     name: Build Module
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       NEXUS_INTERNAL_URL: ${{ secrets.NEXUS_INTERNAL_URL }}
-    container:
-      image: jahia/cimg-mvn-cache:ga_cimg_openjdk_8.0.312-node
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
