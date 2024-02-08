@@ -178,10 +178,11 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         }
 
         JCRSiteNode site = renderContext.getSite() != null ? renderContext.getSite() : resource.getNode().getResolveSite();
-        return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, site, resource.getTemplateType()).stream())
+        return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, site, resource.getTemplateType(), pageRendering).stream())
                 .filter(v -> {
                     JSView jsv = (JSView) v;
                     boolean viewMatch = v.getKey().equals(template);
+                    // TODO (if we keep only React impl): we could simply this code and remove usage of jsv.isDefaultTemplate()
                     if (pageRendering) {
                         // Template resolution here
                         if (jsv.isTemplate()) {
@@ -204,14 +205,18 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
 
     @Override
     public boolean hasView(ExtendedNodeType nt, String viewName, JCRSiteNode site, String templateType) {
-        return getViewsSet(nt, site, templateType).stream().anyMatch(v -> v.getKey().equals(viewName));
+        return getViewsSet(nt, site, templateType, false).stream().anyMatch(v -> v.getKey().equals(viewName));
     }
 
     @Override
     public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType) {
+        return getViewsSet(extendedNodeType, jcrSiteNode, templateType, false);
+    }
+
+    private SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType, boolean pageRendering) {
         final String cacheKey = extendedNodeType.getName() + "_" +
-                "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "__" +
-                templateType + "_";
+                "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "_" +
+                templateType + "_" + pageRendering;
 
         if (viewSetCache.containsKey(cacheKey)) {
             return viewSetCache.get(cacheKey);
@@ -222,6 +227,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
                 .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
                 .filter(v -> templateType.equals(v.getTemplateType()))
                 .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
+                .filter(v -> pageRendering == v.isTemplate())
                 .collect(Collectors.toCollection(TreeSet::new));
         viewSetCache.put(cacheKey, viewsSet);
         return viewsSet;
