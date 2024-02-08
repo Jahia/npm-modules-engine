@@ -158,7 +158,7 @@ public class JSView implements View, Comparable<JSView> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType());
+        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType(), isTemplate(), isDefaultTemplate());
     }
 
     @Override
