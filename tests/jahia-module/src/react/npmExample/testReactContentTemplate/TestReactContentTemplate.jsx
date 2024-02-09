@@ -42,8 +42,7 @@ export const TestReactContentTemplate = () => {
 TestReactContentTemplate.jahiaComponent = {
     id: 'test_react_content_template',
     nodeType: 'npmExample:testReactContentTemplate',
-    // React views/templates are able to not use properties.default = true,
-    // it is possible to register both a view and template that would use the same name.
+    // React views and templates may avoid using properties.default=true by using a 'default' name value.
     name: 'default',
     componentType: 'template',
 }
