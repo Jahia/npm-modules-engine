@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-public class JSView implements View, Comparable<View> {
+public class JSView implements View, Comparable<JSView> {
 
     private final JahiaTemplatesPackage module;
     private final Map<String, Object> jsValues;
@@ -67,6 +67,11 @@ public class JSView implements View, Comparable<View> {
         return isTemplate;
     }
 
+    // TODO (if we keep only React impl): this is only relevant for handlebars templates, due to view/template name resolution based on the file name
+    //      Handlebar templates have to provide a properties file with default:true
+    //      For React it's different since component are registered in the registry manually,
+    //      a view could already use 'default' key without conflicting with a template using also 'default' as key
+    //      if at some point we keep only React impl, we could get rid of this method and the view property default=true
     public boolean isDefaultTemplate() {
         return isDefaultTemplate;
     }
@@ -146,16 +151,18 @@ public class JSView implements View, Comparable<View> {
                 module.equals(jsView.module) &&
                 Objects.equals(path, jsView.path) &&
                 getNodeType().equals(jsView.getNodeType()) &&
-                getTemplateType().equals(jsView.getTemplateType());
+                getTemplateType().equals(jsView.getTemplateType()) &&
+                isTemplate() == jsView.isTemplate() &&
+                isDefaultTemplate() == jsView.isDefaultTemplate();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType());
+        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType(), isTemplate(), isDefaultTemplate());
     }
 
     @Override
-    public int compareTo(View otherView) {
+    public int compareTo(JSView otherView) {
         if (module == null) {
             if (otherView.getModule() != null) {
                 return 1;
