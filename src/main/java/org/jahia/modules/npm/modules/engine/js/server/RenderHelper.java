@@ -189,75 +189,71 @@ public class RenderHelper {
     }
 
     public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        // We copy the attributes to avoid modifying the original map
+        Map<String,Object> areaAttr = new HashMap<>(attr);
         // We now have to transform the attr properties into something that the AreaTag can understand
-        if (attr.get("path") != null && attr.get("name") != null) {
+        if (areaAttr.get("path") != null && areaAttr.get("name") != null) {
             logger.warn("Both path and name are set on the area tag, name will be ignored");
-            attr.remove("name");
+            areaAttr.remove("name");
         } else {
-            if (attr.get("name") != null) {
-                attr.put("path", attr.get("name"));
-                attr.remove("name");
+            if (areaAttr.get("name") != null) {
+                areaAttr.put("path", areaAttr.get("name"));
+                areaAttr.remove("name");
             }
         }
-        if (attr.get("areaView") != null) {
-            attr.put("view", attr.get("areaView"));
-            attr.remove("areaView");
+        if (areaAttr.get("areaView") != null) {
+            areaAttr.put("view", areaAttr.get("areaView"));
+            areaAttr.remove("areaView");
         }
-        Object allowedTypes = attr.get("allowedTypes");
+        Object allowedTypes = areaAttr.get("allowedTypes");
         if (allowedTypes != null) {
             if (allowedTypes instanceof List) {
-                attr.put("nodeTypes", StringUtils.join((List) allowedTypes, ' '));
-                attr.remove("allowedTypes");
+                areaAttr.put("nodeTypes", StringUtils.join((List) allowedTypes, ' '));
+                areaAttr.remove("allowedTypes");
             } if (allowedTypes.getClass().isArray()) {
                 Object[] allowedTypeArray = (Object[]) allowedTypes;
-                attr.put("nodeTypes", StringUtils.join(allowedTypeArray, ' '));
-                attr.remove("allowedTypes");
+                areaAttr.put("nodeTypes", StringUtils.join(allowedTypeArray, ' '));
+                areaAttr.remove("allowedTypes");
             }
         }
-        if (attr.get("numberOfItems") != null) {
-            attr.put("listLimit", attr.get("numberOfItems"));
-            attr.remove("numberOfItems");
-        }
-        AreaTag areaTag = new AreaTag();
-        // The subNodesView is an attribute that is passed as a tag parameter
-        if (attr.get("subNodesView") != null) {
-            attr.put("subNodesView", attr.get("subNodesView"));
-            areaTag.addParameter("subNodesView", (String) attr.get("subNodesView"));
-            attr.remove("subNodesView");
+        if (areaAttr.get("numberOfItems") != null) {
+            areaAttr.put("listLimit", areaAttr.get("numberOfItems"));
+            areaAttr.remove("numberOfItems");
         }
 
-        if (attr.get("level") != null || attr.get("limitedAbsoluteAreaEdit") != null) {
-            if (!"absoluteArea".equals(attr.get("moduleType"))) {
-                attr.put("moduleType", "absoluteArea");
+        if (areaAttr.get("level") != null || areaAttr.get("limitedAbsoluteAreaEdit") != null) {
+            if (!"absoluteArea".equals(areaAttr.get("moduleType"))) {
+                areaAttr.put("moduleType", "absoluteArea");
                 logger.warn("The level and limitedAbsoluteAreaEdit attributes are only available for absoluteArea moduleType. Forcing moduleType to absoluteArea");
             }
+        }
+
+        AreaTag areaTag = new AreaTag();
+        // The subNodesView is an attribute that is passed as a tag parameter
+        if (areaAttr.get("subNodesView") != null) {
+            areaTag.addParameter("subNodesView", (String) areaAttr.get("subNodesView"));
+            areaAttr.remove("subNodesView");
         }
 
         String areaOutput = null;
         try {
             // We need to use another session since we will actually save the new content list node for the area if it
-            // doesn't exist.
-            areaOutput = jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
+            // doesn't exist, while the englobing session used by the NPM modules engine should never be saved.
+            areaOutput = jcrTemplate.doExecute(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
                     renderContext.getMainResource().getLocale(), session -> {
                         RenderContext newSessionRenderContext = new RenderContext(renderContext.getRequest(), renderContext.getResponse(), jcrSessionFactory.getCurrentUser());
                         // Now we copy the properties to the new renderContext
                         try {
                             BeanUtils.copyProperties(newSessionRenderContext, renderContext);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvocationTargetException e) {
+                        } catch (IllegalAccessException | InvocationTargetException e) {
                             throw new RuntimeException(e);
                         }
                         // And we set the new main resoure with the new session.
                         JCRNodeWrapper newMainResource = session.getNodeByIdentifier(renderContext.getMainResource().getNode().getIdentifier());
                         newSessionRenderContext.setMainResource(new Resource(newMainResource, renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getContextConfiguration()));
                         try {
-                            return renderTag(areaTag, attr, newSessionRenderContext);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvocationTargetException e) {
-                            throw new RuntimeException(e);
-                        } catch (JspException e) {
+                            return renderTag(areaTag, areaAttr, newSessionRenderContext);
+                        } catch (IllegalAccessException | InvocationTargetException | JspException e) {
                             throw new RuntimeException(e);
                         }
                     }
