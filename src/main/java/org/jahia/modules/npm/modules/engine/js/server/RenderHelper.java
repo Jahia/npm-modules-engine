@@ -235,33 +235,7 @@ public class RenderHelper {
             areaAttr.remove("subNodesView");
         }
 
-        String areaOutput = null;
-        try {
-            // We need to use another session since we will actually save the new content list node for the area if it
-            // doesn't exist, while the englobing session used by the NPM modules engine should never be saved.
-            areaOutput = jcrTemplate.doExecute(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
-                    renderContext.getMainResource().getLocale(), session -> {
-                        RenderContext newSessionRenderContext = new RenderContext(renderContext.getRequest(), renderContext.getResponse(), jcrSessionFactory.getCurrentUser());
-                        // Now we copy the properties to the new renderContext
-                        try {
-                            BeanUtils.copyProperties(newSessionRenderContext, renderContext);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException(e);
-                        }
-                        // And we set the new main resoure with the new session.
-                        JCRNodeWrapper newMainResource = session.getNodeByIdentifier(renderContext.getMainResource().getNode().getIdentifier());
-                        newSessionRenderContext.setMainResource(new Resource(newMainResource, renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getContextConfiguration()));
-                        try {
-                            return renderTag(areaTag, areaAttr, newSessionRenderContext);
-                        } catch (IllegalAccessException | InvocationTargetException | JspException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            );
-        } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        }
-        return areaOutput;
+        return renderTag(areaTag, areaAttr, renderContext);
     }
 
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
