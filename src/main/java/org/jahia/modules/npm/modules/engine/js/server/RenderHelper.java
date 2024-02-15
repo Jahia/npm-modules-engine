@@ -21,8 +21,8 @@ import org.apache.jackrabbit.util.Text;
 import org.apache.taglibs.standard.tag.common.core.ParamParent;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
-import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
+import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
 import org.jahia.services.content.JCRContentUtils;
@@ -188,6 +188,86 @@ public class RenderHelper {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
+    public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        // We now have to transform the attr properties into something that the AreaTag can understand
+        if (attr.get("path") != null && attr.get("name") != null) {
+            logger.warn("Both path and name are set on the area tag, name will be ignored");
+            attr.remove("name");
+        } else {
+            if (attr.get("name") != null) {
+                attr.put("path", attr.get("name"));
+                attr.remove("name");
+            }
+        }
+        if (attr.get("areaView") != null) {
+            attr.put("view", attr.get("areaView"));
+            attr.remove("areaView");
+        }
+        Object allowedTypes = attr.get("allowedTypes");
+        if (allowedTypes != null) {
+            if (allowedTypes instanceof List) {
+                attr.put("nodeTypes", StringUtils.join((List) allowedTypes, ' '));
+                attr.remove("allowedTypes");
+            } if (allowedTypes.getClass().isArray()) {
+                Object[] allowedTypeArray = (Object[]) allowedTypes;
+                attr.put("nodeTypes", StringUtils.join(allowedTypeArray, ' '));
+                attr.remove("allowedTypes");
+            }
+        }
+        if (attr.get("numberOfItems") != null) {
+            attr.put("listLimit", attr.get("numberOfItems"));
+            attr.remove("numberOfItems");
+        }
+        AreaTag areaTag = new AreaTag();
+        // The subNodesView is an attribute that is passed as a tag parameter
+        if (attr.get("subNodesView") != null) {
+            attr.put("subNodesView", attr.get("subNodesView"));
+            areaTag.addParameter("subNodesView", (String) attr.get("subNodesView"));
+            attr.remove("subNodesView");
+        }
+
+        if (attr.get("level") != null || attr.get("limitedAbsoluteAreaEdit") != null) {
+            if (!"absoluteArea".equals(attr.get("moduleType"))) {
+                attr.put("moduleType", "absoluteArea");
+                logger.warn("The level and limitedAbsoluteAreaEdit attributes are only available for absoluteArea moduleType. Forcing moduleType to absoluteArea");
+            }
+        }
+
+        String areaOutput = null;
+        try {
+            // We need to use another session since we will actually save the new content list node for the area if it
+            // doesn't exist.
+            areaOutput = jcrTemplate.doExecuteWithSystemSessionAsUser(jcrSessionFactory.getCurrentUser(), renderContext.getWorkspace(),
+                    renderContext.getMainResource().getLocale(), session -> {
+                        RenderContext newSessionRenderContext = new RenderContext(renderContext.getRequest(), renderContext.getResponse(), jcrSessionFactory.getCurrentUser());
+                        // Now we copy the properties to the new renderContext
+                        try {
+                            BeanUtils.copyProperties(newSessionRenderContext, renderContext);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // And we set the new main resoure with the new session.
+                        JCRNodeWrapper newMainResource = session.getNodeByIdentifier(renderContext.getMainResource().getNode().getIdentifier());
+                        newSessionRenderContext.setMainResource(new Resource(newMainResource, renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getTemplate(), renderContext.getMainResource().getContextConfiguration()));
+                        try {
+                            return renderTag(areaTag, attr, newSessionRenderContext);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (JspException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
+        }
+        return areaOutput;
+    }
+
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
 
         Map<String, Serializable> renderParameters = (Map<String, Serializable>) attr.remove("parameters");
@@ -205,6 +285,11 @@ public class RenderHelper {
         tag.setPageContext(pageContext);
         tag.doStartTag();
         tag.doEndTag();
+        try {
+            pageContext.flushWriters();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return pageContext.getTargetWriter().getBuffer().toString();
     }
 

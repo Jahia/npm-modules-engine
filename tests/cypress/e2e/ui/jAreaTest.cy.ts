@@ -6,6 +6,45 @@ describe('jArea helper test', () => {
     before('Create test page and contents', () => {
         enableModule('event', 'npmTestSite');
 
+        // First let's create the content on the home page that will be referenced by areas in the test pages.
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home',
+            name: 'pagecontent',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent',
+            name: 'twoColumns',
+            primaryNodeType: 'npmExample:testJAreaColumns'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns',
+            name: 'twoColumns-col-1',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns/twoColumns-col-1',
+            name: 'bigText',
+            primaryNodeType: 'jnt:bigText',
+            properties: [{name: 'text', value: 'Column 1', language: 'en'}]
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns',
+            name: 'twoColumns-col-2',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns/twoColumns-col-2',
+            name: 'bigText',
+            primaryNodeType: 'jnt:bigText',
+            properties: [{name: 'text', value: 'Column 2', language: 'en'}]
+        });
+
         addSimplePage('/sites/npmTestSite/home', 'testJArea', 'testJArea', 'en', 'simple', [
             {
                 name: 'pagecontent',
@@ -102,6 +141,71 @@ describe('jArea helper test', () => {
             cy.reload();
             cy.iframe('#page-builder-frame-1').within(() => {
                 cy.get('div[data-testid="subNodesViewArea"]').find('a').contains('item1');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: path Area`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="pathArea"]').find('div[type="area"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: absolute Area`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="absoluteArea"]').find('div[data-testid="row-twoColumns"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: non editable Area`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="nonEditableArea"]').should('be.empty');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: absolute Area level`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="absoluteAreaLevel"]').find('div[data-testid="row-twoColumns"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: Area as sub node`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="areaAsSubNode"]')
+                    .find('div[type="area"]').should('have.attr', 'path')
+                    .and('match', /\/pagecontent\/test\/areaAsSubNode$/);
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: Area type`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="areaType"]').find('div[data-testid="row-areaType"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: Limited absolute area editing`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="limitedAbsoluteAreaEdit"]').find('div[type="existingNode"]').should('exist');
             });
             cy.logout();
         });

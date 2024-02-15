@@ -1035,10 +1035,10 @@
     eslint-plugin-react "^7.16.0"
     eslint-plugin-react-hooks "^2.2.0"
 
-"@jahia/js-server-engine@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.2.3.tgz#9982cb4c2f1169d1a97aefd9b0ef3343d7ebc136"
-  integrity sha512-yJQtU9tX25NYapjGQVHNJIWrKaYKe3KU7MA89whEEZVhSyYZP9qLk8PSsaYdem15lTi/eFOE5TEqfV/I/hU/qA==
+"@jahia/js-server-engine@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@jahia/js-server-engine/-/js-server-engine-1.2.4.tgz#f79d7677ba8cc5fe70ae57011d96111fb8a0720a"
+  integrity sha512-jhcfX8qTh+7pVLRB8Ef/eFC/O4q4+kDh+cXmJ/gdbqjHorFkQd6BB4YIWtrOri5IghhCjdFhKZATNYGsmEkaZg==
   dependencies:
     "@apollo/client" "^3.5.5"
     dayjs "^1.10.4"

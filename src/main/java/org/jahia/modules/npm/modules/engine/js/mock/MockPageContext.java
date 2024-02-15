@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -45,6 +46,11 @@ public class MockPageContext extends PageContext {
 
     public StringWriter getTargetWriter() {
         return targetWriter;
+    }
+
+    public void flushWriters() throws IOException {
+        writer.flush();
+        targetWriter.flush();
     }
 
     public void initialize(Servlet servlet, ServletRequest request, ServletResponse response, String errorPageURL, boolean needSession, int bufferSize, boolean autoFlush) {
