@@ -1,0 +1,34 @@
+<h2>jAbsoluteArea helper test component</h2>
+
+<h2>Basic Area</h2>
+<div data-testid="basicArea">{{jAbsoluteArea name="basicArea" level="1"}}</div>
+
+<h2>Area with allowed types</h2>
+<div data-testid="allowedTypesArea">{{jAbsoluteArea name="allowedTypesArea" allowedTypes=(jArr "jnt:event" "jnt:bigText") level="1"}}</div>
+
+<h2>Area with number of items</h2>
+<div data-testid="numberOfItemsArea">{{jAbsoluteArea name="numberOfItemsArea" numberOfItems="2" level="1"}}</div>
+
+<h2>Area with areaView</h2>
+<div data-testid="areaViewArea">{{jAbsoluteArea name="areaViewArea" areaView="dropdown" level="1"}}</div>
+
+<h2>Area with subNodesView</h2>
+<div data-testid="subNodesViewArea">{{jAbsoluteArea name="subNodesViewArea" subNodesView="link" level="1"}}</div>
+
+<h2>Area with path</h2>
+<div data-testid="pathArea">{{jAbsoluteArea path="basicArea/subLevel" level="1"}}</div>
+
+<h2>Area with absolute home page content</h2>
+<div data-testid="absoluteArea">{{jAbsoluteArea name="pagecontent"}}</div>
+
+<h2>Non editable area</h2>
+<div data-testid="nonEditableArea">{{jAbsoluteArea name="nonEditable" editable="false" level="1"}}</div>
+
+<h2>Absolute area level</h2>
+<div data-testid="absoluteAreaLevel">{{jAbsoluteArea name="pagecontent" level="0"}}</div>
+
+<h2>Area type </h2>
+<div data-testid="areaType">{{jAbsoluteArea name="areaType" areaType="npmExample:testReactJAreaColumns" level="1"}}</div>
+
+<h2>Limited absolute area editing</h2>
+<div data-testid="limitedAbsoluteAreaEdit">{{jAbsoluteArea name="pagecontent" limitedAbsoluteAreaEdit="false"}}</div>

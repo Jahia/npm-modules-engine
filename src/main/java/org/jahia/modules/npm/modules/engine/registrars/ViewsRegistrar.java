@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(immediate = true, service = {Registrar.class, ScriptResolver.class, JahiaEventListener.class})
+@Component(immediate = true, service = {ViewsRegistrar.class, Registrar.class, ScriptResolver.class, JahiaEventListener.class})
 public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
 
     private RenderService renderService;
@@ -213,7 +213,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         return getViewsSet(extendedNodeType, jcrSiteNode, templateType, false);
     }
 
-    private SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType, boolean pageRendering) {
+    public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType, boolean pageRendering) {
         final String cacheKey = extendedNodeType.getName() + "_" +
                 "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "_" +
                 templateType + "_" + pageRendering;

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-public class JSView implements View, Comparable<JSView> {
+public class JSView implements View, Comparable<View> {
 
     private final JahiaTemplatesPackage module;
     private final Map<String, Object> jsValues;
@@ -162,7 +162,7 @@ public class JSView implements View, Comparable<JSView> {
     }
 
     @Override
-    public int compareTo(JSView otherView) {
+    public int compareTo(View otherView) {
         if (module == null) {
             if (otherView.getModule() != null) {
                 return 1;

@@ -2,6 +2,7 @@ export * from './navMenu/NavMenu';
 export * from './testCurrentContent/TestCurrentContent';
 export * from './testJAreaColumns/TestJAreaColumns';
 export * from './testJAreas/TestJAreas';
+export * from './testJAbsoluteAreas/TestJAbsoluteAreas';
 export * from './testJConfig/TestJConfig';
 export * from './testJFindDisplayableContent/TestJFindDisplayableContent';
 export * from './testJRender';

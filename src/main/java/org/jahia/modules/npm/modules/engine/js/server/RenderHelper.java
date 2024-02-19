@@ -46,10 +46,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RenderHelper {
@@ -188,12 +185,25 @@ public class RenderHelper {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
+    public String renderAbsoluteArea(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException {
+        String[] allowedAttributes = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit"};
+        checkAttributes(attr, allowedAttributes);
+        return internalRenderArea(attr, "absoluteArea", renderContext);
+    }
+
     public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        String[] allowedAttributes = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType"};
+        checkAttributes(attr, allowedAttributes);
+        return internalRenderArea(attr, "area", renderContext);
+    }
+
+    private String internalRenderArea(Map<String, Object> attr, String moduleType, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
         // We copy the attributes to avoid modifying the original map
         Map<String,Object> areaAttr = new HashMap<>(attr);
+        areaAttr.put("moduleType", moduleType);
         // We now have to transform the attr properties into something that the AreaTag can understand
         if (areaAttr.get("path") != null && areaAttr.get("name") != null) {
-            logger.warn("Both path and name are set on the area tag, name will be ignored");
+            logger.warn("Both path and name are set on the area [ " + areaAttr.get("name") + "] tag, name will be ignored");
             areaAttr.remove("name");
         } else {
             if (areaAttr.get("name") != null) {
@@ -219,13 +229,6 @@ public class RenderHelper {
         if (areaAttr.get("numberOfItems") != null) {
             areaAttr.put("listLimit", areaAttr.get("numberOfItems"));
             areaAttr.remove("numberOfItems");
-        }
-
-        if (areaAttr.get("level") != null || areaAttr.get("limitedAbsoluteAreaEdit") != null) {
-            if (!"absoluteArea".equals(areaAttr.get("moduleType"))) {
-                areaAttr.put("moduleType", "absoluteArea");
-                logger.warn("The level and limitedAbsoluteAreaEdit attributes are only available for absoluteArea moduleType. Forcing moduleType to absoluteArea");
-            }
         }
 
         AreaTag areaTag = new AreaTag();
@@ -297,4 +300,13 @@ public class RenderHelper {
     public void setRenderService(RenderService renderService) {
         this.renderService = renderService;
     }
+
+    private void checkAttributes(Map<String,Object> attributes, String[] allowedAttributes) {
+            for (String attr : attributes.keySet()) {
+            if (!Arrays.asList(allowedAttributes).contains(attr)) {
+                throw new IllegalArgumentException("Attribute " + attr + " is not allowed");
+            }
+        }
+    }
+
 }

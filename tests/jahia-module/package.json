@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@jahia/data-helper": "^1.0.3",
-    "@jahia/js-server-engine": "^1.2.4",
+    "@jahia/js-server-engine": "^1.2.5",
     "handlebars": "^4.7.7",
     "react": "^18.2.0"
   },
@@ -71,5 +71,5 @@
     "node": ">=16.0.0",
     "yarn": ">=3.0.0"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }

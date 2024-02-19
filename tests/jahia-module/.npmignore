@@ -4,3 +4,8 @@
 .eslintrc.cjs
 babel.config.cjs
 *.tgz
+src
+.yarn
+.yalc
+.vscode
+yalc.lock

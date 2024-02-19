@@ -2,48 +2,88 @@ import {addNode, enableModule} from '@jahia/cypress';
 import 'cypress-wait-until';
 import {addSimplePage} from '../../utils/Utils';
 
-describe('jArea test', () => {
+describe('jAbsolute Area test', () => {
     before('Create test page and contents', () => {
         enableModule('event', 'npmTestSite');
 
-        addSimplePage('/sites/npmTestSite/home', 'testJArea', 'testJArea', 'en', 'simple', [
+        // First let's create the content on the home page that will be referenced by areas in the test pages.
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home',
+            name: 'pagecontent',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent',
+            name: 'twoColumns',
+            primaryNodeType: 'npmExample:testJAreaColumns'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns',
+            name: 'twoColumns-col-1',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns/twoColumns-col-1',
+            name: 'bigText',
+            primaryNodeType: 'jnt:bigText',
+            properties: [{name: 'text', value: 'Column 1', language: 'en'}]
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns',
+            name: 'twoColumns-col-2',
+            primaryNodeType: 'jnt:contentList'
+        });
+
+        addNode({
+            parentPathOrId: '/sites/npmTestSite/home/pagecontent/twoColumns/twoColumns-col-2',
+            name: 'bigText',
+            primaryNodeType: 'jnt:bigText',
+            properties: [{name: 'text', value: 'Column 2', language: 'en'}]
+        });
+
+        addSimplePage('/sites/npmTestSite/home', 'testJAbsoluteArea', 'testJAbsoluteArea', 'en', 'simple', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: '/sites/npmTestSite/home/testJArea/pagecontent',
+                parentPathOrId: '/sites/npmTestSite/home/testJAbsoluteArea/pagecontent',
                 name: 'test',
-                primaryNodeType: 'npmExample:testJAreas'
+                primaryNodeType: 'npmExample:testJAbsoluteAreas'
             });
         });
 
-        addSimplePage('/sites/npmTestSite/home', 'testJAreaReact', 'testJAreaReact', 'en', 'simpleReact', [
+        addSimplePage('/sites/npmTestSite/home', 'testJAbsoluteAreaReact', 'testJAbsoluteAreaReact', 'en', 'simpleReact', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: '/sites/npmTestSite/home/testJAreaReact/pagecontent',
+                parentPathOrId: '/sites/npmTestSite/home/testJAbsoluteAreaReact/pagecontent',
                 name: 'test',
-                primaryNodeType: 'npmExample:testJAreas',
+                primaryNodeType: 'npmExample:testJAbsoluteAreas',
                 mixins: ['jmix:renderable'],
                 properties: [{name: 'j:view', value: 'react'}]
             });
         });
     });
-    ['testJArea', 'testJAreaReact'].forEach(pageName => {
+    ['testJAbsoluteArea', 'testJAbsoluteAreaReact'].forEach(pageName => {
         it(`${pageName}: Basic Area test`, () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
             cy.iframe('#page-builder-frame-1').within(() => {
-                cy.get('div[data-testid="basicArea"]').find('div[type="area"]').should('be.visible');
+                cy.get('div[data-testid="basicArea"]').find('div[type="absoluteArea"]').should('be.visible');
             });
             cy.logout();
         });
 
+        /* TODO: Re-enable when the allowed types area is fixed (see https://jira.jahia.org/browse/BACKLOG-22305)
         it(`${pageName}: Allowed types area`, () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
@@ -61,6 +101,7 @@ describe('jArea test', () => {
             });
             cy.logout();
         });
+         */
 
         it(`${pageName}: Number of items area`, () => {
             cy.login();
@@ -110,7 +151,16 @@ describe('jArea test', () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
             cy.iframe('#page-builder-frame-1').within(() => {
-                cy.get('div[data-testid="pathArea"]').find('div[type="area"]').should('exist');
+                cy.get('div[data-testid="pathArea"]').find('div[type="absoluteArea"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: absolute Area`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="absoluteArea"]').find('div[data-testid="row-twoColumns"]').should('exist');
             });
             cy.logout();
         });
@@ -124,13 +174,11 @@ describe('jArea test', () => {
             cy.logout();
         });
 
-        it(`${pageName}: Area as sub node`, () => {
+        it(`${pageName}: absolute Area level`, () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
             cy.iframe('#page-builder-frame-1').within(() => {
-                cy.get('div[data-testid="areaAsSubNode"]')
-                    .find('div[type="area"]').should('have.attr', 'path')
-                    .and('match', /\/pagecontent\/test\/areaAsSubNode$/);
+                cy.get('div[data-testid="absoluteAreaLevel"]').find('div[data-testid="row-twoColumns"]').should('exist');
             });
             cy.logout();
         });
@@ -140,6 +188,15 @@ describe('jArea test', () => {
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
             cy.iframe('#page-builder-frame-1').within(() => {
                 cy.get('div[data-testid="areaType"]').find('div[data-testid="row-areaType"]').should('exist');
+            });
+            cy.logout();
+        });
+
+        it(`${pageName}: Limited absolute area editing`, () => {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get('div[data-testid="limitedAbsoluteAreaEdit"]').find('div[type="existingNode"]').should('exist');
             });
             cy.logout();
         });
