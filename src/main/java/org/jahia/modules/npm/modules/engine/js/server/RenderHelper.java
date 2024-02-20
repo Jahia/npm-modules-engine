@@ -314,7 +314,7 @@ public class RenderHelper {
 
     private void checkAttributes(Map<String,Object> attributes, Set<String> allowedAttributes) {
         for (String attr : attributes.keySet()) {
-            if (allowedAttributes.contains(attr)) {
+            if (!allowedAttributes.contains(attr)) {
                 throw new IllegalArgumentException("Attribute " + attr + " is not allowed");
             }
         }
