@@ -44,3 +44,6 @@
  - text (string) = 'Hello world !' i18n
 
 [npmExample:testReactContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testReactJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ + * (jmix:droppableContent) = jmix:droppableContent

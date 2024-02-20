@@ -21,8 +21,8 @@ import org.apache.jackrabbit.util.Text;
 import org.apache.taglibs.standard.tag.common.core.ParamParent;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
-import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
+import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
 import org.jahia.services.content.JCRContentUtils;
@@ -46,14 +46,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RenderHelper {
     private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
+
+    private static final Set<String> ABSOLUTEAREA_ALLOWED_ATTRIBUTES = Set.of("name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit", "parameters");
+    private static final Set<String> AREA_ALLOWED_ATTRIBUTES = Set.of("name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType", "parameters");
 
     private JCRSessionFactory jcrSessionFactory;
     private JCRTemplate jcrTemplate;
@@ -188,6 +188,70 @@ public class RenderHelper {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
+    public String renderAbsoluteArea(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException {
+        checkAttributes(attr, ABSOLUTEAREA_ALLOWED_ATTRIBUTES);
+        return internalRenderArea(attr, "absoluteArea", renderContext);
+    }
+
+    public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        checkAttributes(attr, AREA_ALLOWED_ATTRIBUTES);
+        return internalRenderArea(attr, "area", renderContext);
+    }
+
+    private String internalRenderArea(Map<String, Object> attr, String moduleType, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+        // We copy the attributes to avoid modifying the original map
+        Map<String,Object> areaAttr = new HashMap<>(attr);
+        areaAttr.put("moduleType", moduleType);
+        // We now have to transform the attr properties into something that the AreaTag can understand
+        if (areaAttr.get("path") != null && areaAttr.get("name") != null) {
+            logger.warn("Both path and name are set on the area [ " + areaAttr.get("name") + "] tag, name will be ignored");
+            areaAttr.remove("name");
+        } else {
+            if (areaAttr.get("name") != null) {
+                areaAttr.put("path", areaAttr.get("name"));
+                areaAttr.remove("name");
+            }
+        }
+        if (areaAttr.get("areaView") != null) {
+            areaAttr.put("view", areaAttr.get("areaView"));
+            areaAttr.remove("areaView");
+        }
+        Object allowedTypes = areaAttr.get("allowedTypes");
+        if (allowedTypes != null) {
+            if (allowedTypes instanceof List) {
+                areaAttr.put("nodeTypes", StringUtils.join((List) allowedTypes, ' '));
+                areaAttr.remove("allowedTypes");
+            } if (allowedTypes.getClass().isArray()) {
+                Object[] allowedTypeArray = (Object[]) allowedTypes;
+                areaAttr.put("nodeTypes", StringUtils.join(allowedTypeArray, ' '));
+                areaAttr.remove("allowedTypes");
+            }
+        }
+
+        if (areaAttr.get("numberOfItems") != null) {
+            areaAttr.put("listLimit", areaAttr.get("numberOfItems"));
+            areaAttr.remove("numberOfItems");
+        }
+
+        AreaTag areaTag = new AreaTag();
+        // The subNodesView is an attribute that is passed as a tag parameter
+        if (areaAttr.get("subNodesView") != null) {
+            areaTag.addParameter("subNodesView", (String) areaAttr.get("subNodesView"));
+            areaAttr.remove("subNodesView");
+        }
+
+        // Now we remove any null attribute to make sure they don't override default tag attributes
+        areaAttr = cleanupNullValues(areaAttr);
+
+        return renderTag(areaTag, areaAttr, renderContext);
+    }
+
+    private Map<String,Object> cleanupNullValues(Map<String,Object> mapToClean) {
+        return mapToClean.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
 
         Map<String, Serializable> renderParameters = (Map<String, Serializable>) attr.remove("parameters");
@@ -205,6 +269,11 @@ public class RenderHelper {
         tag.setPageContext(pageContext);
         tag.doStartTag();
         tag.doEndTag();
+        try {
+            pageContext.flushWriters();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return pageContext.getTargetWriter().getBuffer().toString();
     }
 
@@ -242,4 +311,13 @@ public class RenderHelper {
     public void setRenderService(RenderService renderService) {
         this.renderService = renderService;
     }
+
+    private void checkAttributes(Map<String,Object> attributes, Set<String> allowedAttributes) {
+        for (String attr : attributes.keySet()) {
+            if (!allowedAttributes.contains(attr)) {
+                throw new IllegalArgumentException("Attribute " + attr + " is not allowed");
+            }
+        }
+    }
+
 }

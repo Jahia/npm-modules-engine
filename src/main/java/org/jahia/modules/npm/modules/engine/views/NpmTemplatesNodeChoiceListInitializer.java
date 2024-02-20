@@ -17,6 +17,7 @@ package org.jahia.modules.npm.modules.engine.views;
 
 import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Jahia;
+import org.jahia.modules.npm.modules.engine.registrars.ViewsRegistrar;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -25,7 +26,6 @@ import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.content.nodetypes.initializers.ChoiceListInitializer;
 import org.jahia.services.content.nodetypes.initializers.ChoiceListInitializerService;
 import org.jahia.services.content.nodetypes.initializers.ChoiceListValue;
-import org.jahia.services.render.RenderService;
 import org.jahia.services.render.View;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -34,12 +34,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 
 import javax.jcr.RepositoryException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component(immediate = true)
-public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListInitializer {
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(SimpleTemplatesNodeChoiceListInitializer.class);
+public class NpmTemplatesNodeChoiceListInitializer implements ChoiceListInitializer {
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(NpmTemplatesNodeChoiceListInitializer.class);
 
     private ChoiceListInitializerService service;
 
@@ -48,6 +51,13 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
     @Reference
     public void setService(ChoiceListInitializerService service) {
         this.service = service;
+    }
+
+    private ViewsRegistrar viewsRegistrar;
+
+    @Reference
+    public void setViewsRegistrar(ViewsRegistrar viewsRegistrar) {
+        this.viewsRegistrar = viewsRegistrar;
     }
 
     @Activate
@@ -64,7 +74,6 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
     @Override
     public List<ChoiceListValue> getChoiceListValues(ExtendedPropertyDefinition epd, String param, List<ChoiceListValue> previousValues, Locale locale, Map<String, Object> context) {
         List<ChoiceListValue> values = oldInitializer.getChoiceListValues(epd, param, previousValues, locale, context);
-        new ArrayList<>();
 
         try {
             JCRNodeWrapper node = (JCRNodeWrapper) context.get("contextNode");
@@ -94,7 +103,7 @@ public class SimpleTemplatesNodeChoiceListInitializer implements ChoiceListIniti
     }
 
     private List<ChoiceListValue> addTemplates(JCRSiteNode site, JCRSessionWrapper session, ExtendedNodeType nodetype, String defaultTemplate, ExtendedPropertyDefinition propertyDefinition, Locale locale, Map<String, Object> context) throws RepositoryException {
-        return RenderService.getInstance().getViewsSet(nodetype, site, "html").stream()
+        return viewsRegistrar.getViewsSet(nodetype, site, "html", true).stream()
                 .filter(v -> v instanceof JSView && ((JSView) v).isTemplate())
                 .map(v -> new ChoiceListValue(v.getDisplayName(), getProperties(v, defaultTemplate), session.getValueFactory().createValue(v.getKey())))
                 .sorted()

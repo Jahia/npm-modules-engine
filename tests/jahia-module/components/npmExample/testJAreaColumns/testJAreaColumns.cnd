@@ -4,5 +4,5 @@
 <npmExample = 'http://www.acme.org/npm-example/nt/1.0'>
 <npmExampleMix = 'http://www.acme.org/npm-example/mix/1.0'>
 
-[npmExample:testJAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
