@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
 public class RenderHelper {
     private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
 
-    private static final String[] ABSOLUTEAREA_ALLOWED_ATTRIBUTES = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit", "parameters"};
-    private static final String[] AREA_ALLOWED_ATTRIBUTES = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType", "parameters" };
+    private static final Set<String> ABSOLUTEAREA_ALLOWED_ATTRIBUTES = Set.of("name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit", "parameters");
+    private static final Set<String> AREA_ALLOWED_ATTRIBUTES = Set.of("name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType", "parameters");
 
     private JCRSessionFactory jcrSessionFactory;
     private JCRTemplate jcrTemplate;
@@ -241,13 +241,15 @@ public class RenderHelper {
         }
 
         // Now we remove any null attribute to make sure they don't override default tag attributes
-        cleanupNullAttributes(areaAttr);
+        areaAttr = cleanupNullValues(areaAttr);
 
         return renderTag(areaTag, areaAttr, renderContext);
     }
 
-    private void cleanupNullAttributes(Map<String,Object> areaAttr) {
-        areaAttr.keySet().stream().filter(key -> areaAttr.get(key) == null).collect(Collectors.toList()).forEach(areaAttr::remove);
+    private Map<String,Object> cleanupNullValues(Map<String,Object> mapToClean) {
+        return mapToClean.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
@@ -310,9 +312,9 @@ public class RenderHelper {
         this.renderService = renderService;
     }
 
-    private void checkAttributes(Map<String,Object> attributes, String[] allowedAttributes) {
-            for (String attr : attributes.keySet()) {
-            if (!Arrays.asList(allowedAttributes).contains(attr)) {
+    private void checkAttributes(Map<String,Object> attributes, Set<String> allowedAttributes) {
+        for (String attr : attributes.keySet()) {
+            if (allowedAttributes.contains(attr)) {
                 throw new IllegalArgumentException("Attribute " + attr + " is not allowed");
             }
         }
