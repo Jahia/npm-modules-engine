@@ -1,4 +1,5 @@
-<h2>jArea helper test component</h2>
+{{jLoadJSON 'testJAreas.components.json' 'components'}}
+<h2>Handlebars jArea helper test component</h2>
 
 <h2>Basic Area</h2>
 <div data-testid="basicArea">{{jArea name="basicArea"}}</div>
@@ -26,3 +27,6 @@
 
 <h2>Area type </h2>
 <div data-testid="areaType">{{jArea name="areaType" areaType="npmExample:testReactJAreaColumns"}}</div>
+
+<h2>Area with parameters</h2>
+<div data-testid="areaParameters">{{jArea name="areaParameters" parameters=components.areaParameters areaView="parametersHbs"}}</div>

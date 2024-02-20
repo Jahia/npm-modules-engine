@@ -52,6 +52,9 @@ import java.util.stream.Collectors;
 public class RenderHelper {
     private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
 
+    private static final String[] ABSOLUTEAREA_ALLOWED_ATTRIBUTES = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit", "parameters"};
+    private static final String[] AREA_ALLOWED_ATTRIBUTES = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType", "parameters" };
+
     private JCRSessionFactory jcrSessionFactory;
     private JCRTemplate jcrTemplate;
     private RenderService renderService;
@@ -186,14 +189,12 @@ public class RenderHelper {
     }
 
     public String renderAbsoluteArea(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException {
-        String[] allowedAttributes = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaType", "level", "limitedAbsoluteAreaEdit"};
-        checkAttributes(attr, allowedAttributes);
+        checkAttributes(attr, ABSOLUTEAREA_ALLOWED_ATTRIBUTES);
         return internalRenderArea(attr, "absoluteArea", renderContext);
     }
 
     public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
-        String[] allowedAttributes = { "name", "path", "areaView", "allowedTypes", "numberOfItems", "subNodesView", "editable", "areaAsSubNode", "areaType"};
-        checkAttributes(attr, allowedAttributes);
+        checkAttributes(attr, AREA_ALLOWED_ATTRIBUTES);
         return internalRenderArea(attr, "area", renderContext);
     }
 
@@ -226,6 +227,7 @@ public class RenderHelper {
                 areaAttr.remove("allowedTypes");
             }
         }
+
         if (areaAttr.get("numberOfItems") != null) {
             areaAttr.put("listLimit", areaAttr.get("numberOfItems"));
             areaAttr.remove("numberOfItems");
@@ -238,7 +240,14 @@ public class RenderHelper {
             areaAttr.remove("subNodesView");
         }
 
+        // Now we remove any null attribute to make sure they don't override default tag attributes
+        cleanupNullAttributes(areaAttr);
+
         return renderTag(areaTag, areaAttr, renderContext);
+    }
+
+    private void cleanupNullAttributes(Map<String,Object> areaAttr) {
+        areaAttr.keySet().stream().filter(key -> areaAttr.get(key) == null).collect(Collectors.toList()).forEach(areaAttr::remove);
     }
 
     private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {

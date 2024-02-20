@@ -51,6 +51,11 @@ export const TestJAreas = () => {
                 <JArea name="areaType" areaType="npmExample:testReactJAreaColumns"/>
             </div>
 
+            <h2>Area parameters</h2>
+            <div data-testid="areaParameters">
+                <JArea name="areaParameters" areaView="parametersReact" parameters={{ "stringParam1": "stringValue1", "stringParam2": "stringValue2"}} />
+            </div>
+
         </>
     )
 }

@@ -1,4 +1,5 @@
-<h2>jAbsoluteArea helper test component</h2>
+{{jLoadJSON 'testJAbsoluteAreas.components.json' 'components'}}
+<h2>Handlebars jAbsoluteArea helper test component</h2>
 
 <h2>Basic Area</h2>
 <div data-testid="basicArea">{{jAbsoluteArea name="basicArea" level="1"}}</div>
@@ -32,3 +33,6 @@
 
 <h2>Limited absolute area editing</h2>
 <div data-testid="limitedAbsoluteAreaEdit">{{jAbsoluteArea name="pagecontent" limitedAbsoluteAreaEdit="false"}}</div>
+
+<h2>Absolute Area with parameters</h2>
+<div data-testid="absoluteAreaParameters">{{jAbsoluteArea name="absoluteAreaParameters" parameters=components.absoluteAreaParameters areaView="parametersHbs" level="1"}}</div>

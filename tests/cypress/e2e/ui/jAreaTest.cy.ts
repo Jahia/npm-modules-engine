@@ -143,5 +143,19 @@ describe('jArea test', () => {
             });
             cy.logout();
         });
+
+        it(`${pageName}: should render area with parameters`, function () {
+            cy.login();
+            cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
+            cy.iframe('#page-builder-frame-1').within(() => {
+                cy.get(
+                    'div[data-testid="areaParam-string1"]'
+                ).should('contain', 'stringParam1=stringValue1');
+                cy.get(
+                    'div[data-testid="areaParam-string2"]'
+                ).should('contain', 'stringParam2=stringValue2');
+            });
+            cy.logout();
+        });
     });
 });

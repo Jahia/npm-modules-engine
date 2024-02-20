@@ -38,7 +38,7 @@ export const TestJAbsoluteAreas = () => {
 
             <h2>Absolute Area with home page content</h2>
             <div data-testid="absoluteArea">
-                <JAbsoluteArea name="pagecontent" />
+                <JAbsoluteArea name="pagecontent"/>
             </div>
 
             <h2>Non editable area </h2>
@@ -59,6 +59,12 @@ export const TestJAbsoluteAreas = () => {
             <h2>Limited absolute area editing</h2>
             <div data-testid="limitedAbsoluteAreaEdit">
                 <JAbsoluteArea name="pagecontent" limitedAbsoluteAreaEdit={false}/>
+            </div>
+
+            <h2>Absolute Area parameters</h2>
+            <div data-testid="absoluteAreaParameters">
+                <JAbsoluteArea name="absoluteAreaParameters" areaView="parametersReact"
+                       parameters={{"stringParam1": "stringValue1", "stringParam2": "stringValue2"}} level={1}/>
             </div>
 
         </>
