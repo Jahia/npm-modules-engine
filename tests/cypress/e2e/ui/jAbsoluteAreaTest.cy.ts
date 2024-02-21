@@ -83,7 +83,6 @@ describe('jAbsolute Area test', () => {
             cy.logout();
         });
 
-        /* TODO: Re-enable when the allowed types area is fixed (see https://jira.jahia.org/browse/BACKLOG-22305)
         it(`${pageName}: Allowed types area`, () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);
@@ -101,7 +100,6 @@ describe('jAbsolute Area test', () => {
             });
             cy.logout();
         });
-         */
 
         it(`${pageName}: Number of items area`, () => {
             cy.login();
