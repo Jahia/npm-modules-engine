@@ -35,7 +35,8 @@ export default () => {
             const styleRegistry = createStyleRegistry();
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
-            const element = React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode}, React.createElement(view.component, {...props})));
+            const bundleKey = view.bundle.getSymbolicName();
+            const element = React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(view.component, {...props})));
 
             // Some server side components are using dangerouslySetInnerHTML to render their content,
             // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)

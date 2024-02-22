@@ -5,6 +5,8 @@
 
 [npmExampleMix:npmExampleComponent] > jmix:droppableContent, jmix:accessControllableContent mixin
 
+[npmExample:testReactClientSide] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
 [npmExample:testGetNodeProps] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
     - propNotSet (string)
     - smallText (string)
