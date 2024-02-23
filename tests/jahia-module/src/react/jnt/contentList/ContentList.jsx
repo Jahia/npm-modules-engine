@@ -17,7 +17,6 @@ export const ContentList = () => {
 }
 
 ContentList.jahiaComponent = {
-    id: 'testArea_parametersReact',
     nodeType: 'jnt:contentList',
     name: 'parametersReact',
     displayName: 'Test Area with parameters (React)',

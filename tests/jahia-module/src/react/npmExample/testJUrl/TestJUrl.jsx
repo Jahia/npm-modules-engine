@@ -68,7 +68,6 @@ export const TestJUrl = () => {
 }
 
 TestJUrl.jahiaComponent = {
-    id: 'testJUrl_react',
     nodeType: 'npmExample:testJUrl',
     name: 'react',
     displayName: 'test jUrl (react)',

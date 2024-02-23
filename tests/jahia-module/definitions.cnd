@@ -47,3 +47,5 @@
 
 [npmExample:testReactJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
+
+[npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title

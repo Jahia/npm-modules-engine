@@ -72,7 +72,6 @@ export const TestJAbsoluteAreas = () => {
 }
 
 TestJAbsoluteAreas.jahiaComponent = {
-    id: 'testJAbsoluteAreas_react',
     nodeType: 'npmExample:testJAbsoluteAreas',
     name: 'react',
     displayName: 'Test Absolute Areas (react)',

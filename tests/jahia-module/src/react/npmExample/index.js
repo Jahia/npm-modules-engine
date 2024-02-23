@@ -12,3 +12,4 @@ export * from './testGetChildNodes/TestGetChildNodes';
 export * from './testReactContentTemplate/TestReactContentTemplate';
 export * from './testReactContentTemplate/TestReactContentTemplateView';
 export * from './testReactContentTemplate/TestReactContentTemplateOtherView';
+export * from './testReactRegistry/TestReactRegistry';

@@ -31,7 +31,12 @@ public class RegistryHelper {
     }
 
     public Object get(String type, String key) {
-        return ProxyObject.fromMap(context.getRegistry().get(type, key));
+        Map<String,Object> registryEntry = context.getRegistry().get(type, key);
+        // We need this check because ProxyObject.fromMap doesn't do it.
+        if (registryEntry == null) {
+            return null;
+        }
+        return ProxyObject.fromMap(registryEntry);
     }
 
     public List<Object> find(Map<String, Object> filter) {

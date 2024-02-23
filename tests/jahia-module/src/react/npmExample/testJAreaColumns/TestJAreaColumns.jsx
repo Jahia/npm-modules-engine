@@ -16,7 +16,6 @@ export const TestJAreaColumns = () => {
 };
 
 TestJAreaColumns.jahiaComponent = {
-    id: 'npmExample_testReactJAreaColumns',
     nodeType: 'npmExample:testReactJAreaColumns',
     name: 'default',
     componentType: 'view'
