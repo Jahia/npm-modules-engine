@@ -1,7 +1,17 @@
+const fs = require('fs');
 const path = require('path');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+
+// Read all files in the client components directory in order to expose them with webpack module federation more easily
+// Those components are exposed in order to be hydrate/rendered client side
+const componentsDir = './src/client';
+const exposes = {};
+fs.readdirSync(componentsDir).forEach(file => {
+    const componentName = path.basename(file, path.extname(file));
+    exposes[componentName] = path.resolve(componentsDir, file);
+});
 
 module.exports = env => {
     let config = {
@@ -52,11 +62,7 @@ module.exports = env => {
                 name: 'jahia-npm-module-example',
                 library: {type: 'assign', name: 'window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell[\'jahia-npm-module-example\']'},
                 filename: '../client/remote.js',
-                exposes: {
-                    // Expose here every component that you want to be able to use on client side
-                    SampleHydrateInBrowserReact: './src/client/SampleHydrateInBrowserReact',
-                    SampleRenderInBrowserReact: './src/client/SampleRenderInBrowserReact'
-                },
+                exposes: exposes,
                 shared: {
                     react: {
                         requiredVersion: '^18.2.0'

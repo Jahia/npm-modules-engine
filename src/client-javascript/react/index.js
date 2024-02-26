@@ -5,10 +5,9 @@ const hydrateReactComponent = element => {
     if (!element.dataset.hydrated) {
         const conf = JSON.parse(decodeURIComponent(element.dataset.reacthydrate));
 
-        if (!window.appShell || !window.appShell[conf.bundle] || !window.appShell[conf.bundle].get(conf.name)) {
-            console.error('npm-modules-engine AppShell: React hydration not possible because component not found for bundle ' +
-                conf.bundle + ' and id ' + conf.name +
-                '. Make sure you have a registered appShell for this module and that the component is registered in it.');
+        if (!window.appShell || !window.appShell[conf.bundle]) {
+            console.error(`npm-modules-engine AppShell: React hydration Failed, cannot find module [${conf.bundle}]. 
+            Make sure you have a registered appShell for this module and that the component is registered in it.`);
             return;
         }
 
@@ -24,10 +23,9 @@ const renderReactComponent = element => {
     if (!element.dataset.hydrated) {
         const conf = JSON.parse(decodeURIComponent(element.dataset.reactrender));
 
-        if (!window.appShell || !window.appShell[conf.bundle] || !window.appShell[conf.bundle].get(conf.name)) {
-            console.error('npm-modules-engine AppShell: React render not possible because component not found for bundle ' +
-                conf.bundle + ' and id ' + conf.name +
-                '. Make sure you have a registered appShell for this module and that the component is registered in it.');
+        if (!window.appShell || !window.appShell[conf.bundle]) {
+            console.error(`npm-modules-engine AppShell: React render Failed, cannot find module [${conf.bundle}]. 
+            Make sure you have a registered appShell for this module and that the component is registered in it.`);
             return;
         }
 
