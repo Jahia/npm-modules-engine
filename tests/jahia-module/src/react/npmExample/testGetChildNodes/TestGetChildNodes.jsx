@@ -38,7 +38,6 @@ export const TestGetChildNodes = () => {
 }
 
 TestGetChildNodes.jahiaComponent = {
-    id: 'testGetChildNodes_react',
     nodeType: 'npmExample:testGetChildNodes',
     name: 'default',
     displayName: 'test getChildNodes',

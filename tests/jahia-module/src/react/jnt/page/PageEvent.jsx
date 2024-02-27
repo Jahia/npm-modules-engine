@@ -40,7 +40,6 @@ export const PageEvent = () => {
 }
 
 PageEvent.jahiaComponent = {
-    id: 'page_event_react',
     nodeType: 'jnt:page',
     name: 'eventsReact',
     displayName: 'Events page (react)',

@@ -11,7 +11,6 @@ export const TestJRenderTagged = () => {
 }
 
 TestJRenderTagged.jahiaComponent = {
-    id: 'testJRender_taggedReact',
     nodeType: 'npmExample:testJRender',
     name: 'taggedReact',
     displayName: 'test Render (tagged react)',

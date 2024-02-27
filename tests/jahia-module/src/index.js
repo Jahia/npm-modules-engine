@@ -1,8 +1,7 @@
-import {server} from '@jahia/js-server-engine';
+import {registerJahiaComponents, server} from '@jahia/js-server-engine';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
 import {menuEntryCss} from './helpers/menuEntryCss';
-import {registerJahiaComponents} from '@jahia/js-server-engine';
 import * as reactComponents from './react';
 import Handlebars from 'handlebars';
 
@@ -13,7 +12,6 @@ server.registry.add('view', 'yourHandlebarTemplate_default', yourHandlebarTempla
     templateType: 'html',
     name: 'Default template',
     componentType: 'template'
-
 });
 
 server.registry.add('render-filter', 'test', renderFilterTest, {
