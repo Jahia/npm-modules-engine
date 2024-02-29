@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 @Component(immediate = true, service = {ViewsRegistrar.class, Registrar.class, ScriptResolver.class, JahiaEventListener.class})
 public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
 
-    private static final Class[] ACCEPTED_EVENT_TYPES = {
+    private static final Class<EventObject>[] ACCEPTED_EVENT_TYPES = new Class[] {
             JahiaTemplateManagerService.TemplatePackageRedeployedEvent.class,
             JahiaTemplateManagerService.ModuleDeployedOnSiteEvent.class,
             JahiaTemplateManagerService.ModuleDependenciesEvent.class
