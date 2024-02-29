@@ -252,6 +252,7 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         clearCache();
     }
 
+    @Override
     public Class<EventObject>[] getEventTypes() {
         return ACCEPTED_EVENT_TYPES;
     }
