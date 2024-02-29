@@ -43,6 +43,11 @@ import java.util.stream.Stream;
 @Component(immediate = true, service = {ViewsRegistrar.class, Registrar.class, ScriptResolver.class, JahiaEventListener.class})
 public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
 
+    private static final Class[] ACCEPTED_EVENT_TYPES = {
+            JahiaTemplateManagerService.TemplatePackageRedeployedEvent.class,
+            JahiaTemplateManagerService.ModuleDeployedOnSiteEvent.class,
+            JahiaTemplateManagerService.ModuleDependenciesEvent.class
+    };
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
@@ -244,11 +249,11 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
 
     @Override
     public void onEvent(EventObject eventObject) {
-        if (eventObject instanceof JahiaTemplateManagerService.TemplatePackageRedeployedEvent
-                || eventObject instanceof JahiaTemplateManagerService.ModuleDeployedOnSiteEvent
-                || eventObject instanceof JahiaTemplateManagerService.ModuleDependenciesEvent) {
-            clearCache();
-        }
+        clearCache();
+    }
+
+    public Class<EventObject>[] getEventTypes() {
+        return ACCEPTED_EVENT_TYPES;
     }
 
     @Override
