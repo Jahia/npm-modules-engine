@@ -1,10 +1,7 @@
 import React from 'react';
 import {
-    getNodeProps,
     useServerContext,
-    getChildNodes,
     getNodesByJCRQuery,
-    JRender,
     jAddCacheDependency
 } from '@jahia/js-server-engine';
 
