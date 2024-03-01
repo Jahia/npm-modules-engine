@@ -3,7 +3,7 @@ import {getChildNodes, getNodeProps, JRender, useServerContext} from '@jahia/js-
 
 export const TestJRenderEditable = () => {
     const {currentNode} = useServerContext();
-    const allChildren = getChildNodes(currentNode);
+    const allChildren = getChildNodes(currentNode, -1);
     return (
         <>
             <div data-testid="npm-render-editable-default">
