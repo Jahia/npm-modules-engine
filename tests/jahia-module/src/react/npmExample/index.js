@@ -13,3 +13,4 @@ export * from './testReactContentTemplate/TestReactContentTemplate';
 export * from './testReactContentTemplate/TestReactContentTemplateView';
 export * from './testReactContentTemplate/TestReactContentTemplateOtherView';
 export * from './testReactRegistry/TestReactRegistry';
+export * from './testJCRQuery/TestJCRQuery';

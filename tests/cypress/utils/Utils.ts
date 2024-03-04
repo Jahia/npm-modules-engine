@@ -62,7 +62,7 @@ export const addEventPageAndEvents = (siteKey: string, template: string, pageNam
 
 export const addEvent = (siteKey: string, event) => {
     addNode({
-        parentPathOrId: `/sites/${siteKey}/home/${event.pageName}/events`,
+        parentPathOrId: event.parentPath ? event.parentPath : `/sites/${siteKey}/home/${event.pageName}/events`,
         name: event.name,
         primaryNodeType: 'jnt:event',
         properties: [

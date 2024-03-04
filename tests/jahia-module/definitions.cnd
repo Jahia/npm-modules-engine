@@ -49,3 +49,5 @@
  + * (jmix:droppableContent) = jmix:droppableContent
 
 [npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testJCRQuery] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
