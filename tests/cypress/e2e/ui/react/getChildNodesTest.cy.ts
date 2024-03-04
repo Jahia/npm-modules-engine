@@ -74,7 +74,7 @@ describe('getChildNodes function test', () => {
 
         cy.get('div[data-testid="getChildNodes_filteredOffset_1"]').contains('/sites/npmTestSite/home/testGetChildNodes/pagecontent/getChildNodesTest/filtered2');
         cy.get('div[data-testid="getChildNodes_filteredOffset_2"]').contains('/sites/npmTestSite/home/testGetChildNodes/pagecontent/getChildNodesTest/filtered3');
-        cy.get('div[data-testid="getChildNodes_filteredOffset_1"]').should('not.exist');
+        cy.get('div[data-testid="getChildNodes_filteredOffset_3"]').should('not.exist');
         cy.get('div[data-testid="getChildNodes_filteredOffset_4"]').should('not.exist');
         cy.get('div[data-testid="getChildNodes_filteredOffset_5"]').should('not.exist');
 
