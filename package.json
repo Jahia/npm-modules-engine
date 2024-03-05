@@ -5,13 +5,13 @@
   "repository": "git@github.com:Jahia/npm-modules-engine.git",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --mode=development",
+    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
     "lint": "eslint --ext js,jsx,json .",
     "lint:fix": "eslint --ext js,jsx,json --fix ."
   },
   "dependencies": {
     "@apollo/client": "^3.5.5",
-    "@jahia/js-server-engine": "^1.2.9",
+    "@jahia/js-server-engine": "^1.2.10",
     "@jahia/ui-extender": "^1.0.1",
     "dayjs": "^1.10.4",
     "fast-text-encoding": "^1.0.6",

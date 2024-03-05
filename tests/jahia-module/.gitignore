@@ -1,5 +1,6 @@
 .env
 dist
+javascript/client
 .DS_Store
 
 # Logs

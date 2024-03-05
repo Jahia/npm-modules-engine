@@ -6,7 +6,7 @@
   "author": "Jahia Solutions Group SA",
   "scripts": {
     "postinstall": "yarn dlx @yarnpkg/sdks vscode",
-    "build": "webpack --mode=development",
+    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
     "deploy": "jahia-deploy pack",
     "watch": "yarn build --env deploy=true --watch",
     "lint": "eslint .",
@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@jahia/data-helper": "^1.0.3",
-    "@jahia/js-server-engine": "^1.2.9",
+    "@jahia/js-server-engine": "^1.2.10",
     "handlebars": "^4.7.7",
     "react": "^18.2.0"
   },

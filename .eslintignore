@@ -6,3 +6,4 @@ src/main/javascript/__tests__
 src/main/resources
 src/main/javascript/publicPath.js
 webpack.config.js
+webpack.client.js
