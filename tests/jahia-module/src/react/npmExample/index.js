@@ -14,4 +14,4 @@ export * from './testReactContentTemplate/TestReactContentTemplateView';
 export * from './testReactContentTemplate/TestReactContentTemplateOtherView';
 export * from './testReactRegistry/TestReactRegistry';
 export * from './testJCRQuery/TestJCRQuery';
-export * from './testReactClientSide/testReactClientSide';
+export * from './testReactClientSide/TestReactClientSide';
