@@ -1,8 +1,8 @@
 import React from 'react';
 import {JAddResources, JArea, JRender, useServerContext} from '@jahia/js-server-engine';
-import {footer, header, login, navMenu} from '../../jnt/page/pageComponents';
+import {footer, header, login, navMenu} from "../pageComponents";
 
-export const TestReactContentTemplate = () => {
+export const EventFull = () => {
     const {currentResource} = useServerContext();
     return (<>
         <head>
@@ -39,9 +39,9 @@ export const TestReactContentTemplate = () => {
     </>)
 }
 
-TestReactContentTemplate.jahiaComponent = {
-    nodeType: 'npmExample:testReactContentTemplate',
-    // React views and templates may avoid using properties.default=true by using a 'default' name value.
-    name: 'default',
-    componentType: 'template',
+EventFull.jahiaComponent = {
+    nodeType: 'jnt:event',
+    name: 'fullReact',
+    displayName: 'Full event (react)',
+    componentType: 'template'
 }
