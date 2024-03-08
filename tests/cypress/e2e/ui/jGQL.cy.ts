@@ -34,6 +34,7 @@ describe('Test GQL', () => {
                 parentPathOrId: '/sites/npmTestSite/home/testJGQLReact/pagecontent',
                 name: 'testReact',
                 primaryNodeType: 'npmExample:testJGQL',
+                mixins: ['jmix:renderable'],
                 properties: [
                     {name: 'jcr:title', value: 'NPM test component'},
                     {name: 'prop1', value: 'prop1 value'},
@@ -52,7 +53,6 @@ describe('Test GQL', () => {
         deleteNode('/sites/npmTestSite/home/testJGQL');
         deleteNode('/sites/npmTestSite/home/testJGQLReact');
     });
-
 
     ['testJGQL', 'testJGQLReact'].forEach(pageName => {
         it(`${pageName}: Check GQL execution in current view`, function () {
