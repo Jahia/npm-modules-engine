@@ -24,7 +24,7 @@ describe('Test GQL', () => {
                 ]
             });
         });
-        addSimplePage('/sites/npmTestSite/home', 'testJGQLReact','testJGQLReact','en','simpleReact',[
+        addSimplePage('/sites/npmTestSite/home', 'testJGQLReact', 'testJGQLReact', 'en', 'simpleReact', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
