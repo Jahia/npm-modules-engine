@@ -1,7 +1,7 @@
 import React from 'react';
 import {HydrateInBrowser, RenderInBrowser, useServerContext} from '@jahia/js-server-engine';
-import SampleHydrateInBrowserReact from "../../../client/SampleHydrateInBrowserReact";
-import SampleRenderInBrowserReact from "../../../client/SampleRenderInBrowserReact";
+import SampleHydrateInBrowserReact from "../../../../client/SampleHydrateInBrowserReact";
+import SampleRenderInBrowserReact from "../../../../client/SampleRenderInBrowserReact";
 
 export const TestReactClientSide = () => {
     const {currentResource} = useServerContext();
