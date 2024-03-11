@@ -1,5 +1,5 @@
 import {addSimplePage} from '../../utils/Utils';
-import {addNode, deleteNode, publishAndWaitJobEnding} from '@jahia/cypress';
+import {addNode, deleteNode} from '@jahia/cypress';
 
 describe('Test GQL', () => {
     before('Create test page and contents', () => {
@@ -47,11 +47,6 @@ describe('Test GQL', () => {
                 ]
             });
         });
-    });
-
-    after('Clean', () => {
-        deleteNode('/sites/npmTestSite/home/testJGQL');
-        deleteNode('/sites/npmTestSite/home/testJGQLReact');
     });
 
     ['testJGQL', 'testJGQLReact'].forEach(pageName => {
