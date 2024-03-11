@@ -5,6 +5,7 @@ export * from './testJAreas/TestJAreas';
 export * from './testJAbsoluteAreas/TestJAbsoluteAreas';
 export * from './testJConfig/TestJConfig';
 export * from './testJFindDisplayableContent/TestJFindDisplayableContent';
+export * from './testJGQL/TestJGQL';
 export * from './testJRender';
 export * from './testJUrl/TestJUrl';
 export * from './testGetNodeProps/TestGetNodeProps';

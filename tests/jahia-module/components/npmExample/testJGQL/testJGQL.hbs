@@ -1,0 +1,27 @@
+{{jAddResources type="css" resources="news.css"}}
+{{#jGql}}
+    {
+        jcr {
+            nodeByPath(path:"{{currentContent.path}}") {
+                name
+                properties {
+                    name
+                    value
+                }
+            }
+        }
+    }
+{{/jGql}}
+
+<div data-testid="npm-view">NPM (hbs) view working</div>
+<hr/>
+
+<h3>GraphQL</h3>
+    <div data-testid="gql-info-test" style="padding: 10px; margin:10px; border: 1px solid">
+        <ul>
+            {{#each gql.jcr.nodeByPath.properties}}
+                <li data-testid={{name}}>{{name}}={{value}}</li>
+            {{/each}}
+        </ul>
+    </div>
+<hr/>
