@@ -55,7 +55,7 @@ describe('Error handling test during JS view execution', () => {
                 cy.get('[data-sel-role="renderingFailureViewKey"]').should('contain', testConfig.viewKey);
                 cy.get('[data-sel-role="renderingFailureViewPath"]').should('contain', testConfig.viewPath);
                 cy.get('[data-sel-role="renderingFailureErrorMessage"]').should('contain', testConfig.errorMessage);
-                // By default the full error is not displayed
+                // Check that by default the full error is not displayed
                 cy.get('[data-sel-role="renderingFailureFullError"]').should('not.be.visible');
                 // Click on the button to display the full error
                 cy.get('button[data-sel-role="renderingFailureToggleFullError"]').click();
