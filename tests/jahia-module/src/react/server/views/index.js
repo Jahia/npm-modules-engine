@@ -17,3 +17,8 @@ export * from './testReactRegistry/TestReactRegistry';
 export * from './testJCRQuery/TestJCRQuery';
 export * from './testReactClientSide/TestReactClientSide';
 export * from './contentList/ContentList';
+export * from './testCurrentUser/TestCurrentUser';
+export * from './testIsNodeType/TestIsNodeType';
+export * from './testHasPermission/TestHasPermission';
+export * from './testUrlParameters/TestUrlParameters';
+export * from './testLocale/TestLocale';

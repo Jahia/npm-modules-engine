@@ -53,3 +53,13 @@
 [npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testJCRQuery] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testCurrentUser] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testIsNodeType] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testHasPermission] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testUrlParameters] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testLocale] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
