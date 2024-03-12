@@ -60,7 +60,15 @@ public class JSScript implements Script {
             }
 
             viewValues.put("bundle", Value.asValue(jsView.getModule().getBundle()));
+            /*Object executionResult;
+            try {
+                executionResult = Value.asValue(viewRenderer.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValues));
+            } catch (Exception e) {
+                logger.error("Error while executing JS view", e);
+                return "Oups: " + e.getMessage();
+            }*/
             Object executionResult = Value.asValue(viewRenderer.get("render")).execute(resource, renderContext, ProxyObject.fromMap(viewValues));
+
             Value value = Value.asValue(executionResult);
             return value.asString();
         }));

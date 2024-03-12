@@ -17,3 +17,4 @@ export * from './testReactRegistry/TestReactRegistry';
 export * from './testJCRQuery/TestJCRQuery';
 export * from './testReactClientSide/TestReactClientSide';
 export * from './contentList/ContentList';
+export * from './testCrashingView/TestCrashingView';
