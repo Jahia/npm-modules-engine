@@ -60,7 +60,7 @@ describe('Error handling test during JS view execution', () => {
                 // Check that clicking on the button displays the full error
                 cy.get('button[data-sel-role="renderingFailureToggleFullError"]').click();
                 cy.get('[data-sel-role="renderingFailureFullError"]').should('be.visible');
-                // Click again on the button to hide the full error
+                // Check that clicking again on the button hides the full error
                 cy.get('button[data-sel-role="renderingFailureToggleFullError"]').click();
                 cy.get('[data-sel-role="renderingFailureFullError"]').should('not.be.visible');
             });
