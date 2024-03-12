@@ -51,7 +51,7 @@ describe('Error handling test during JS view execution', () => {
             cy.login();
             cy.visit(`/jahia/jcontent/npmTestSite/en/pages${testConfig.pagePath}`);
             cy.iframe('[data-sel-role="page-builder-frame-active"]', {timeout: 90000, log: true}).within(() => {
-                // The error informations are correctly displayed
+                // Check that the error information is correctly displayed
                 cy.get('[data-sel-role="renderingFailureViewKey"]').should('contain', testConfig.viewKey);
                 cy.get('[data-sel-role="renderingFailureViewPath"]').should('contain', testConfig.viewPath);
                 cy.get('[data-sel-role="renderingFailureErrorMessage"]').should('contain', testConfig.errorMessage);
