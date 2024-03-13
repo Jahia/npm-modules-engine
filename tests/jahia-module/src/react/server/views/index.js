@@ -18,3 +18,4 @@ export * from './testJCRQuery/TestJCRQuery';
 export * from './testReactClientSide/TestReactClientSide';
 export * from './contentList/ContentList';
 export * from './testCrashingView/TestCrashingView';
+export * from './testBoundComponent/TestBoundComponent';

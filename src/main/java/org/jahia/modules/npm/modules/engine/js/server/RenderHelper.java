@@ -35,6 +35,7 @@ import org.jahia.services.render.RenderException;
 import org.jahia.services.render.RenderService;
 import org.jahia.services.render.Resource;
 import org.jahia.taglibs.template.include.*;
+import org.jahia.taglibs.uicomponents.Functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +81,10 @@ public class RenderHelper {
 
     public JCRNodeWrapper findDisplayableNode(JCRNodeWrapper node, RenderContext renderContext, JCRSiteNode contextSite) {
         return JCRContentUtils.findDisplayableNode(node, renderContext, contextSite);
+    }
+
+    public JCRNodeWrapper getBoundNode(JCRNodeWrapper node, RenderContext context) {
+        return Functions.getBoundComponent(node, context, "j:bindedComponent");
     }
 
     public String renderComponent(Map<String, ?> attr, RenderContext renderContext) throws RepositoryException {
