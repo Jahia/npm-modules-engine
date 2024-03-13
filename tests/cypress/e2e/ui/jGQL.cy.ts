@@ -1,5 +1,5 @@
 import {addSimplePage} from '../../utils/Utils';
-import {addNode, deleteNode} from '@jahia/cypress';
+import {addNode} from '@jahia/cypress';
 
 describe('Test GQL', () => {
     before('Create test page and contents', () => {
