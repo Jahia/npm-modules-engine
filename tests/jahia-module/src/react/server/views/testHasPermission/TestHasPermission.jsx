@@ -3,7 +3,6 @@ import { useServerContext } from '@jahia/js-server-engine';
 
 export const testHasPermission = () => {
     const {currentNode} = useServerContext();
-    const hPerm = currentNode.hasPermission;
     return (
         <>
             <h3>Node has permission</h3>

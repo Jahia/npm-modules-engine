@@ -19,15 +19,13 @@ describe('Test has permission', () => {
 
     it('should display the permission', () => {
         cy.login();
-        cy.visit('/jahia/jcontent/npmTestSite/en/pages/home/testHasPermission');
-        cy.iframe('#page-builder-frame-1').within(() => {
-            cy.get('div[data-testid="currentNode_hasPermission"]')
-                .should('exist')
-                .contains('true');
-            cy.get('div[data-testid="currentNode_hasNotPermission"]')
-                .should('exist')
-                .contains('false');
-        });
+        cy.visit('/cms/render/default/en/sites/npmTestSite/home/testHasPermission.html');
+        cy.get('div[data-testid="currentNode_hasPermission"]')
+            .should('exist')
+            .contains('true');
+        cy.get('div[data-testid="currentNode_hasNotPermission"]')
+            .should('exist')
+            .contains('false');
         cy.logout();
     });
 });

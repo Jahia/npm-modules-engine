@@ -18,15 +18,13 @@ describe('test isNodeType', () => {
 
     it('should display the node type', () => {
         cy.login();
-        cy.visit('/jahia/jcontent/npmTestSite/en/pages/home/testIsNodeType');
-        cy.iframe('#page-builder-frame-1').within(() => {
-            cy.get('div[data-testid="currentNode_isNodeType"]')
-                .should('exist')
-                .contains('true');
-            cy.get('div[data-testid="currentNode_isNotNodeType"]')
-                .should('exist')
-                .contains('false');
-        });
+        cy.visit('/cms/render/default/en/sites/npmTestSite/home/testIsNodeType.html');
+        cy.get('div[data-testid="currentNode_isNodeType"]')
+            .should('exist')
+            .contains('true');
+        cy.get('div[data-testid="currentNode_isNotNodeType"]')
+            .should('exist')
+            .contains('false');
         cy.logout();
     });
 });
