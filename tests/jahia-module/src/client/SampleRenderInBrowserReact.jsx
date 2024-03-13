@@ -17,9 +17,9 @@ const SampleRenderInBrowserReact = ({path}) => {
     return (
         <div>
             <h2>This React component is fully rendered client side:</h2>
-            <p>Able to display current node path: <span id="path">{path}</span></p>
-            <p>And refreshing date every 2 sec: <span id="date">{currentDate.toLocaleString()}</span></p>
-            <p>Countdown: <span id="counter">{counter}</span></p>
+            <p>Able to display current node path: <span data-testid="path">{path}</span></p>
+            <p>And refreshing date every 2 sec: <span data-testid="date">{currentDate.toLocaleString()}</span></p>
+            <p>Countdown: <span data-testid="counter">{counter}</span></p>
         </div>
     );
 }
