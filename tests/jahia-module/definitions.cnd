@@ -63,3 +63,5 @@
 [npmExample:testUrlParameters] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testLocale] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testBoundComponent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent
