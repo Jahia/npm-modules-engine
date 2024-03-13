@@ -53,3 +53,5 @@
 [npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testJCRQuery] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testBoundComponent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent

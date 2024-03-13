@@ -200,13 +200,13 @@ public class JSNodeMapper {
                 node.setProperty("j:bindedComponent", boundComponent);
             }
         } catch (RepositoryException re) {
-            // We add some details to the logging manually but don't want to log a full stack trace since this error
-            // might occur repeatedly in the logs
-            if (re.getCause() != null) {
-                logger.error("Error while retrieving bound component: class={} message={} causeClass={} causeMessage={}", re.getClass().getName(), re.getMessage(), re.getCause().getClass().getName(), re.getCause().getMessage());
-            } else {
-                logger.error("Error while retrieving bound component: class={} message={}", re.getClass().getName(), re.getMessage());
-            }
+            // We handle cases where the bound component cannot be retrieved without causing rendering failure.
+            // This situation is rare, occurring when the page is being previewed or render in live, and the associated list hasn't been created or published yet.
+            // Lists for specific areas are only generated when the page is rendered in edit mode.
+            // If we don't set the property, the mainResource would incorrectly be considered as the boundComponent, which is undesired.
+            // In such cases, we intentionally use a fake UUID to ensure that Functions.getBoundJcrNodeWrapper returns null.
+            // This workaround allows to have the same behavior as JSP without any errors.
+            node.setProperty("j:bindedComponent", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
         }
 
         // handle children
