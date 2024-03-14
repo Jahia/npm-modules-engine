@@ -10,8 +10,8 @@ const SampleHydrateInBrowserReact = ({initialValue}) => {
     return (
         <div>
             <h2>This React component is hydrated client side:</h2>
-            <p>Count: {count}</p>
-            <button onClick={handleClick}>Increment</button>
+            <p data-testid="count">Count: {count}</p>
+            <button data-testid="count-button" onClick={handleClick}>Increment</button>
         </div>
     );
 }
