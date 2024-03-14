@@ -21,7 +21,6 @@ import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.modules.npm.modules.engine.views.JSScript;
 import org.jahia.modules.npm.modules.engine.views.JSView;
 import org.jahia.registries.ServicesRegistry;
-import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
 import org.jahia.services.content.nodetypes.NodeTypeRegistry;
@@ -39,7 +38,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component(immediate = true, service = {ViewsRegistrar.class, Registrar.class, ScriptResolver.class, JahiaEventListener.class})
 public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
