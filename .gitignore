@@ -30,7 +30,7 @@ src/main/resources/META-INF/js
 /tests/node_modules
 yarn-error.log
 
-# yarn v2
+# yarn
 **/.yarn/cache
 **/.yarn/unplugged
 **/.yarn/build-state.yml
@@ -39,6 +39,8 @@ yarn-error.log
 
 **/.yalc
 **/yalc.lock
+
+**/.yarnrc.yml
 
 .yarn/*
 !.yarn/cache
