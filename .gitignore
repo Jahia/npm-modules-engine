@@ -40,8 +40,6 @@ yarn-error.log
 **/.yalc
 **/yalc.lock
 
-**/.yarnrc.yml
-
 .yarn/*
 !.yarn/cache
 !.yarn/patches
