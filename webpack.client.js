@@ -7,7 +7,10 @@ module.exports = (env, argv) => {
             reactAppShell: path.resolve(__dirname, 'src/client-javascript/main')
         },
         output: {
-            path: path.resolve(__dirname, 'src/main/resources/javascript/apps')
+            path: path.resolve(__dirname, 'src/main/resources/javascript/apps'),
+            // publicPath is used to make webpack able to download the chunks and assets from the correct location
+            // Since JS can aggregate by Jahia on lice, the path of the original file is lost
+            publicPath: '/modules/npm-modules-engine/javascript/apps/'
         },
         resolve: {
             mainFields: ['module', 'main'],

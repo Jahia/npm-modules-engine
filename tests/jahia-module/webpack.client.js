@@ -12,13 +12,17 @@ fs.readdirSync(componentsDir).forEach(file => {
     const componentName = path.basename(file, path.extname(file));
     exposes[componentName] = path.resolve(componentsDir, file);
 });
+const moduleName = 'jahia-npm-module-example';
 
 module.exports = env => {
     let config = {
         entry: {
         },
         output: {
-            path: path.resolve(__dirname, 'javascript/client')
+            path: path.resolve(__dirname, 'javascript/client'),
+            // PublicPath is used to make webpack able to download the chunks and assets from the correct location
+            // Since JS can aggregate by Jahia on lice, the path of the original file is lost
+            publicPath: `/modules/${moduleName}/javascript/client/`
         },
         resolve: {
             mainFields: ['module', 'main'],
@@ -59,8 +63,8 @@ module.exports = env => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: 'jahia-npm-module-example',
-                library: {type: 'assign', name: 'window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell[\'jahia-npm-module-example\']'},
+                name: moduleName,
+                library: {type: 'assign', name: `window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell['${moduleName}']`},
                 filename: '../client/remote.js',
                 exposes: exposes,
                 shared: {
