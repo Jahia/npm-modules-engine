@@ -184,7 +184,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v18.12.0</nodeVersion>
-                            <yarnVersion>v1.22.22</yarnVersion>
+                            <yarnVersion>v1.22.22</yarnVersion> <!-- The Maven plugin needs 1.x as bootstrap but will use version in .yarnrc for the execution -->
                         </configuration>
                     </execution>
                     <execution>
