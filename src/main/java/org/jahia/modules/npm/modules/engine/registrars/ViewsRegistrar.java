@@ -38,7 +38,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component(immediate = true, service = {ViewsRegistrar.class, Registrar.class, ScriptResolver.class, JahiaEventListener.class})
 public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registrar, JahiaEventListener<EventObject> {
@@ -51,9 +50,10 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
     private RenderService renderService;
     private GraalVMEngine graalVMEngine;
 
-    private final Map<Bundle, Collection<JSView>> viewsPerBundle = new HashMap<>();
+    private final Map<String, Collection<JSView>> viewsPerBundle = new HashMap<>();
 
-    private static final Map<String, SortedSet<View>> viewSetCache = new ConcurrentHashMap<>(512);
+    private static final Map<String, Set<String>> siteJSModulesCache = new ConcurrentHashMap<>(15);
+    private static final Map<String, SortedSet<JSView>> viewSetCache = new ConcurrentHashMap<>(512);
 
     @Reference
     public void setRenderService(RenderService renderService) {
@@ -94,13 +94,13 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
             views.addAll(getRegistryViewsSet(bundle, contextProvider));
         });
 
-        viewsPerBundle.put(bundle, views);
+        viewsPerBundle.put(bundle.getSymbolicName(), views);
         clearCache();
     }
 
     @Override
     public void unregister(Bundle bundle) {
-        viewsPerBundle.remove(bundle);
+        viewsPerBundle.remove(bundle.getSymbolicName());
         clearCache();
     }
 
@@ -123,6 +123,17 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         } catch (RepositoryException e) {
             throw new TemplateNotFoundException(e);
         }
+    }
+
+    @Override
+    public boolean hasTemplate(String templateName, ExtendedNodeType nodeType, Set<String> templatePackages) throws RepositoryException {
+        Set<String> involvedJSModules = filterModulesWithJSViews(templatePackages);
+        if (involvedJSModules.isEmpty()) {
+            return false;
+        }
+
+        SortedSet<View> templates = getViewsSet(nodeType, involvedJSModules, "html", true);
+        return templates.stream().anyMatch(v -> v.getKey().equals(templateName));
     }
 
     @Override
@@ -219,31 +230,39 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
     }
 
     public SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, JCRSiteNode jcrSiteNode, String templateType, boolean pageRendering) {
-        final String cacheKey = extendedNodeType.getName() + "_" +
-                "_" + (jcrSiteNode != null ? jcrSiteNode.getPath() : "") + "_" +
-                templateType + "_" + pageRendering;
+        Set<String> involvedJSModules = siteJSModulesCache.computeIfAbsent(jcrSiteNode.getPath(),
+                k -> filterModulesWithJSViews(jcrSiteNode.getInstalledModulesWithAllDependencies()));
 
-        if (viewSetCache.containsKey(cacheKey)) {
-            return viewSetCache.get(cacheKey);
+        // If no JS module involved in the site, return empty set
+        if (involvedJSModules.isEmpty()) {
+            return Collections.emptySortedSet();
         }
 
-        Set<String> modulesWithAllDependencies = jcrSiteNode.getInstalledModulesWithAllDependencies();
-        SortedSet<View> viewsSet = getAllViews()
-                .filter(v -> modulesWithAllDependencies.contains(v.getModule().getId()))
-                .filter(v -> templateType.equals(v.getTemplateType()))
-                .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
-                .filter(v -> pageRendering == v.isTemplate())
-                .collect(Collectors.toCollection(TreeSet::new));
-        viewSetCache.put(cacheKey, viewsSet);
-        return viewsSet;
+        return getViewsSet(extendedNodeType, involvedJSModules, templateType, pageRendering);
     }
 
-    private Stream<JSView> getAllViews() {
-        return viewsPerBundle.values().stream()
-                .flatMap(Collection::stream);
+    private SortedSet<View> getViewsSet(ExtendedNodeType extendedNodeType, Set<String> moduleNames, String templateType, boolean pageRendering) {
+        return moduleNames.stream()
+                .filter(viewsPerBundle::containsKey)
+                .flatMap(moduleName -> {
+                    String cacheKey = extendedNodeType.getName() + "_" + moduleName + "_" + templateType + "_" + pageRendering;
+                    return viewSetCache.computeIfAbsent(cacheKey, key -> viewsPerBundle.get(moduleName).stream()
+                            .filter(v -> extendedNodeType.isNodeType(v.getNodeType()))
+                            .filter(v -> templateType.equals(v.getTemplateType()))
+                            .filter(v -> pageRendering == v.isTemplate())
+                            .collect(Collectors.toCollection(TreeSet::new))).stream();
+                })
+                .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> (JSView) o))));
+    }
+
+    private Set<String> filterModulesWithJSViews(Set<String> moduleNames) {
+        return moduleNames.stream()
+                .filter(viewsPerBundle::containsKey)
+                .collect(Collectors.toSet());
     }
 
     private void clearCache() {
+        siteJSModulesCache.clear();
         viewSetCache.clear();
     }
 
