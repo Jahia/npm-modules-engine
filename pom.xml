@@ -72,14 +72,6 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.osgi</groupId>-->
-<!--            <artifactId>osgi.compendium</artifactId>-->
-<!--            <version>${osgi.compendium.version}</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--        -->
-
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-bnd</artifactId>
@@ -192,7 +184,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v18.12.0</nodeVersion>
-                            <yarnVersion>v1.22.19</yarnVersion>
+                            <yarnVersion>v4.1.1</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
