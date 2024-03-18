@@ -165,9 +165,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/cypress@npm:^3.17.6":
-  version: 3.17.6
-  resolution: "@jahia/cypress@npm:3.17.6"
+"@jahia/cypress@npm:^3.19.0":
+  version: 3.19.0
+  resolution: "@jahia/cypress@npm:3.19.0"
   dependencies:
     "@apollo/client": "npm:^3.4.9"
     cypress-real-events: "npm:^1.11.0"
@@ -178,7 +178,7 @@ __metadata:
     ci.startup: ci.startup.sh
     env.debug: env.debug.sh
     env.run: env.run.sh
-  checksum: 10c0/fb5c2ec0c0f6a7e74834d7de143a1fecbf2801f47b1a3dc08223040b7268bf1fd0f924748eec081afc41a060bf874b08a497b72e2d0604756bf5639aaa9ea6eb
+  checksum: 10c0/0e3c997647657b0d9f29b1b249bf7cd3bc00ac82ac8da1adfbcc9f8f0a047866d0aa6e1db05b961417f706122c6c82744cc2868a68e23d5651ede9c4c24401ad
   languageName: node
   linkType: hard
 
@@ -233,7 +233,7 @@ __metadata:
   resolution: "@jahia/npm-modules-engine-cypress@workspace:."
   dependencies:
     "@4tw/cypress-drag-drop": "npm:^2.2.1"
-    "@jahia/cypress": "npm:^3.17.6"
+    "@jahia/cypress": "npm:^3.19.0"
     "@jahia/jahia-reporter": "npm:^1.0.30"
     "@jahia/jcontent-cypress": "npm:^3.0.0-tests.2"
     "@types/node": "npm:^18.11.18"
