@@ -9,13 +9,17 @@ const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
 const componentsDir = './src/client';
 const exposes = {};
 fs.readdirSync(componentsDir).forEach(file => {
-    const componentName = path.basename(file, path.extname(file));
-    exposes[componentName] = path.resolve(componentsDir, file);
+    if (file !== 'index.js') {
+        const componentName = path.basename(file, path.extname(file));
+        exposes[componentName] = path.resolve(componentsDir, file);
+    }
 });
+const moduleName = 'jahia-npm-module-example';
 
 module.exports = env => {
     let config = {
         entry: {
+            remote: path.resolve(__dirname, './src/client/index')
         },
         output: {
             path: path.resolve(__dirname, 'javascript/client')
@@ -59,8 +63,8 @@ module.exports = env => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: 'jahia-npm-module-example',
-                library: {type: 'assign', name: 'window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell[\'jahia-npm-module-example\']'},
+                name: 'remote',
+                library: {type: 'assign', name: `window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell['${moduleName}']`},
                 filename: '../client/remote.js',
                 exposes: exposes,
                 shared: {
