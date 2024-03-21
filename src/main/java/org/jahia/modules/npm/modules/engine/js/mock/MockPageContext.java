@@ -34,23 +34,20 @@ import java.util.Map;
 public class MockPageContext extends PageContext {
     private final Map<String, Object> pageAttrs = Collections.synchronizedMap(new HashMap<>());
     private final Map<String, Object> appAttr = Collections.synchronizedMap(new HashMap<>());
-    private final JspWriter writer;
-    private final StringWriter targetWriter;
+    private final MockJspWriter writer;
     private final RenderContext renderContext;
 
     public MockPageContext(RenderContext renderContext) {
         this.renderContext = renderContext;
-        this.targetWriter = new StringWriter();
-        this.writer = new MockJspWriter(targetWriter);
+        this.writer = new MockJspWriter();
     }
 
-    public StringWriter getTargetWriter() {
-        return targetWriter;
+    public MockJspWriter getWriter() {
+        return writer;
     }
 
     public void flushWriters() throws IOException {
         writer.flush();
-        targetWriter.flush();
     }
 
     public void initialize(Servlet servlet, ServletRequest request, ServletResponse response, String errorPageURL, boolean needSession, int bufferSize, boolean autoFlush) {

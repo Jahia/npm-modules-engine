@@ -1,5 +1,6 @@
 import React from 'react';
 import {hydrateRoot, createRoot} from 'react-dom/client';
+import BaseApp from './BaseApp';
 
 const hydrateReactComponent = element => {
     if (!element.dataset.hydrated) {
@@ -12,7 +13,7 @@ const hydrateReactComponent = element => {
         }
 
         window.appShell[conf.bundle].get(conf.name).then(f => {
-            hydrateRoot(element, React.createElement(f().default, conf.props));
+            hydrateRoot(element, React.createElement(BaseApp, {ns: conf.bundle, lang: conf.lang, app: f().default, appProps: conf.props}));
             element.dataset.hydrated = 'true';
             console.log('npm-modules-engine AppShell: React component hydrated', element);
         });
@@ -31,7 +32,7 @@ const renderReactComponent = element => {
 
         window.appShell[conf.bundle].get(conf.name).then(f => {
             const root = createRoot(element);
-            root.render(React.createElement(f().default, conf.props));
+            root.render(React.createElement(BaseApp, {ns: conf.bundle, lang: conf.lang, app: f().default, appProps: conf.props}));
             element.dataset.hydrated = 'true';
             console.log('npm-modules-engine AppShell: React component rendered', element);
         });

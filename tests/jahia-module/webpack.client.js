@@ -3,6 +3,7 @@ const path = require('path');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+const deps = require('./package.json').dependencies;
 
 // Read all files in the client components directory in order to expose them with webpack module federation more easily
 // Those components are exposed in order to be hydrate/rendered client side
@@ -19,7 +20,7 @@ const moduleName = 'jahia-npm-module-example';
 module.exports = env => {
     let config = {
         entry: {
-            remote: path.resolve(__dirname, './src/client/index')
+            'jahia-npm-module-example': path.resolve(__dirname, './src/client/index')
         },
         output: {
             path: path.resolve(__dirname, 'javascript/client')
@@ -63,14 +64,16 @@ module.exports = env => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: 'remote',
+                name: moduleName,
                 library: {type: 'assign', name: `window.appShell = (typeof appShell === "undefined" ? {} : appShell); window.appShell['${moduleName}']`},
                 filename: '../client/remote.js',
                 exposes: exposes,
                 shared: {
                     react: {
-                        requiredVersion: '^18.2.0'
-                    }
+                        requiredVersion: deps.react,
+                        singleton: true
+                    },
+                    'react-i18next': {}
                 }
             }),
             new ExtraWatchWebpackPlugin({

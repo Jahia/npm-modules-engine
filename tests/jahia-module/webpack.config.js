@@ -14,6 +14,8 @@ module.exports = env => {
         externals: {
             '@jahia/js-server-engine': 'jsServerEngineLibraryBuilder.getLibrary()',
             react: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react\')',
+            'react-i18next': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react-i18next\')',
+            i18next: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'i18next\')',
             'styled-jsx/style': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
             handlebars: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'handlebars\')'
         },

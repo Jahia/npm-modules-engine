@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import {useTranslation} from "react-i18next";
 
 const SampleHydrateInBrowserReact = ({initialValue}) => {
+    const { t } = useTranslation();
     const [count, setCount] = useState(initialValue);
 
     const handleClick = () => {

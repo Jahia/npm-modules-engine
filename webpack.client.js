@@ -1,5 +1,6 @@
 const path = require('path');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const deps = require('./package.json').dependencies;
 
 module.exports = (env, argv) => {
     let config = {
@@ -39,8 +40,10 @@ module.exports = (env, argv) => {
                 },
                 shared: {
                     react: {
-                        requiredVersion: '^18.2.0'
+                        requiredVersion: deps.react,
+                        singleton: true,
                     },
+                    'react-i18next': {},
                     'react-dom': {},
                     '@apollo/client': {},
                     '@apollo/react-hooks': {},

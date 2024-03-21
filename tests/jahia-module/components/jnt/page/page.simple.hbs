@@ -4,6 +4,7 @@
         {{jAddResources type="css" resources="styles.css"}}
     </head>
     <body>
+        {{jAddResources type="inline" key="inline-script-test" inlineResource=(inlineScriptTest)}}
         {{jAddResources type="javascript" resources="head-script.js"}}
         {{jAddResources type="javascript" resources="body-script.js" targetTag="body"}}
         <div class="page">

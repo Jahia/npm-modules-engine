@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
 import {ServerContextProvider} from '@jahia/js-server-engine';
+import i18n from 'i18next';
+import {I18nextProvider} from 'react-i18next';
 
 export default () => {
     server.registry.add('view', 'react', {
@@ -11,6 +13,15 @@ export default () => {
 
     server.registry.add('viewRenderer', 'react', {
         render: (currentResource, renderContext, view) => {
+            // I18next
+            const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
+            // Load locales
+            i18n.loadNamespaces(view.bundle.getSymbolicName());
+            i18n.loadLanguages(locale.getLanguage());
+            // Set module namespace and current language
+            i18n.setDefaultNamespace(view.bundle.getSymbolicName());
+            i18n.changeLanguage(locale.getLanguage());
+
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
             const props = {
                 id,
@@ -36,7 +47,8 @@ export default () => {
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
             const bundleKey = view.bundle.getSymbolicName();
-            const element = React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(view.component, {...props})));
+            const element =
+                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
 
             // Some server side components are using dangerouslySetInnerHTML to render their content,
             // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)
