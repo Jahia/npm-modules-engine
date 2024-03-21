@@ -73,7 +73,8 @@ module.exports = env => {
                         requiredVersion: deps.react,
                         singleton: true
                     },
-                    'react-i18next': {}
+                    'react-i18next': {},
+                    'i18next': {}
                 }
             }),
             new ExtraWatchWebpackPlugin({

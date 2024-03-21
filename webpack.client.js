@@ -45,6 +45,7 @@ module.exports = (env, argv) => {
                     },
                     'react-i18next': {},
                     'react-dom': {},
+                    'i18next': {},
                     '@apollo/client': {},
                     '@apollo/react-hooks': {},
                     '@jahia/data-helper': {}
