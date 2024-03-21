@@ -1,7 +1,7 @@
 import React from 'react';
 import {server, useServerContext} from '@jahia/js-server-engine';
 
-export const TestJFindDisplayableContent = () => {
+export const TestFindDisplayableContent = () => {
     const {currentResource, renderContext} = useServerContext();
 
     let displayableNodePath = '';
@@ -25,7 +25,7 @@ export const TestJFindDisplayableContent = () => {
     )
 }
 
-TestJFindDisplayableContent.jahiaComponent = {
+TestFindDisplayableContent.jahiaComponent = {
     nodeType: 'npmExample:testJFindDisplayableContent',
     name: 'react',
     displayName: 'test jFindDisplayableContent (react)',

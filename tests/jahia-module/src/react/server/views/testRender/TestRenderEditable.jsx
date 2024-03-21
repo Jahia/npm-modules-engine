@@ -1,7 +1,7 @@
 import React from 'react';
-import {getChildNodes, getNodeProps, JRender, useServerContext} from '@jahia/js-server-engine';
+import {getChildNodes, getNodeProps, Render, useServerContext} from '@jahia/js-server-engine';
 
-export const TestJRenderEditable = () => {
+export const TestRenderEditable = () => {
     const {currentNode} = useServerContext();
     const allChildren = getChildNodes(currentNode, -1);
     return (
@@ -10,7 +10,7 @@ export const TestJRenderEditable = () => {
                 <h3>NPM JRender generates editable items by default</h3>
                 <div class="childs">
                     {allChildren && allChildren.map(function(child, i){
-                        return <JRender path={child.getPath()} key={child.getIdentifier()} />;
+                        return <Render path={child.getPath()} key={child.getIdentifier()} />;
                     })}
                 </div>
             </div>
@@ -18,7 +18,7 @@ export const TestJRenderEditable = () => {
                 <h3>NPM JRender generates editable items when precised true</h3>
                 <div class="childs">
                     {allChildren && allChildren.map(function(child, i){
-                        return <JRender path={child.getPath()}  editable={true} key={child.getIdentifier()} />;
+                        return <Render path={child.getPath()} editable={true} key={child.getIdentifier()} />;
                     })}
                 </div>
             </div>
@@ -26,7 +26,7 @@ export const TestJRenderEditable = () => {
                 <h3>NPM JRender generates non editable items when precised false</h3>
                 <div class="childs">
                     {allChildren && allChildren.map(function(child, i){
-                        return <JRender path={child.getPath()} editable={false} key={child.getIdentifier()} />;
+                        return <Render path={child.getPath()} editable={false} key={child.getIdentifier()} />;
                     })}
                 </div>
             </div>
@@ -34,7 +34,7 @@ export const TestJRenderEditable = () => {
     )
 }
 
-TestJRenderEditable.jahiaComponent = {
+TestRenderEditable.jahiaComponent = {
     nodeType: 'npmExample:testRenderEditable',
     displayName: 'Test JRender Editable',
     componentType: 'view'

@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    useServerContext,
-    getNodesByJCRQuery,
-    jAddCacheDependency
-} from '@jahia/js-server-engine';
+import {getNodesByJCRQuery, server, useServerContext} from '@jahia/js-server-engine';
 
 const PrintQueryResults = ({title, testid, nodes}) => {
     return (
@@ -19,13 +15,13 @@ const PrintQueryResults = ({title, testid, nodes}) => {
 }
 
 export const TestJCRQuery = () => {
-    const {currentNode} = useServerContext();
+    const {currentNode, renderContext} = useServerContext();
     const currentSiteKey = currentNode.getResolveSite().getSiteKey();
     const eventsPath = `/sites/${currentSiteKey}/contents/events`;
     const query = `SELECT *
                    from [jnt:event]
                    where isdescendantnode('${eventsPath}')`
-    jAddCacheDependency({flushOnPathMatchingRegexp:`${eventsPath}/.*`})
+    server.render.addCacheDependency({flushOnPathMatchingRegexp:`${eventsPath}/.*`}, renderContext)
 
     const all = getNodesByJCRQuery(currentNode.getSession(), query, -1,);
     const limit = getNodesByJCRQuery(currentNode.getSession(), query, 2);

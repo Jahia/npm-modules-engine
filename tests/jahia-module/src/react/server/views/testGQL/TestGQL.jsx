@@ -1,7 +1,7 @@
 import React from 'react';
 import {useQuery, useServerContext} from "@jahia/js-server-engine";
 
-export const TestJGQL = () => {
+export const TestGQL = () => {
     const {currentNode} = useServerContext();
     const result = useQuery({
         query: "query ($path:String!) { jcr { nodeByPath(path:$path) { name, properties { name, value } } } }",
@@ -25,7 +25,7 @@ export const TestJGQL = () => {
     )
 }
 
-TestJGQL.jahiaComponent = {
+TestGQL.jahiaComponent = {
     nodeType: 'npmExample:testJGQL',
     name: 'react',
     displayName: 'test JGQL (react)',

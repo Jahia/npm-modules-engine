@@ -1,5 +1,5 @@
 import React from 'react';
-import {getChildNodes, JAddContentButtons, useServerContext} from '@jahia/js-server-engine';
+import {AddContentButtons, getChildNodes, useServerContext} from '@jahia/js-server-engine';
 
 const PrintChildren = ({children, title, testid}) => {
     return (
@@ -46,7 +46,7 @@ export const TestGetChildNodes = () => {
             <PrintChildren title="Limit + offset Children" testid="limitOffset" children={limitOffsetChildren}/>
             <PrintChildren title="Limit is mandatory" testid="limitMandatory" children={limitMandatory}/>
             <PrintChildren title="Offset children" testid="offset" children={offsetChildren}/>
-            <JAddContentButtons/>
+            <AddContentButtons/>
         </>
     )
 }

@@ -185,11 +185,11 @@ public class RenderHelper {
         }
     }
 
-    public String addResourcesTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public String addResources(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
         return renderTag(new AddResourcesTag(), attr, renderContext);
     }
 
-    public void addCacheDependencyTag(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public void addCacheDependency(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
