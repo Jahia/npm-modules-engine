@@ -13,13 +13,14 @@ export default () => {
 
     server.registry.add('viewRenderer', 'react', {
         render: (currentResource, renderContext, view) => {
+            const bundleKey = view.bundle.getSymbolicName();
             // I18next
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
             // Load locales
-            i18n.loadNamespaces(view.bundle.getSymbolicName());
+            i18n.loadNamespaces(bundleKey);
             i18n.loadLanguages(locale.getLanguage());
             // Set module namespace and current language
-            i18n.setDefaultNamespace(view.bundle.getSymbolicName());
+            i18n.setDefaultNamespace(bundleKey);
             i18n.changeLanguage(locale.getLanguage());
 
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
@@ -39,14 +40,13 @@ export default () => {
                 workspace: renderContext.getWorkspace(),
                 uiLocale: renderContext.getUILocale().toString(),
                 view: view.key,
-                bundle: view.bundle.getSymbolicName()
+                bundle: bundleKey
             };
 
             // SSR
             const styleRegistry = createStyleRegistry();
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
-            const bundleKey = view.bundle.getSymbolicName();
             const element =
                 React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
 
