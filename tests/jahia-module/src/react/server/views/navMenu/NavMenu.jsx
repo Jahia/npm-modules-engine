@@ -1,5 +1,5 @@
 import React from 'react';
-import {jBuildNavMenu, useServerContext} from '@jahia/js-server-engine';
+import {buildNavMenu, useServerContext} from '@jahia/js-server-engine';
 import {menuEntryCss} from "../../../../helpers/menuEntryCss";
 
 const NavMenuEntry = ({menuEntry, fist, last, level}) => {
@@ -22,12 +22,12 @@ const NavMenuEntry = ({menuEntry, fist, last, level}) => {
 }
 
 export const NavMenu = () => {
-    const {currentResource} = useServerContext();
+    const {renderContext,currentResource} = useServerContext();
 
     const base = currentResource.getNode().getPropertyAsString('j:baselineNode');
     const maxDepth = currentResource.getNode().getProperty('j:maxDepth').getLong();
     const startLevel = currentResource.getNode().hasProperty('j:startLevel') ? currentResource.getNode().getProperty('j:startLevel').getLong() : 0;
-    const menu = jBuildNavMenu(maxDepth, base, undefined, startLevel);
+    const menu = buildNavMenu(maxDepth, base, undefined, startLevel, renderContext, currentResource);
 
     return (
         <div className={'navBar'}>

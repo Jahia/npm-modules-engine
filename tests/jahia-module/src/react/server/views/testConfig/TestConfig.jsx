@@ -1,7 +1,7 @@
 import React from 'react';
 import {server} from '@jahia/js-server-engine';
 
-export const TestJConfig = () => {
+export const TestConfig = () => {
     const configValues = server.config.getConfigValues('org.jahia.modules.test');
     const defaultFactoryConfigs = server.config.getConfigFactoryValues('org.jahia.modules.test.factory', 'default');
     const complexObject = server.config.getConfigValues('org.jahia.modules.test.complex');
@@ -42,7 +42,7 @@ export const TestJConfig = () => {
     )
 }
 
-TestJConfig.jahiaComponent = {
+TestConfig.jahiaComponent = {
     nodeType: 'npmExample:testJConfig',
     name: 'react',
     displayName: 'test jConfig (react)',

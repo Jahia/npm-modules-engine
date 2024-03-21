@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext} from '@jahia/js-server-engine';
 
-export const TestJRenderParameters = () => {
+export const TestRenderParameters = () => {
     const {currentResource} = useServerContext();
     return (
         <>
@@ -19,7 +19,7 @@ export const TestJRenderParameters = () => {
     )
 }
 
-TestJRenderParameters.jahiaComponent = {
+TestRenderParameters.jahiaComponent = {
     nodeType: 'npmExample:testJRender',
     name: 'parametersReact',
     displayName: 'test Render (parameters react)',

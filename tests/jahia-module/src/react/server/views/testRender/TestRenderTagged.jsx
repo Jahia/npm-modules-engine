@@ -1,7 +1,7 @@
 import React from 'react';
 import {useServerContext} from '@jahia/js-server-engine';
 
-export const TestJRenderTagged = () => {
+export const TestRenderTagged = () => {
     const {currentResource} = useServerContext();
     return (
         <div>
@@ -10,7 +10,7 @@ export const TestJRenderTagged = () => {
     )
 }
 
-TestJRenderTagged.jahiaComponent = {
+TestRenderTagged.jahiaComponent = {
     nodeType: 'npmExample:testJRender',
     name: 'taggedReact',
     displayName: 'test Render (tagged react)',

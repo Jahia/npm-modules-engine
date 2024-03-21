@@ -1,7 +1,7 @@
 import React from 'react';
-import {JAddContentButtons, JRender} from '@jahia/js-server-engine';
+import {AddContentButtons, Render} from '@jahia/js-server-engine';
 
-export const TestJRender = () => {
+export const TestRender = () => {
     return (
         <>
             <div data-testid="npm-view">NPM view working</div>
@@ -10,7 +10,7 @@ export const TestJRender = () => {
             <h3>Components</h3>
             Render a jnt:text as JSON Node :
             <div data-testid="component-text-json-node" className="case">
-                    <JRender
+                    <Render
                         content={{
                                 "name": "text",
                                 "nodeType": "jnt:text",
@@ -21,7 +21,7 @@ export const TestJRender = () => {
             </div>
             Render a jnt:text as JSON Node with conf OPTION :
             <div data-testid="component-text-json-node-option" className="case">
-                    <JRender
+                    <Render
                         advanceRenderingConfig={'OPTION'}
                         content={{
                                 "name": "textOption",
@@ -33,7 +33,7 @@ export const TestJRender = () => {
             </div>
             Render a npmExample:test with view sub as JSON Node with conf OPTION :
             <div data-testid="component-npm-json-node-option" className="case">
-                    <JRender
+                    <Render
                         advanceRenderingConfig={'OPTION'}
                         view={'subReact'}
                         content={{
@@ -46,18 +46,18 @@ export const TestJRender = () => {
             </div>
             Render a simple predefined richtext component with conf INCLUDE :
             <div data-testid="component-npm-node-include" className="case">
-                    <JRender
+                    <Render
                         advanceRenderingConfig={'INCLUDE'}
                         view={'subReact'}/>
             </div>
             Render a text child node :
             <div data-testid="component-text-child-node" className="case">
-                    <JRender path={'simpletext'}/>
-                    <JAddContentButtons childName={'simpletext'} nodeTypes={'jnt:text'}/>
+                    <Render path={'simpletext'}/>
+                    <AddContentButtons childName={'simpletext'} nodeTypes={'jnt:text'}/>
             </div>
             Render a JSON Node with mixins :
             <div data-testid="component-json-node-with-mixin" className="case">
-                    <JRender
+                    <Render
                         view={'taggedReact'}
                         content={{
                                 "name": "viewWithMixin",
@@ -70,7 +70,7 @@ export const TestJRender = () => {
             </div>
             Render a JSON Node with parameters :
             <div data-testid="component-json-node-with-parameters" className="case">
-                    <JRender
+                    <Render
                         view={'parametersReact'}
                         content={{
                                 "name": "viewWithParameters",
@@ -90,7 +90,7 @@ export const TestJRender = () => {
             </div>
             Render an existing content Node with parameters :
             <div data-testid="component-npm-node-with-parameters" className="case">
-                    <JRender
+                    <Render
                         advanceRenderingConfig={'INCLUDE'}
                         view={'parametersReact'}
                         parameters={{
@@ -114,7 +114,7 @@ export const TestJRender = () => {
     )
 }
 
-TestJRender.jahiaComponent = {
+TestRender.jahiaComponent = {
         nodeType: 'npmExample:testJRender',
         name: 'react',
         displayName: 'test Render (parameters react)',
