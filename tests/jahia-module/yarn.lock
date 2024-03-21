@@ -1768,6 +1768,7 @@ __metadata:
     extra-watch-webpack-plugin: "npm:^1.0.3"
     handlebars: "npm:^4.7.7"
     handlebars-loader: "npm:^1.7.3"
+    i18next: "npm:^23.10.1"
     react: "npm:^18.2.0"
     react-i18next: "npm:^14.1.0"
     styled-jsx: "npm:^5.1.2"
