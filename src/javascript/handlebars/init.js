@@ -14,7 +14,7 @@ import path from 'handlebars-helpers/lib/path';
 import regex from 'handlebars-helpers/lib/regex';
 import string from 'handlebars-helpers/lib/string';
 import url from 'handlebars-helpers/lib/url';
-import i18next from 'i18next';
+import i18n from 'i18next';
 import registerI18nHelper from 'handlebars-i18next';
 
 export default () => {
@@ -28,7 +28,7 @@ export default () => {
         });
     });
 
-    registerI18nHelper(Handlebars, i18next);
+    registerI18nHelper(Handlebars, i18n);
 
     server.registry.add('bundleInitializer', 'handlebars-views', {
         init: bundle => {
@@ -69,8 +69,8 @@ export default () => {
         render: (currentResource, renderContext, view) => {
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
             const mode = renderContext.getMode();
-            i18next.loadNamespaces(view.bundle.getSymbolicName());
-            i18next.loadLanguages(locale.getLanguage());
+            i18n.loadNamespaces(view.bundle.getSymbolicName());
+            i18n.loadLanguages(locale.getLanguage());
 
             const i18nextValues = {
                 ns: view.bundle.getSymbolicName(),

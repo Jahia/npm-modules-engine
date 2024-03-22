@@ -65,3 +65,5 @@
 [npmExample:testLocale] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testBoundComponent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent
+
+[npmExample:testI18n] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent

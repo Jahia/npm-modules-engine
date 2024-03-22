@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -157,7 +158,7 @@ public class GraalVMEngine {
     public static String loadResource(Bundle bundle, String path) {
         try {
             URL url = bundle.getResource(path);
-            return url != null ? IOUtils.toString(url, Charset.defaultCharset()) : null;
+            return url != null ? IOUtils.toString(url, StandardCharsets.UTF_8) : null;
         } catch (Exception e) {
             logger.error("Cannot get resource: " + path, e);
         }

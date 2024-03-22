@@ -22,6 +22,8 @@ import org.apache.taglibs.standard.tag.common.core.ParamParent;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
+import org.jahia.modules.npm.modules.engine.js.mock.MockBodyContent;
+import org.jahia.modules.npm.modules.engine.js.mock.MockJspWriter;
 import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
@@ -42,9 +44,11 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.*;
@@ -104,7 +108,7 @@ public class RenderHelper {
                 optionAttr.put("nodetype", node.getPrimaryNodeType().getName());
                 try {
                     return renderTag(new OptionTag(), optionAttr, renderContext);
-                } catch (IllegalAccessException | InvocationTargetException | JspException e) {
+                } catch (IllegalAccessException | InvocationTargetException | JspException | IOException e) {
                     throw new RepositoryException(e);
                 }
             } else {
@@ -135,8 +139,7 @@ public class RenderHelper {
         });
     }
 
-    public String createContentButtons(String childName, String nodeTypes, boolean editCheck, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
-
+    public String createContentButtons(String childName, String nodeTypes, boolean editCheck, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException, IOException {
         boolean childExists = !"*".equals(childName) && currentResource.getNode().hasNode(childName);
         if (!childExists && (!editCheck || renderContext.isEditMode())) {
             Map<String, Object> attr = new HashMap<>();
@@ -147,7 +150,7 @@ public class RenderHelper {
         return "";
     }
 
-    public String render(Map<String, Object> attr, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException {
+    public String render(Map<String, Object> attr, RenderContext renderContext, Resource currentResource) throws JspException, InvocationTargetException, IllegalAccessException, RepositoryException, IOException {
 
         // handle json node
         if (attr.get("content") != null) {
@@ -185,25 +188,29 @@ public class RenderHelper {
         }
     }
 
-    public String addResources(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public String addResources(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
+        if (attr.containsKey("inlineResource")){
+            attr.put("body", attr.get("inlineResource").toString());
+            attr.remove("inlineResource");
+        }
         return renderTag(new AddResourcesTag(), attr, renderContext);
     }
 
-    public void addCacheDependency(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public void addCacheDependency(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
 
-    public String renderAbsoluteArea(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException {
+    public String renderAbsoluteArea(Map<String, Object> attr, RenderContext renderContext) throws JspException, InvocationTargetException, IllegalAccessException, IOException {
         checkAttributes(attr, ABSOLUTEAREA_ALLOWED_ATTRIBUTES);
         return internalRenderArea(attr, "absoluteArea", renderContext);
     }
 
-    public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    public String renderArea(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
         checkAttributes(attr, AREA_ALLOWED_ATTRIBUTES);
         return internalRenderArea(attr, "area", renderContext);
     }
 
-    private String internalRenderArea(Map<String, Object> attr, String moduleType, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    private String internalRenderArea(Map<String, Object> attr, String moduleType, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
         // We copy the attributes to avoid modifying the original map
         Map<String,Object> areaAttr = new HashMap<>(attr);
         areaAttr.put("moduleType", moduleType);
@@ -257,7 +264,7 @@ public class RenderHelper {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException {
+    private String renderTag(TagSupport tag, Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
 
         Map<String, Serializable> renderParameters = (Map<String, Serializable>) attr.remove("parameters");
         if (tag instanceof ParamParent && renderParameters != null && !renderParameters.isEmpty()) {
@@ -269,17 +276,30 @@ public class RenderHelper {
             }
         }
 
+        String body = null;
+        if (tag instanceof BodyTagSupport && attr.get("body") != null) {
+           body = (String) attr.remove("body");
+        }
+
         BeanUtils.populate(tag, attr);
         MockPageContext pageContext = new MockPageContext(renderContext);
         tag.setPageContext(pageContext);
         tag.doStartTag();
-        tag.doEndTag();
         try {
-            pageContext.flushWriters();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (tag instanceof BodyTagSupport && body != null) {
+                MockPageContext bodyPageContext = new MockPageContext(renderContext);
+                bodyPageContext.getOut().print(body);
+                tag.setPageContext(bodyPageContext);
+                ((BodyTagSupport) tag).setBodyContent(new MockBodyContent(bodyPageContext.getWriter()));
+                tag.doAfterBody();
+                bodyPageContext.flushWriters();
+            }
+        } finally {
+            tag.setPageContext(pageContext);
         }
-        return pageContext.getTargetWriter().getBuffer().toString();
+        tag.doEndTag();
+        pageContext.flushWriters();
+        return pageContext.getWriter().getString();
     }
 
     private ProxyObject recursiveProxyMap(Map<String, Object> mapToProxy) {

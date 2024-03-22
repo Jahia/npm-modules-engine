@@ -107,5 +107,12 @@ describe('Test on add resources component/helper', () => {
             cy.get('#testHeadElement').should('exist');
             cy.logout();
         });
+
+        it(`${pageName} : should contain the test inline script element created by the inline script`, () => {
+            cy.login();
+            cy.visit(`/cms/render/default/en/sites/npmTestSite/home/${pageName}.html`);
+            cy.get('#testInlineScript').should('exist');
+            cy.logout();
+        });
     });
 });

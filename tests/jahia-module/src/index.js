@@ -30,3 +30,14 @@ Handlebars.registerHelper('param', (param, options) => {
     const value = options.data.root.renderContext.getRequest().getParameter(param);
     return value;
 });
+
+Handlebars.registerHelper('inlineScriptTest', () => {
+    return '<script type="text/javascript">\n' +
+        '            console.log(\'Executing inline script...\');\n' +
+        '            document.addEventListener(\'DOMContentLoaded\', function () {\n' +
+        '                var newDiv = document.createElement(\'div\');\n' +
+        '                newDiv.id = \'testInlineScript\';\n' +
+        '                document.body.appendChild(newDiv);\n' +
+        '            });\n' +
+        '        </script>';
+});

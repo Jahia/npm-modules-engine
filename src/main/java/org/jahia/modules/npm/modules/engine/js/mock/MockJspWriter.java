@@ -18,6 +18,7 @@ package org.jahia.modules.npm.modules.engine.js.mock;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 
 /**
@@ -31,39 +32,41 @@ import java.io.Writer;
  */
 public class MockJspWriter extends JspWriter {
 
+    private StringWriter originalWriter;
     private PrintWriter targetWriter;
 
     /**
-     * Create a MockJspWriter for the given plain Writer.
-     *
-     * @param targetWriter the target Writer to wrap
+     * Create a MockJspWriter.
      */
-    public MockJspWriter(Writer targetWriter) {
+    public MockJspWriter() {
         super(DEFAULT_BUFFER, true);
-        if (targetWriter instanceof PrintWriter) {
-            this.targetWriter = (PrintWriter) targetWriter;
-        } else if (targetWriter != null) {
-            this.targetWriter = new PrintWriter(targetWriter);
-        }
+        init();
     }
 
-    /**
-     * Lazily initialize the target Writer.
-     */
+    private void init() {
+        this.originalWriter = new StringWriter();
+        this.targetWriter = new PrintWriter(this.originalWriter);
+    }
+
     protected PrintWriter getTargetWriter() throws IOException {
         return this.targetWriter;
     }
 
+    public String getString() {
+        return this.originalWriter.getBuffer().toString();
+    }
+
     public void clear() throws IOException {
+        flush();
+        init();
     }
 
     public void clearBuffer() throws IOException {
     }
 
     public void flush() throws IOException {
-        if (targetWriter != null) {
-            targetWriter.flush();
-        }
+        targetWriter.flush();
+        originalWriter.flush();
     }
 
     public void close() throws IOException {

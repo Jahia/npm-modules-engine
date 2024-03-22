@@ -3,11 +3,22 @@ import {AddResources, Area, Render} from '@jahia/js-server-engine';
 import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageSimple = () => {
+
+    const inlineScript = '<script type="text/javascript">\n' +
+        '            console.log(\'Executing inline script...\');\n' +
+        '            document.addEventListener(\'DOMContentLoaded\', function () {\n' +
+        '                var newDiv = document.createElement(\'div\');\n' +
+        '                newDiv.id = \'testInlineScript\';\n' +
+        '                document.body.appendChild(newDiv);\n' +
+        '            });\n' +
+        '        </script>';
+
     return (<>
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
         <body>
+        <AddResources type={'inline'} key={'inline-script-test'} inlineResource={inlineScript}/>
         <AddResources type={'javascript'} resources={'body-script.js'} targetTag={'body'}/>
         <AddResources type={'javascript'} resources={'head-script.js'} />
         <div className="page">

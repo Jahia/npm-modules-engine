@@ -9,15 +9,15 @@ const backend = {
     read: function (language, namespace, callback) {
         const bundle = server.osgi.getBundle(namespace);
         if (bundle) {
-            let content = server.osgi.loadResource(bundle, 'locales/' + language + '.json', true) ||
-                server.osgi.loadResource(bundle, 'javascript/locales/' + language + '.json', true);
+            let content = server.osgi.loadResource(bundle, 'locales/' + language + '.json', true);
             if (content) {
                 callback(null, JSON.parse(content));
             } else {
-                callback('cannot load translation file');
+                // No locales found
+                callback(null, {});
             }
         } else {
-            callback('cannot find bundle ' + namespace);
+            callback('cannot find bundle: ' + namespace);
         }
     },
 

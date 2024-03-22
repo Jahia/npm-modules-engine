@@ -24,3 +24,4 @@ export * from './testUrlParameters/TestUrlParameters';
 export * from './testLocale/TestLocale';
 export * from './testCrashingView/TestCrashingView';
 export * from './testBoundComponent/TestBoundComponent';
+export * from './testI18n/TestI18n';
