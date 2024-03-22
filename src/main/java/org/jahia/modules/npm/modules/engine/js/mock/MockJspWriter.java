@@ -65,8 +65,8 @@ public class MockJspWriter extends JspWriter {
     }
 
     public void flush() throws IOException {
-        originalWriter.flush();
         targetWriter.flush();
+        originalWriter.flush();
     }
 
     public void close() throws IOException {
