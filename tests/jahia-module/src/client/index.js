@@ -2,4 +2,4 @@
 // Since JS can be aggregated by Jahia on live, the path of the original file is lost
 // Also the context of the server should be handled properly
 // eslint-disable-next-line camelcase, no-undef
-__webpack_public_path__ = `${window.contextJsParameters.contextPath}/modules/jahia-npm-module-example/javascript/client/`;
+__webpack_public_path__ = `${window.__APPSHELL_INIT_DATA__.moduleBaseUrl}/jahia-npm-module-example/javascript/client/`;

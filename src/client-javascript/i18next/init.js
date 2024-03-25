@@ -13,11 +13,11 @@ export default () => {
             }
         });
 
-    if (window.__INITIAL_I18N_STORES__) {
+    if (window.__APPSHELL_INIT_DATA__ && window.__APPSHELL_INIT_DATA__.initialI18nStore) {
         const initialI18nStore = {};
 
         // Merge all stores from SSR rendering views
-        window.__INITIAL_I18N_STORES__.forEach(obj => {
+        window.__APPSHELL_INIT_DATA__.initialI18nStore.forEach(obj => {
             for (let lang in obj) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (obj.hasOwnProperty(lang)) {

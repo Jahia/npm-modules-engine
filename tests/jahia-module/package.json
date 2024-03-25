@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@jahia/data-helper": "^1.0.3",
-    "@jahia/js-server-engine": "^1.2.13",
+    "@jahia/js-server-engine": "^1.2.14",
     "handlebars": "^4.7.7",
     "i18next": "^23.10.1",
     "react": "^18.2.0",
