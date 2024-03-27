@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jahia/jahia-modules-action/static-analysis@TECH-1635-yarn-version
+      - uses: jahia/jahia-modules-action/static-analysis@v2
         with:
           node_version: 18
           yarn_version: 4.1.1
