@@ -5,7 +5,6 @@
   "license": "MIT",
   "author": "Jahia Solutions Group SA",
   "scripts": {
-    "postinstall": "yarn dlx @yarnpkg/sdks vscode",
     "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
     "deploy": "jahia-deploy pack",
     "watch": "yarn build --env deploy=true --watch",

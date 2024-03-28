@@ -16,6 +16,8 @@ jobs:
       - uses: jahia/jahia-modules-action/static-analysis@v2
         with:
           node_version: 18
+          yarn_version: 4.1.1
+          yarn_tests_version: 4.1.1
           auditci_level: critical
 
   build:
