@@ -1,4 +1,4 @@
-import {registerJahiaComponents, server} from '@jahia/js-server-engine';
+import {registerJahiaComponents, server} from '@jahia/js-server-core';
 import renderFilterTest from './renderfilter/renderFilterTest';
 import yourHandlebarTemplate from './views/yourHandlebarTemplate/yourHandlebarTemplate';
 import {menuEntryCss} from './helpers/menuEntryCss';

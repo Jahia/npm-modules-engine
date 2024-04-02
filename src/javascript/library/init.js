@@ -1,5 +1,5 @@
-import * as jsServerEngine from '@jahia/js-server-engine';
-import jsServerEngineBuilder from '@jahia/js-server-engine-builder';
+import * as jsServerEngine from '@jahia/js-server-core';
+import jsServerEngineBuilder from '@jahia/js-server-core-builder';
 import Handlebars from 'handlebars';
 import React from 'react';
 import * as ReactI18Next from 'react-i18next';
@@ -7,7 +7,7 @@ import I18next from 'i18next';
 import styledJsx from 'styled-jsx/style';
 
 export default () => {
-    // Repackage @jahia/js-server-engine for runtime
+    // Repackage @jahia/js-server-core for runtime
     for (const [key, value] of Object.entries(jsServerEngine)) {
         jsServerEngineBuilder.addToLibrary(key, value);
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Area, useServerContext} from '@jahia/js-server-engine';
+import {Area, useServerContext} from '@jahia/js-server-core';
 
 export const TestAreaColumns = () => {
     const {currentNode} = useServerContext();

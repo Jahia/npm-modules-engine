@@ -1,5 +1,5 @@
 import React from 'react';
-import {getNodesByJCRQuery, server, useServerContext} from '@jahia/js-server-engine';
+import {getNodesByJCRQuery, server, useServerContext} from '@jahia/js-server-core';
 
 const PrintQueryResults = ({title, testid, nodes}) => {
     return (

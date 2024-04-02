@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteArea} from '@jahia/js-server-engine';
+import {AbsoluteArea} from '@jahia/js-server-core';
 
 export const TestAbsoluteAreas = () => {
     return (
