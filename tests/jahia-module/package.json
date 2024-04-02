@@ -25,7 +25,7 @@
         }
       }
     },
-    "module-dependencies": "default",
+    "module-dependencies": "default,legacy-default-components",
     "module-type": "templatesSet",
     "required-version": "8.2.0.0-SNAPSHOT",
     "server": "dist/main.js",
