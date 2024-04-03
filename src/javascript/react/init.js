@@ -14,42 +14,24 @@ export default () => {
     server.registry.add('viewRenderer', 'react', {
         render: (currentResource, renderContext, view) => {
             const bundleKey = view.bundle.getSymbolicName();
-            // I18next
-            const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
-            const language = locale.getLanguage();
+            // I18next configuration
             // Load locales
+            const language = currentResource.getLocale().getLanguage();
             i18n.loadNamespaces(bundleKey);
             i18n.loadLanguages(language);
             // Set module namespace and current language
             i18n.setDefaultNamespace(bundleKey);
             i18n.changeLanguage(language);
 
-            const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
-            const props = {
-                id,
-                currentNode: {
-                    identifier: currentResource.getNode().getIdentifier(),
-                    path: currentResource.getNode().getPath()
-                },
-                currentLocale: currentResource.getLocale().toString(),
-                mainNode: {
-                    identifier: renderContext.getMainResource().getNode().getIdentifier(),
-                    path: renderContext.getMainResource().getNode().getPath()
-                },
-                user: renderContext.getUser().getUsername(),
-                editMode: renderContext.isEditMode(),
-                workspace: renderContext.getWorkspace(),
-                uiLocale: renderContext.getUILocale().toString(),
-                view: view.key,
-                bundle: bundleKey
-            };
-
             // SSR
+            const props = {
+                id: 'reactTarget' + Math.floor(Math.random() * 100000000)
+            };
             const styleRegistry = createStyleRegistry();
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
             const element =
-                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey, language}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
+                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
 
             // Some server side components are using dangerouslySetInnerHTML to render their content,
             // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)
@@ -58,7 +40,7 @@ export default () => {
                 .replace(/<\/unwanteddiv>/g, '');
 
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
-            const stylesResource = styles ? `<jahia:resource type="inline" key="styles${id}">${styles}</jahia:resource>` : '';
+            const stylesResource = styles ? `<jahia:resource type="inline" key="styles${props.id}">${styles}</jahia:resource>` : '';
             if (currentResource.getContextConfiguration() === 'page') {
                 return `<html>${cleanedRenderedElement}${stylesResource}</html>`;
             }
