@@ -8,10 +8,10 @@ export const footer = {
     nodeType: 'jnt:absoluteArea'
 };
 
-// export const login = {
-//     name: 'login',
-//     nodeType: 'jnt:loginForm'
-// };
+export const login = {
+    name: 'login',
+    nodeType: 'jnt:loginForm'
+};
 
 export const navMenu = {
     name: 'navMenu',
