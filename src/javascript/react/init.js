@@ -16,12 +16,13 @@ export default () => {
             const bundleKey = view.bundle.getSymbolicName();
             // I18next
             const locale = renderContext.getRequest().getAttribute('org.jahia.utils.i18n.forceLocale') || currentResource.getLocale();
+            const language = locale.getLanguage();
             // Load locales
             i18n.loadNamespaces(bundleKey);
-            i18n.loadLanguages(locale.getLanguage());
+            i18n.loadLanguages(language);
             // Set module namespace and current language
             i18n.setDefaultNamespace(bundleKey);
-            i18n.changeLanguage(locale.getLanguage());
+            i18n.changeLanguage(language);
 
             const id = 'reactTarget' + Math.floor(Math.random() * 100000000);
             const props = {
@@ -48,7 +49,7 @@ export default () => {
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
             const element =
-                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
+                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey, language}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
 
             // Some server side components are using dangerouslySetInnerHTML to render their content,
             // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)
