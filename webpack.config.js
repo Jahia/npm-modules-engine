@@ -10,8 +10,8 @@ module.exports = (env, argv) => {
             path: path.resolve(__dirname, 'src/main/resources/META-INF/js')
         },
         externals: {
-            '@jahia/js-server-core-builder': 'jsServerEngineLibraryBuilder',
-            '@jahia/js-server-core-private': 'jsServerEngineLibraryBuilder.getLibrary()',
+            '@jahia/js-server-core-builder': 'jsServerCoreLibraryBuilder',
+            '@jahia/js-server-core-private': 'jsServerCoreLibraryBuilder.getLibrary()',
         },
         resolve: {
             alias: {

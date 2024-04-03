@@ -17,14 +17,14 @@ import java.util.Map;
  * But also for exposing shared libraries to the JS runtime
  * And finally can be enriched by the externalized js library to provide mirroring of the JAVA backend and ensure auto-completion.
  */
-public class JSServerEngineLibraryBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(JSServerEngineLibraryBuilder.class);
+public class JSServerCoreLibraryBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(JSServerCoreLibraryBuilder.class);
 
     private ProxyObject exports = ProxyObject.fromMap(new HashMap<>());
 
     private Map<String, Object> sharedLibraries = new HashMap<>();
 
-    public JSServerEngineLibraryBuilder(ContextProvider contextProvider) {
+    public JSServerCoreLibraryBuilder(ContextProvider contextProvider) {
 
         Map<String, Object> server = new HashMap<>();
         server.put("config", new ConfigHelper(contextProvider));
