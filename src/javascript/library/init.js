@@ -1,4 +1,4 @@
-import * as jsServerEngine from '@jahia/js-server-core';
+import * as jsServerCore from '@jahia/js-server-core';
 import jsServerCoreBuilder from '@jahia/js-server-core-builder';
 import Handlebars from 'handlebars';
 import React from 'react';
@@ -8,7 +8,7 @@ import styledJsx from 'styled-jsx/style';
 
 export default () => {
     // Repackage @jahia/js-server-core for runtime
-    for (const [key, value] of Object.entries(jsServerEngine)) {
+    for (const [key, value] of Object.entries(jsServerCore)) {
         jsServerCoreBuilder.addToLibrary(key, value);
     }
 
