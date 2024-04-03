@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddResources, Area, Render} from '@jahia/js-server-engine';
+import {AddResources, Area, Render} from '@jahia/js-server-core';
 import {calendar, facets, footer, header, login, navMenu} from "./pageComponents";
 
 export const PageEvent = () => {

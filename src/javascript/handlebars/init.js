@@ -1,5 +1,5 @@
-import {server} from '@jahia/js-server-engine-private';
-import {handlebars} from '@jahia/js-server-engine';
+import {server} from '@jahia/js-server-core-private';
+import {handlebars} from '@jahia/js-server-core';
 import Handlebars from 'handlebars';
 import array from 'handlebars-helpers/lib/array';
 import collection from 'handlebars-helpers/lib/collection';

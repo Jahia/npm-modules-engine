@@ -1,6 +1,6 @@
 {
   "name": "npm-modules-engine",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "repository": "git@github.com:Jahia/npm-modules-engine.git",
   "license": "MIT",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.5",
-    "@jahia/js-server-engine": "^1.2.14",
+    "@jahia/js-server-core": "^0.0.1",
     "@jahia/ui-extender": "^1.0.1",
     "dayjs": "^1.10.4",
     "fast-text-encoding": "^1.0.6",

@@ -1,5 +1,5 @@
 import React from 'react';
-import {buildNavMenu, useServerContext} from '@jahia/js-server-engine';
+import {buildNavMenu, useServerContext} from '@jahia/js-server-core';
 import {menuEntryCss} from "../../../../helpers/menuEntryCss";
 
 const NavMenuEntry = ({menuEntry, fist, last, level}) => {

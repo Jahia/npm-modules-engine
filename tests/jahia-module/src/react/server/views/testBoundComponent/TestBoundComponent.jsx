@@ -1,5 +1,5 @@
 import React from 'react';
-import {server, useServerContext} from '@jahia/js-server-engine';
+import {server, useServerContext} from '@jahia/js-server-core';
 
 export const TestBoundComponent = () => {
     const {currentNode, renderContext} = useServerContext();

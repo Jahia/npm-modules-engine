@@ -1,5 +1,5 @@
 import React from 'react';
-import {server} from '@jahia/js-server-engine';
+import {server} from '@jahia/js-server-core';
 
 export const TestConfig = () => {
     const configValues = server.config.getConfigValues('org.jahia.modules.test');

@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddContentButtons, getChildNodes, useServerContext} from '@jahia/js-server-engine';
+import {AddContentButtons, getChildNodes, useServerContext} from '@jahia/js-server-core';
 
 const PrintChildren = ({children, title, testid}) => {
     return (

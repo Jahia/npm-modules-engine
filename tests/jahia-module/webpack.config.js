@@ -12,12 +12,12 @@ module.exports = env => {
         },
         externalsPresets: {node: true},
         externals: {
-            '@jahia/js-server-engine': 'jsServerEngineLibraryBuilder.getLibrary()',
-            react: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react\')',
-            'react-i18next': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'react-i18next\')',
-            i18next: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'i18next\')',
-            'styled-jsx/style': 'jsServerEngineLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
-            handlebars: 'jsServerEngineLibraryBuilder.getSharedLibrary(\'handlebars\')'
+            '@jahia/js-server-core': 'jsServerCoreLibraryBuilder.getLibrary()',
+            react: 'jsServerCoreLibraryBuilder.getSharedLibrary(\'react\')',
+            'react-i18next': 'jsServerCoreLibraryBuilder.getSharedLibrary(\'react-i18next\')',
+            i18next: 'jsServerCoreLibraryBuilder.getSharedLibrary(\'i18next\')',
+            'styled-jsx/style': 'jsServerCoreLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
+            handlebars: 'jsServerCoreLibraryBuilder.getSharedLibrary(\'handlebars\')'
         },
         resolve: {
             extensions: ['.js', '.jsx']

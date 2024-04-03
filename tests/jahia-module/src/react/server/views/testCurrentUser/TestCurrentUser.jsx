@@ -1,5 +1,5 @@
 import React from 'react';
-import { useServerContext } from '@jahia/js-server-engine';
+import { useServerContext } from '@jahia/js-server-core';
 
 export const TestCurrentUser = () => {
     const {renderContext} = useServerContext();

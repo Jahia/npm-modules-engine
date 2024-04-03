@@ -1,5 +1,5 @@
 import React from 'react';
-import {HydrateInBrowser, RenderInBrowser, useServerContext} from '@jahia/js-server-engine';
+import {HydrateInBrowser, RenderInBrowser, useServerContext} from '@jahia/js-server-core';
 import SampleHydrateInBrowserReact from "../../../../client/SampleHydrateInBrowserReact";
 import SampleRenderInBrowserReact from "../../../../client/SampleRenderInBrowserReact";
 

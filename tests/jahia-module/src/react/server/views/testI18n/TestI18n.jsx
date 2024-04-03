@@ -1,6 +1,6 @@
 import React from 'react';
 import SampleI18n from "../../../../client/SampleI18n";
-import {HydrateInBrowser, RenderInBrowser} from "@jahia/js-server-engine";
+import {HydrateInBrowser, RenderInBrowser} from "@jahia/js-server-core";
 
 export const TestI18n = () => {
     return (

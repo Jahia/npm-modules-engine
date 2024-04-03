@@ -5,14 +5,14 @@ import org.jahia.modules.npm.modules.engine.jsengine.JSGlobalVariableFactory;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = {JSGlobalVariableFactory.class}, immediate = true)
-public class JSServerEngineGlobalVariableFactory implements JSGlobalVariableFactory {
+public class JSServerCoreGlobalVariableFactory implements JSGlobalVariableFactory {
     @Override
     public String getName() {
-        return "jsServerEngineLibraryBuilder";
+        return "jsServerCoreLibraryBuilder";
     }
 
     @Override
     public Object getObject(ContextProvider context) {
-        return new JSServerEngineLibraryBuilder(context);
+        return new JSServerCoreLibraryBuilder(context);
     }
 }

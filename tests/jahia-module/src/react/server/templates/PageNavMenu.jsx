@@ -1,5 +1,5 @@
 import React from 'react';
-import {buildNavMenu, useServerContext} from '@jahia/js-server-engine';
+import {buildNavMenu, useServerContext} from '@jahia/js-server-core';
 
 export const PageNavMenu = () => {
     const {renderContext, currentResource} = useServerContext();
