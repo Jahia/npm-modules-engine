@@ -26,9 +26,9 @@ export const PageSimple = () => {
                 <div className="headerContent">
                     <Render content={header}/>
                 </div>
-                <div className="headerLogin">
+                {/* <div className="headerLogin">
                     <Render content={login}/>
-                </div>
+                </div> */}
             </div>
             <div className="nav">
                 <Render content={navMenu}/>

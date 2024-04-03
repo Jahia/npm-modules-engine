@@ -28,7 +28,7 @@
     </parent>
     <artifactId>npm-modules-engine</artifactId>
     <name>NPM modules engine</name>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>This is the engine allowing NPM modules to run on a Jahia server.</description>
 
