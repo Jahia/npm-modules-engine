@@ -55,9 +55,9 @@ public class OSGiHelper {
     }
 
     /**
-     * Retrieve the Osgi Bundle by symbolic name
+     * Get the Osgi Bundle by symbolic name
      * @param symbolicName the symbolic name for the bundle
-     * @return if successful, the bundle, otherwise null
+     * @return if successful, the Bundle, otherwise null
      */
     public Bundle getBundle(String symbolicName) {
         JahiaTemplatesPackage packageById = templateManagerService.getTemplatePackageById(symbolicName);
@@ -72,7 +72,7 @@ public class OSGiHelper {
      * @param bundle the bundle to load the resource from
      * @param path the path to the resource in the bundle
      * @param optional if false an error message will be logged if the resource is not found, otherwise null will be returned
-     * @return the content of the resource if it was found, otherwise null
+     * @return a String containing the content of the resource if it was found, null otherwise
      * @throws RenderException
      */
     public String loadResource(Bundle bundle, String path, boolean optional) throws RenderException {

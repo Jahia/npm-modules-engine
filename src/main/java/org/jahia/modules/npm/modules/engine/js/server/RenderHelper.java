@@ -76,9 +76,9 @@ public class RenderHelper {
     }
 
     /**
-     * Retrieve the render parameters for the given resource
+     * Get the render parameters for the given resource
      * @param resource the resource for which to retrieve the render parameters
-     * @return a Map<String,Object> containing the render parameters
+     * @return a Map&lt;String,Object&gt; containing the render parameters
      */
     public ProxyObject getRenderParameters(Resource resource) {
         Map<String, Object> moduleParams = new HashMap<>(resource.getModuleParams());
@@ -91,7 +91,7 @@ public class RenderHelper {
      * the 'URI generic syntax' RFC 2396. Not the entire path string is escaped,
      * but every individual part (i.e. the slashes are not escaped).
      * @param path the path to encode
-     * @return the escaped path
+     * @return a String containing the escaped path
      * @throws NullPointerException if <code>path</code> is <code>null</code>.
      */
     public String escapePath(String path) {
@@ -104,7 +104,7 @@ public class RenderHelper {
      * @param node the node at which to start the resolution
      * @param renderContext the current render context
      * @param contextSite the site in which to resolve the template
-     * @return the first displayable node found in the hierarchy
+     * @return the first displayable {@link JCRNodeWrapper} found in the hierarchy
      */
     public JCRNodeWrapper findDisplayableNode(JCRNodeWrapper node, RenderContext renderContext, JCRSiteNode contextSite) {
         return JCRContentUtils.findDisplayableNode(node, renderContext, contextSite);
@@ -114,7 +114,7 @@ public class RenderHelper {
      * Returns the node which corresponds to the bound component of the j:bindedComponent property in the specified node.
      * @param node the node to get the bound component for
      * @param context current render context
-     * @return the bound node
+     * @return the bound {@link JCRNodeWrapper}
      */
     public JCRNodeWrapper getBoundNode(JCRNodeWrapper node, RenderContext context) {
         return Functions.getBoundComponent(node, context, "j:bindedComponent");
@@ -252,7 +252,7 @@ public class RenderHelper {
      *             used for conditional comments in IE, for example.</li>
      *             </ul>
      * @param renderContext the current rendering context
-     * @return a string containing the rendered HTML tags for the provided resources.
+     * @return a String containing the rendered HTML tags for the provided resources.
      * @throws IllegalAccessException if the underlying tag cannot be accessed
      * @throws InvocationTargetException if the underlying tag cannot be invoked
      * @throws JspException if the underlying tag throws a JSP exception

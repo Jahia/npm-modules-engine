@@ -19,7 +19,7 @@ public class ConfigHelper {
 
     /**
      * Get the list of OSGi configuration PIDs
-     * @return an array of string contains the OSGi configuration PIDs
+     * @return an array of String containing the OSGi configuration PIDs
      */
     public ProxyArray getConfigPids() {
         return ProxyArray.fromArray(Functions.getConfigPids().toArray());
@@ -27,7 +27,7 @@ public class ConfigHelper {
 
     /**
      * Get the list of OSGi configuration factory PIDs for a given factory ID
-     * @return an array of string contains the OSGi configuration factory PIDs
+     * @return an array of String containing the OSGi configuration factory PIDs
      */
     public ProxyArray getConfigFactoryIdentifiers(String factoryPid) {
         return ProxyArray.fromArray(Functions.getConfigFactoryIdentifiers(factoryPid).toArray());
@@ -53,22 +53,22 @@ public class ConfigHelper {
     }
 
     /**
-     * Retrieve a single configuration value for a given OSGi configuration PID and a property key
+     * Get a single configuration value for a given OSGi configuration PID and a property key
      * @param configPid the unique identifier of the OSGi configuration
      * @param key the property key
-     * @return a string containing the configuration value
+     * @return a String containing the configuration value
      */
     public String getConfigValue(String configPid, String key) {
         return Functions.getConfigValue(configPid, key);
     }
 
     /**
-     * Retrieve a single configuration value for a given OSGi configuration factory PID, factory identifier and a
+     * Get a single configuration value for a given OSGi configuration factory PID, factory identifier and a
      * property key
      * @param factoryPid the factory PID
      * @param factoryIdentifier the factory identifier within the given factory PID
      * @param key the property key
-     * @return a string containing the configuration value
+     * @return a String containing the configuration value
      */
     public String getConfigFactoryValue(String factoryPid, String factoryIdentifier, String key) {
         return Functions.getConfigFactoryValue(factoryPid, factoryIdentifier, key);

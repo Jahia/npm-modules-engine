@@ -34,7 +34,7 @@ public class RegistryHelper {
     }
 
     /**
-     * Retrieve an object from the registry by type and key
+     * Get an object from the registry by type and key
      * @param type the type of the object to retrieve
      * @param key the key in the type of the object to retrieve
      * @return the object if found as a Map&lt;String,Object&gt;, otherwise null
@@ -49,22 +49,22 @@ public class RegistryHelper {
     }
 
     /**
-     * Retrieve objects from the registry by using a map filter. The filter is a map of key-value pairs that will be used
+     * Search objects from the registry by using a map filter. The filter is a map of key-value pairs that will be used
      * to match objects that have the same values for the keys specified in the filter.
      * @param filter a map of key-value pairs to filter the objects to retrieve
-     * @return a list of matching objects
+     * @return a List of matching objects
      */
     public List<Object> find(Map<String, Object> filter) {
         return context.getRegistry().find(filter).stream().map(ProxyObject::fromMap).collect(Collectors.toList());
     }
 
     /**
-     * Retrieve objects from the registry by using a map filter and an order by clause. The filter is a map of key-value
+     * Search objects from the registry by using a map filter and an order by clause. The filter is a map of key-value
      * pairs that will be used to match objects that have the same values for the keys specified in the filter.
      * @param filter a map of key-value pairs to filter the objects to retrieve
      * @param orderBy a string representing the key to use to order the resulting objects. Not that this only works if
      *                the key refers to an integer value
-     * @return a sorted list of matching objects
+     * @return a sorted List of matching objects
      */
     public List<Object> find(Map<String, Object> filter, String orderBy) {
         return context.getRegistry().find(filter, orderBy).stream().map(ProxyObject::fromMap).collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class RegistryHelper {
      * object to be store you should instead use the addOrReplace method.
      * @param type the type of the object to store
      * @param key the key of the object to store within the type
-     * @param arguments a map of key-value pairs representing the object to store
+     * @param arguments a Map of key-value pairs representing the object to store
      */
     public void add(String type, String key, Map<String, Object>... arguments) {
         context.getRegistry().add(type, key, arguments);
@@ -87,7 +87,7 @@ public class RegistryHelper {
      * stored using the specified type and key. If the object already exists, it will be replaced by the new one.
      * @param type the type of the object to store
      * @param key the key of the object to store within the type
-     * @param arguments a map of key-value pairs representing the object to store
+     * @param arguments a Map of key-value pairs representing the object to store
      */
     public void addOrReplace(String type, String key, Map<String, Object>... arguments) {
         context.getRegistry().addOrReplace(type, key, arguments);
