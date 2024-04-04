@@ -63,6 +63,9 @@ export const TestUrl = () => {
             <div data-testid="path_not_exists">
                 <a href={buildUrl({path: '/sites/mySiteNotExists/home'}, renderContext, currentResource)}>Using a path of node that does not exists</a>
             </div>
+            <div data-testid="no_weakref">
+                <a href={buildUrl({path: null})}>No weakref</a>
+            </div>
         </>
     )
 }
