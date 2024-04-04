@@ -27,10 +27,16 @@ import org.jahia.services.securityfilter.PermissionService;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.*;
 
+/**
+ * Helper class to execute GraphQL queries. It provides both synchronous and asynchronous methods to execute queries.
+ */
 public class GQLHelper {
     private final ContextProvider context;
     private HttpServlet servlet;
@@ -39,6 +45,20 @@ public class GQLHelper {
         this.context = context;
     }
 
+    /**
+     * Execute an asynchronous GraphQL query using the specified parameters and return a Promise that will be resolved with the result
+     * @param parameters the parameters can contain the following keys:
+     *                   <ul>
+     *                   <li> query (string) : the GraphQL query to be executed </li>
+     *                   <li> operationName (string) : the GraphQL operation name </li>
+     *                   <li> variables: the variables as a JSON string or a Map&lt;String, Object&gt; </li>
+     *                   <li> renderContext (RenderContext) : the render context
+     *                   if the renderContext is null, a request will be created with the parameters that were passed,
+     *                   otherwise the request from the renderContext will be used. </li>
+     *                   </ul>
+     * @return a Promise that will be resolved with the result of the query as a JSON structure or with an error message
+     * if there was an error executing the query
+     */
     public Promise executeQuery(Map parameters) {
         return (onResolve, onReject) -> {
             // convert JSON string to Map
@@ -51,6 +71,21 @@ public class GQLHelper {
         };
     }
 
+    /**
+     * Execute a synchronous GraphQL query using the specified parameters and return the result
+     * @param parameters the parameters can contain the following keys:
+     *                   <ul>
+     *                   <li> query (string) : the GraphQL query to be executed </li>
+     *                   <li> operationName (string) : the GraphQL operation name </li>
+     *                   <li> variables: the variables as a JSON string or a Map&lt;String, Object&gt; </li>
+     *                   <li> renderContext (RenderContext) : the render context
+     *                   if the renderContext is null, a request will be created with the parameters that were passed,
+     *                   otherwise the request from the renderContext will be used. </li>
+     *                   </ul>
+     * @return the result of the query as a JSON structure
+     * @throws ServletException
+     * @throws IOException
+     */
     public Value executeQuerySync(Map parameters) throws ServletException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> params = new HashMap<>();

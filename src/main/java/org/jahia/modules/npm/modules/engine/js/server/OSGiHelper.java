@@ -34,6 +34,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Helper class to make it possible to access OSGi bundle resources from the JavaScript engine
+ */
 public class OSGiHelper {
     private static final Logger logger = LoggerFactory.getLogger(OSGiHelper.class);
 
@@ -51,6 +54,11 @@ public class OSGiHelper {
         this.templateManagerService = templateManagerService;
     }
 
+    /**
+     * Retrieve the Osgi Bundle by symbolic name
+     * @param symbolicName the symbolic name for the bundle
+     * @return if successful, the bundle, otherwise null
+     */
     public Bundle getBundle(String symbolicName) {
         JahiaTemplatesPackage packageById = templateManagerService.getTemplatePackageById(symbolicName);
         if (packageById != null) {
@@ -59,6 +67,14 @@ public class OSGiHelper {
         return null;
     }
 
+    /**
+     * Load a resource from an OSGi bundle
+     * @param bundle the bundle to load the resource from
+     * @param path the path to the resource in the bundle
+     * @param optional if false an error message will be logged if the resource is not found, otherwise null will be returned
+     * @return the content of the resource if it was found, otherwise null
+     * @throws RenderException
+     */
     public String loadResource(Bundle bundle, String path, boolean optional) throws RenderException {
         String result = GraalVMEngine.loadResource(bundle, path);
         if (!optional && result == null) {
@@ -69,6 +85,13 @@ public class OSGiHelper {
         return result;
     }
 
+    /**
+     * Load a properties resource from an OSGi bundle
+     * @param bundle the bundle to load the resource from
+     * @param path the path to the resource in the bundle
+     * @return A Map&lt;String,String&gt; containing the properties
+     * @throws RenderException
+     */
     public ProxyObject loadPropertiesResource(Bundle bundle, String path) throws RenderException {
         URL url = bundle.getResource(path);
         if (url != null) {
