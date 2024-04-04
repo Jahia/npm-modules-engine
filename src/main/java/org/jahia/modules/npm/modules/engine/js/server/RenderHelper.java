@@ -23,7 +23,6 @@ import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.js.mock.MockBodyContent;
-import org.jahia.modules.npm.modules.engine.js.mock.MockJspWriter;
 import org.jahia.modules.npm.modules.engine.js.mock.MockPageContext;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.JSNodeMapper;
@@ -48,12 +47,14 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Helper class to provide rendering functions to the Javascript engine
+ */
 public class RenderHelper {
     private static final Logger logger = LoggerFactory.getLogger(RenderHelper.class);
 
@@ -74,19 +75,47 @@ public class RenderHelper {
         return recursiveProxyMap(JSNodeMapper.toJSNode(node, includeChildren, includeDescendants, includeAllTranslations));
     }
 
+    /**
+     * Get the render parameters for the given resource
+     * @param resource the resource for which to retrieve the render parameters
+     * @return a Map&lt;String,Object&gt; containing the render parameters
+     */
     public ProxyObject getRenderParameters(Resource resource) {
         Map<String, Object> moduleParams = new HashMap<>(resource.getModuleParams());
         return recursiveProxyMap(moduleParams);
     }
 
+    /**
+     * Does a URL encoding of the <code>path</code>. The characters that
+     * don't need encoding are those defined 'unreserved' in section 2.3 of
+     * the 'URI generic syntax' RFC 2396. Not the entire path string is escaped,
+     * but every individual part (i.e. the slashes are not escaped).
+     * @param path the path to encode
+     * @return a String containing the escaped path
+     * @throws NullPointerException if <code>path</code> is <code>null</code>.
+     */
     public String escapePath(String path) {
         return Text.escapePath(path);
     }
 
+    /**
+     * Find the first displayable node in the given node's hierarchy. A displayable node is a node that has a content
+     * or page template associated with it.
+     * @param node the node at which to start the resolution
+     * @param renderContext the current render context
+     * @param contextSite the site in which to resolve the template
+     * @return the first displayable {@link JCRNodeWrapper} found in the hierarchy
+     */
     public JCRNodeWrapper findDisplayableNode(JCRNodeWrapper node, RenderContext renderContext, JCRSiteNode contextSite) {
         return JCRContentUtils.findDisplayableNode(node, renderContext, contextSite);
     }
 
+    /**
+     * Returns the node which corresponds to the bound component of the j:bindedComponent property in the specified node.
+     * @param node the node to get the bound component for
+     * @param context current render context
+     * @return the bound {@link JCRNodeWrapper}
+     */
     public JCRNodeWrapper getBoundNode(JCRNodeWrapper node, RenderContext context) {
         return Functions.getBoundComponent(node, context, "j:bindedComponent");
     }
@@ -188,6 +217,47 @@ public class RenderHelper {
         }
     }
 
+    /**
+     * Render a tag that adds resources to the page. Resources might for example be CSS files, Javascript files or inline
+     * @param attr may contain the following:
+     *             <ul>
+     *             <li> insert (boolean) : If true, the resource will be inserted into the document. Typically used
+     *             for on-demand loading of resources. </li>
+     *             <li> async (boolean) : If true, the resource will be loaded asynchronously. For scripts, this means
+     *             the script
+     *             will be executed as soon as it's available, without blocking the rest of the page. </li>
+     *             <li> defer (boolean) : If true, the resource will be deferred, i.e., loaded after the document
+     *             has been parsed.
+     *             For scripts, this means the script will not be executed until after the page has loaded. </li>
+     *             <li> type (string) : The type of the resource. This could be 'javascript' for .js files, 'css' for
+     *             .css files, etc.
+     *             The type will be used to resolve the directory in the module where the resources are located. For example
+     *             for the 'css' type it will look for the resources in the css directory of the module. </li>
+     *             <li> resources (string) : The path to the resource file, relative to the module. It is also allowed to
+     *             specify multiple resources by separating them with commas. It is also allowed to use absolute URLs to
+     *             include remote resources. </li>
+     *             <li> inlineResource (string) : Inline HTML that markup will be considered as a resource. </li>
+     *             <li> title (string) : The title of the resource. This is typically not used for scripts or stylesheets,
+     *             but may be used for other types of resources. </li>
+     *             <li> key (string) : A unique key for the resource. This could be used to prevent duplicate resources
+     *             from being added to the document. </li>
+     *             <li> targetTag (string): The HTML tag where the resource should be added. This could be 'head' for
+     *             resources that should be added to the &lt;head&gt; tag, 'body' for resources that should be added to
+     *             the &lt;body&gt; tag, etc.</li>
+     *             <li> rel (string) : The relationship of the resource to the document. This is typically 'stylesheet'
+     *             for CSS files. </li>
+     *             <li> media (string) : The media for which the resource is intended. This is typically used for CSS
+     *             files, with values like 'screen', 'print', etc. </li>
+     *             <li> condition (string) : A condition that must be met for the resource to be loaded. This could be
+     *             used for conditional comments in IE, for example.</li>
+     *             </ul>
+     * @param renderContext the current rendering context
+     * @return a String containing the rendered HTML tags for the provided resources.
+     * @throws IllegalAccessException if the underlying tag cannot be accessed
+     * @throws InvocationTargetException if the underlying tag cannot be invoked
+     * @throws JspException if the underlying tag throws a JSP exception
+     * @throws IOException if the underlying tag throws an IO exception
+     */
     public String addResources(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
         if (attr.containsKey("inlineResource")){
             attr.put("body", attr.get("inlineResource").toString());
@@ -196,6 +266,23 @@ public class RenderHelper {
         return renderTag(new AddResourcesTag(), attr, renderContext);
     }
 
+    /**
+     * Add a cache dependency to the current resource. This will be used to flush the current resource when the
+     * dependencies are modified.
+     * @param attr may be the following:
+     *             <ul>
+     *             <li> node (JCRNodeWrapper) : The node to add as a dependency. </li>
+     *             <li> uuid (String) : The UUID of the node to add as a dependency. </li>
+     *             <li> path (String) : The path of the node to add as a dependency. </li>
+     *             <li> flushOnPathMatchingRegexp (String) : A regular expression that will be used to flush the cache
+     *             when the path of the modified nodes matches the regular expression. </li>
+     *             </ul>
+     * @param renderContext the current rendering context
+     * @throws IllegalAccessException if the underlying tag cannot be accessed
+     * @throws InvocationTargetException if the underlying tag cannot be invoked
+     * @throws JspException if the underlying tag throws a JSP exception
+     * @throws IOException if the underlying tag throws an IO exception
+     */
     public void addCacheDependency(Map<String, Object> attr, RenderContext renderContext) throws IllegalAccessException, InvocationTargetException, JspException, IOException {
         renderTag(new AddCacheDependencyTag(), attr, renderContext);
     }
