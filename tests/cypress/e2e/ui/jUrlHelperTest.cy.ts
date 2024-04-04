@@ -167,7 +167,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -243,7 +250,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -325,8 +339,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attributeShouldNotExists: true,
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -402,8 +422,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attributeShouldNotExists: true,
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -484,7 +510,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -550,7 +583,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -631,8 +671,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attributeShouldNotExists: true,
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
@@ -698,8 +744,14 @@ describe('Test on url helper', () => {
             {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
-                attributeShouldNotExists: true,
-                attribute: 'href'
+                attribute: 'href',
+                expectedURL: '#'
+            },
+            {
+                dataTestId: 'no_weakref',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '#'
             }
         ]);
 
