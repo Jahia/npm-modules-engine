@@ -33,8 +33,10 @@
     <description>This is the engine allowing NPM modules to run on a Jahia server.</description>
 
     <scm>
-        <connection>scm:dummy:uri</connection>
-        <developerConnection>scm:dummy:uri</developerConnection>
+        <connection>scm:git:git@github.com:Jahia/npm-modules-engine.git</connection>
+        <developerConnection>scm:git:git@github.com:Jahia/npm-modules-engine.git</developerConnection>
+        <url>scm:git:git@github.com:Jahia/npm-modules-engine.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
