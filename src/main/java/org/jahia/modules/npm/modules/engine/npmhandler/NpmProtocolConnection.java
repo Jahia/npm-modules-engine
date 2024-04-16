@@ -30,7 +30,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarOutputStream;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 
@@ -64,52 +63,44 @@ public class NpmProtocolConnection extends URLConnection {
     public InputStream getInputStream() throws IOException {
         connect();
 
+        logger.info("Handling JS module using npm protocol wrapper for package: {}", wrappedUrl);
         File outputDir = Files.createTempDirectory("npm.").toFile();
         TarUtils.unTar(new GZIPInputStream(wrappedUrl.openStream()), outputDir);
-
         Properties instructions = new Properties();
-
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        Collection<String> extensions = new HashSet<>();
 
-        File mergedDefinitionFile = null;
         File packageDir = new File(outputDir, "package");
         Collection<File> files = FileUtils.listFiles(packageDir, null, true);
         try (JarOutputStream jos = new JarOutputStream(byteArrayOutputStream)) {
             Set<ZipEntry> processedImages = new HashSet<>();
-            // first we get all the files that are not definitions
-            List<File> filesWithMergedDefinitions = files.stream().filter(file -> !file.getName().endsWith(".cnd")).collect(Collectors.toList());
-            // now we retrieve the merged definition file
-            mergedDefinitionFile = getMergedDefinitionFile(files, packageDir);
-            if (mergedDefinitionFile != null) {
-                filesWithMergedDefinitions.add(mergedDefinitionFile);
-            }
-            for (File file : filesWithMergedDefinitions) {
-                boolean shouldCopyFile = true;
-                String path = packageDir.toURI().relativize(file.toURI()).getPath();
 
-                if (path.equals("package.json")) {
+            // Process files of the packages
+            List<File> cndFiles = new ArrayList<>();
+            for (File file : files) {
+                if (file.getName().endsWith(".cnd")) {
+                    // Postpone processing of CND files
+                    cndFiles.add(file);
+                    continue;
+                }
+
+                // Calculate relative path of the file in the package
+                String packageRelativePath = packageDir.toURI().relativize(file.toURI()).getPath();
+
+                // Extract instructions from package.json
+                if (packageRelativePath.equals("package.json")) {
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, Object> properties = mapper.readValue(file, Map.class);
                     Map<String, Object> jahiaProps = (Map<String, Object>) properties.getOrDefault("jahia", new HashMap<>());
-
                     instructions.putAll(generateInstructions(properties, jahiaProps));
                 }
-                if (path.startsWith("jahia-views/")) {
-                    path = path.substring("jahia-views/".length());
-                    if (file.isFile()) {
-                        extensions.add(StringUtils.substringAfterLast(file.getName(), "."));
-                    }
-                }
 
-                if (mergedDefinitionFile != null && path.equals(mergedDefinitionFile.getPath())) {
-                    jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
-                } else if (path.equals("import.xml")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/" + path));
-                } else if (path.startsWith("settings/")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(path, "settings/")));
-                } else if (path.startsWith("components") && path.endsWith(".png")) {
-                    String[] parts = StringUtils.split(path, "/");
+                // Copy file path (try to detect good path for file in the final package jar.)
+                if (packageRelativePath.equals("import.xml")) {
+                    jos.putNextEntry(new ZipEntry("META-INF/" + packageRelativePath));
+                } else if (packageRelativePath.startsWith("settings/")) {
+                    jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(packageRelativePath, "settings/")));
+                } else if (packageRelativePath.startsWith("components") && packageRelativePath.endsWith(".png")) {
+                    String[] parts = StringUtils.split(packageRelativePath, "/");
                     String nodeTypeName = parts[2];
                     if (file.getName().equals(nodeTypeName + ".icon.png")) {
                         jos.putNextEntry(new ZipEntry("icons/" + parts[1] + "_" + nodeTypeName + ".png"));
@@ -119,31 +110,57 @@ public class NpmProtocolConnection extends URLConnection {
                             jos.putNextEntry(entry);
                             processedImages.add(entry);
                         } else {
-                            shouldCopyFile = false;
                             logger.warn("File with the name {} already copied into the /images folder, the current file won't be copied", file.getName());
+                            continue;
                         }
                     }
                 } else {
-                    jos.putNextEntry(new ZipEntry(path));
+                    jos.putNextEntry(new ZipEntry(packageRelativePath));
                 }
-                if (shouldCopyFile) {
-                    try (FileInputStream input = new FileInputStream(file)) {
+
+                // Copy file content
+                try (FileInputStream input = new FileInputStream(file)) {
+                    IOUtils.copy(input, jos);
+                }
+            }
+
+            // Process CND files (merging them in a single file if necessary)
+            if (!cndFiles.isEmpty()) {
+                if (cndFiles.size() == 1) {
+                    // Single cnd file, just copy it, no need for merge
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Single CND file detected in the package.");
+                    }
+                    File cndFile = cndFiles.get(0);
+                    jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
+                    try (FileInputStream input = new FileInputStream(cndFile)) {
                         IOUtils.copy(input, jos);
+                    }
+                } else {
+                    // Multiple cnd files, merge them
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Multiple CND files detected in the package, they will be merged into a single file");
+                    }
+                    File mergedDefinitionFile = mergeDefinitionFiles(cndFiles, packageDir);
+                    if (mergedDefinitionFile != null) {
+                        jos.putNextEntry(new ZipEntry("META-INF/definitions.cnd"));
+                        try (FileInputStream input = new FileInputStream(mergedDefinitionFile)) {
+                            IOUtils.copy(input, jos);
+                        } finally {
+                            FileUtils.delete(mergedDefinitionFile);
+                        }
                     }
                 }
             }
+
         } catch (Exception e) {
-            logger.error("Cannot transform npm-module", e);
+            logger.error("An error occurred during JS module transformation", e);
         }
+
         FileUtils.deleteDirectory(outputDir);
-        if (mergedDefinitionFile != null) {
-            FileUtils.delete(mergedDefinitionFile);
+        if (logger.isDebugEnabled()) {
+            logger.debug("JS module transformed to bundle using instructions: {}", instructions);
         }
-
-        if (!extensions.isEmpty()) {
-            instructions.put("Jahia-Module-Scripting-Views", StringUtils.join(extensions, ","));
-        }
-
         return BndUtils.createBundle(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()), instructions, wrappedUrl.toExternalForm());
     }
 
@@ -151,7 +168,6 @@ public class NpmProtocolConnection extends URLConnection {
         Properties instructions = new Properties();
 
         // First let's setup Bundle headers
-
         instructions.put("Bundle-Category", jahiaProps.getOrDefault("category", "jahia-npm-module"));
         setIfPresent(properties, "description", instructions, "Bundle-Description");
         String name = (String) properties.get("name");
@@ -164,7 +180,6 @@ public class NpmProtocolConnection extends URLConnection {
         setIfPresent(properties, "license", instructions, "Bundle-License");
 
         // Next lets setup Jahia headers
-
         instructions.put("Jahia-Depends", jahiaProps.getOrDefault("module-dependencies", "default"));
         setIfPresent(jahiaProps, "deploy-on-site", instructions, "Jahia-Deploy-On-Site");
         instructions.put("Jahia-GroupId", jahiaProps.getOrDefault("group-id", "org.jahia.npm"));
@@ -186,18 +201,19 @@ public class NpmProtocolConnection extends URLConnection {
         }
     }
 
-    private File getMergedDefinitionFile(Collection<File> npmFiles, File packageDir) {
-        List<File> definitionsFiles = npmFiles.stream().filter(file -> file.getName().endsWith(".cnd")).collect(Collectors.toList());
+    private File mergeDefinitionFiles(Collection<File> cndFiles, File packageDir) {
         Set<String> namespaces = new HashSet<>();
         StringBuilder lines = new StringBuilder();
 
-        definitionsFiles.forEach(definitionFile -> {
-            lines.append(System.getProperty("line.separator"));
+        cndFiles.forEach(definitionFile -> {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Merging CND file: {}", definitionFile);
+            }
+            lines.append(System.lineSeparator());
             lines.append("// From ");
-            String definitionFilePath = packageDir.toURI().relativize(definitionFile.toURI()).getPath();
-            lines.append(definitionFilePath);
+            lines.append(packageDir.toURI().relativize(definitionFile.toURI()).getPath());
             lines.append(" : ");
-            lines.append(System.getProperty("line.separator"));
+            lines.append(System.lineSeparator());
             try (BufferedReader reader = new BufferedReader(new FileReader(definitionFile.getPath()))) {
                 String line = reader.readLine();
 
@@ -205,17 +221,17 @@ public class NpmProtocolConnection extends URLConnection {
                     if (line.startsWith("<")) {
                         namespaces.add(line);
                     } else if (line.isBlank()) {
-                        lines.append(System.getProperty("line.separator"));
+                        lines.append(System.lineSeparator());
                     } else {
                         lines.append(line);
-                        lines.append(System.getProperty("line.separator"));
+                        lines.append(System.lineSeparator());
                     }
                     line = reader.readLine();
                 }
             } catch (IOException e) {
                 logger.error("Error reading definition lines from {}", definitionFile, e);
             }
-            lines.append(System.getProperty("line.separator"));
+            lines.append(System.lineSeparator());
         });
 
         return buildDefinitionFile(namespaces, lines.toString());
@@ -232,7 +248,7 @@ public class NpmProtocolConnection extends URLConnection {
         try (FileWriter writer = new FileWriter(mergedDefinitions);
              BufferedWriter bw = new BufferedWriter(writer)) {
 
-            String mergedNamespaces = namespaces.stream().reduce("", (partialString, element) -> partialString + element + System.getProperty("line.separator"));
+            String mergedNamespaces = namespaces.stream().reduce("", (partialString, element) -> partialString + element + System.lineSeparator());
             bw.write(mergedNamespaces);
             bw.write(allDefinitionLines);
             if (logger.isDebugEnabled()) {
@@ -242,6 +258,5 @@ public class NpmProtocolConnection extends URLConnection {
             logger.error("Error while generating definitions.cnd file", e);
         }
         return mergedDefinitions;
-
     }
 }
