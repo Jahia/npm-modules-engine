@@ -21,10 +21,14 @@ import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.Promise;
 import org.jahia.osgi.BundleUtils;
+import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.securityfilter.PermissionService;
+import org.jahia.services.usermanager.JahiaUser;
+import org.jahia.services.usermanager.JahiaUserManagerService;
 
 import javax.inject.Inject;
+import javax.jcr.RepositoryException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
@@ -86,7 +90,7 @@ public class GQLHelper {
      * @throws ServletException
      * @throws IOException
      */
-    public Value executeQuerySync(Map parameters) throws ServletException, IOException {
+    public Value executeQuerySync(Map parameters) throws ServletException, IOException, RepositoryException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> params = new HashMap<>();
         params.put("query", (String) parameters.get("query"));
@@ -99,8 +103,16 @@ public class GQLHelper {
             }
         }
 
-        PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
-        permissionService.addScopes(Collections.singleton("graphql"), null);
+        JahiaUser currentUser = JCRSessionFactory.getInstance().getCurrentUserSession().getUser();
+        // Switch to root to register the scope
+        try {
+            JCRSessionFactory.getInstance().setCurrentUser(JahiaUserManagerService.getInstance().lookupRootUser().getJahiaUser());
+            PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
+            permissionService.addScopes(Collections.singleton("graphql"), null);
+        } finally {
+            // Restore the current user
+            JCRSessionFactory.getInstance().setCurrentUser(currentUser);
+        }
 
         RenderContext renderContext = (RenderContext) parameters.get("renderContext");
         HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
