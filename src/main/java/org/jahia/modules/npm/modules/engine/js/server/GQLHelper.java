@@ -20,11 +20,14 @@ import org.graalvm.polyglot.Value;
 import org.jahia.modules.npm.modules.engine.js.injector.OSGiService;
 import org.jahia.modules.npm.modules.engine.jsengine.ContextProvider;
 import org.jahia.modules.npm.modules.engine.jsengine.Promise;
-import org.jahia.osgi.BundleUtils;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.securityfilter.PermissionService;
+import org.jahia.services.securityfilter.ScopeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.jcr.RepositoryException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
@@ -38,8 +41,12 @@ import java.util.*;
  * Helper class to execute GraphQL queries. It provides both synchronous and asynchronous methods to execute queries.
  */
 public class GQLHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(GQLHelper.class);
+
     private final ContextProvider context;
     private HttpServlet servlet;
+    private PermissionService permissionService;
 
     public GQLHelper(ContextProvider context) {
         this.context = context;
@@ -86,7 +93,7 @@ public class GQLHelper {
      * @throws ServletException
      * @throws IOException
      */
-    public Value executeQuerySync(Map parameters) throws ServletException, IOException {
+    public Value executeQuerySync(Map parameters) throws ServletException, IOException, RepositoryException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> params = new HashMap<>();
         params.put("query", (String) parameters.get("query"));
@@ -99,8 +106,22 @@ public class GQLHelper {
             }
         }
 
-        PermissionService permissionService = BundleUtils.getOsgiService(PermissionService.class, null);
-        permissionService.addScopes(Collections.singleton("graphql"), null);
+        Collection<ScopeDefinition> currentScopes = permissionService.getCurrentScopes();
+        if (currentScopes == null || currentScopes.stream().noneMatch(scope -> "graphql".equals(scope.getScopeName()))) {
+            // Inject graphql scope if missing
+            Optional<ScopeDefinition> graphqlScope = permissionService.getAvailableScopes().stream().filter(scope -> scope.getScopeName().equals("graphql")).findFirst();
+            if (graphqlScope.isPresent()) {
+                Set<ScopeDefinition> newScopes = new HashSet<>();
+                if (currentScopes != null) {
+                    newScopes.addAll(currentScopes);
+                }
+                newScopes.add(graphqlScope.get());
+                permissionService.setCurrentScopes(newScopes);
+            } else {
+                // Warn about missing scope
+                logger.warn("Unable to find graphql scope in available scopes");
+            }
+        }
 
         RenderContext renderContext = (RenderContext) parameters.get("renderContext");
         HttpServletRequest req = renderContext == null ? new HttpServletRequestMock(params) : new HttpServletRequestWrapper(renderContext.getRequest()) {
@@ -114,6 +135,12 @@ public class GQLHelper {
         HttpServletResponseMock responseMock = new HttpServletResponseMock();
         servlet.service(req, responseMock);
         return context.getContext().eval("js", "(" + ((ServletOutputStreamMock) responseMock.getOutputStream()).getContent() + ")");
+    }
+
+    @Inject
+    @OSGiService(service = PermissionService.class)
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
     }
 
     @Inject
