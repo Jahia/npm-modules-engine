@@ -15,7 +15,7 @@ jobs:
     # downloading the entire world when building.
     # More on https://github.com/Jahia/cimg-mvn-cache
     container:
-      image: jahia/cimg-mvn-cache:ga_cimg_openjdk_8.0.312-node
+      image: jahia/cimg-mvn-cache:ga_cimg_openjdk_11.0.20-node
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -33,7 +33,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GH_SSH_PRIVATE_KEY_JAHIACI }}
 
-      - uses: jahia/jahia-modules-action/release@v2-legacy
+      - uses: jahia/jahia-modules-action/release@v2
         name: Release Module
         with:
           github_slug: Jahia/npm-modules-engine
