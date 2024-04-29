@@ -88,8 +88,21 @@ public class GraalVMEngine {
         }
     }
 
+    private boolean isJavaScriptModuleInstalled() {
+        try (Context context = Context.create()) {
+            return context.getEngine().getLanguages().containsKey("js");
+
+        }
+    }
+
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
+        String vmVendor = System.getProperty("java.vm.vendor");
+        if(!vmVendor.contains("GraalVM")) {
+            logger.warn("We detected npm-modules-engine was running on your environment with {}, GraalVM is required when using NPM Modules in production", vmVendor);
+        } else if(!isJavaScriptModuleInstalled()) {
+            logger.error("We detected npm-modules-engine was running on your environment with GraalVM but the js extension was not installed. You can install it by running: gu install js");
+        }
         logger.debug("GraalVMEngine.activate");
         this.bundleContext = bundleContext;
         try {
