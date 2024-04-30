@@ -98,6 +98,9 @@ public class GraalVMEngine {
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
         String vmVendor = System.getProperty("java.vm.vendor");
+        if(vmVendor == null) {
+            vmVendor = "Unknown";
+        }
         if(!vmVendor.contains("GraalVM")) {
             logger.warn("We detected npm-modules-engine was running on your environment with {}, GraalVM is required when using NPM Modules in production", vmVendor);
         } else if(!isJavaScriptModuleInstalled()) {
