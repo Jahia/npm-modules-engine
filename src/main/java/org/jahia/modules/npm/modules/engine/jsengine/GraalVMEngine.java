@@ -88,32 +88,17 @@ public class GraalVMEngine {
         }
     }
 
-    private boolean isJavaScriptModuleInstalled() {
-        try (Context context = Context.create()) {
-            return context.getEngine().getLanguages().containsKey("js");
-
-        }
-    }
-
     @Activate
     public void activate(BundleContext bundleContext, Map<String, ?> props) {
-        String vmVendor = System.getProperty("java.vm.vendor");
-        if(vmVendor == null) {
-            vmVendor = "Unknown";
-        }
-        if(!vmVendor.contains("GraalVM")) {
-            logger.warn("We detected npm-modules-engine was running on your environment with {}, GraalVM is required when using NPM Modules in production", vmVendor);
-        } else if(!isJavaScriptModuleInstalled()) {
-            logger.error("We detected npm-modules-engine was running on your environment with GraalVM but the js extension was not installed. You can install it by running: gu install js");
-        }
         logger.debug("GraalVMEngine.activate");
         this.bundleContext = bundleContext;
+
+        initialEngineCheckup();
         try {
             initScripts.put(bundleContext.getBundle(), getGraalSource(bundleContext.getBundle(), "META-INF/js/main.js"));
         } catch (IOException e) {
             logger.error("Cannot execute main init script", e);
         }
-
         Engine.Builder builder = Engine.newBuilder();
         Map<String,String> poolOptions = new HashMap<>();
         boolean experimental = props.containsKey("experimental") && Boolean.parseBoolean(props.get("experimental").toString());
@@ -179,6 +164,22 @@ public class GraalVMEngine {
             logger.error("Cannot get resource: " + path, e);
         }
         return null;
+    }
+
+    private void initialEngineCheckup() {
+        // check VM
+        String vmVendor = System.getProperty("java.vm.vendor", "Unknown");
+        if (!vmVendor.contains("GraalVM")) {
+            logger.warn("NPM Modules Engine requires GraalVM for production usage, detected {}.", vmVendor);
+            return;
+        }
+
+        // Check if the 'js' extension is installed
+        try (Context context = Context.create()) {
+            if (!context.getEngine().getLanguages().containsKey(JS)) {
+                logger.error("NPM Modules Engine detected GraalVM, but the 'js' extension is not installed. You can install it by running: gu install js");
+            }
+        }
     }
 
     private void initializePool(Map<String,String> poolOptions) {
