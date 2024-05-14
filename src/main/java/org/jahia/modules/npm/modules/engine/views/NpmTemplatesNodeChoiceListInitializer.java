@@ -95,13 +95,19 @@ public class NpmTemplatesNodeChoiceListInitializer implements ChoiceListInitiali
 
             List<ChoiceListValue> newValues = addTemplates(site, session, nodetype, defaultTemplate, epd, locale, context);
 
-            String templatesTitle = Messages.getInternal("org.jahia.services.content.nodetypes.initializers.templates.title", locale);
-            List<String> displayNames = values.stream().map(ChoiceListValue::getDisplayName).collect(Collectors.toList());
-            int indexOfTemplatesTitle = displayNames.indexOf(templatesTitle);
-            if(indexOfTemplatesTitle != -1) {
-                values.addAll(indexOfTemplatesTitle+1,newValues);
-            }  else {
-                values.addAll(0,newValues);
+            if (values.isEmpty()) {
+                values.addAll(0, newValues);
+            } else {
+                // in case of page mode, the templates are rendered in a separate subsection
+                String templatesTitle = Messages.getInternal("org.jahia.services.content.nodetypes.initializers.templates.title", locale);
+                int insertIndex = 0;
+                for (int i = 0; i < values.size(); i++) {
+                    if (templatesTitle.equals(values.get(i).getDisplayName())) {
+                        insertIndex = i + 1;
+                        break;
+                    }
+                }
+                values.addAll(insertIndex, newValues);
             }
         } catch (RepositoryException e) {
             logger.error("Cannot get template", e);
