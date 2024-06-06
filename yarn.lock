@@ -1497,9 +1497,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/js-server-core@file:.yalc/@jahia/js-server-core::locator=npm-modules-engine%40workspace%3A.":
-  version: 0.0.7
-  resolution: "@jahia/js-server-core@file:.yalc/@jahia/js-server-core#.yalc/@jahia/js-server-core::hash=04f0ae&locator=npm-modules-engine%40workspace%3A."
+"@jahia/js-server-core@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@jahia/js-server-core@npm:0.0.4"
   dependencies:
     "@apollo/client": "npm:^3.5.5"
     dayjs: "npm:^1.10.4"
@@ -1510,7 +1510,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
     react-i18next: "npm:^14.1.0"
-  checksum: 10c0/964186a79e5fa1c384944b94519b0a1cdb1673d4f4dd3d6d3212664e7f2eb4c09908b6c8c365c9084e87594316b959269098dee462ef96d26bc98aac30667406
+  checksum: 10c0/045dbe7dd35bddc475d3e9fac59991248415871638b94801f561857acae9a9dca1731d7dd606391e1695e8a3ffd36e60e001b41f892090d00d3ae95a61fcf407
   languageName: node
   linkType: hard
 
@@ -6120,7 +6120,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.23.2"
     "@babel/preset-react": "npm:^7.22.15"
     "@jahia/eslint-config": "npm:^1.1.0"
-    "@jahia/js-server-core": "file:.yalc/@jahia/js-server-core"
+    "@jahia/js-server-core": "npm:^0.0.4"
     "@jahia/ui-extender": "npm:^1.0.1"
     babel-loader: "npm:^8.2.3"
     dayjs: "npm:^1.10.4"
