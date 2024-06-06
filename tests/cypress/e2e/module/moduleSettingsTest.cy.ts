@@ -37,7 +37,7 @@ describe('Check that NPM module settings (UI extensions, rules, configs) are cor
         cy.logout();
     });
 
-    // it('Ensure Jahia rule is correctly registered and working', function () {
+    // It('Ensure Jahia rule is correctly registered and working', function () {
     //     cy.login();
     //     cy.visit('/cms/render/default/en/sites/npmTestSite/home/testModuleSettings.html');
     //     cy.get('div[data-testid="testRule_triggerProp"]').should('contain', 'Trigger prop set');
