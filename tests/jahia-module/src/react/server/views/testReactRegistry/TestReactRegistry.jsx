@@ -2,7 +2,7 @@ import React from 'react';
 import {server} from '@jahia/js-server-core';
 
 export const TestReactRegistry = () => {
-    const testAreasName = server.registry.get('view', 'jahia-npm-module-example_view_npmExample:testJAreas_react').name;
+    const testAreasName = server.registry.get('view', 'jahia-npm-module-example_view_npmExample:testJAreas_default').name;
     const testReactRegistryName = server.registry.get('view', '@@@customid//for-testing@@@_view_npmExample:testReactRegistry_default').name;
     // We test non existant entries to make sure that the ProxyObject is not created by the RegistryHelper in this case
     const nonExistantComponent = server.registry.get('view', '@@@thisobjectdoesnotexist@@@');

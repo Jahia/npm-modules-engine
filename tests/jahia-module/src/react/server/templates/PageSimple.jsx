@@ -53,7 +53,7 @@ export const PageSimple = () => {
 
 PageSimple.jahiaComponent = {
     nodeType: 'jnt:page',
-    name: 'simpleReact',
-    displayName: 'Simple page (react)',
+    name: 'simple',
+    displayName: 'Simple page',
     componentType: 'template'
 }

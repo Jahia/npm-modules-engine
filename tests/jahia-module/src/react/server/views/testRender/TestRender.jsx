@@ -35,7 +35,7 @@ export const TestRender = () => {
             <div data-testid="component-npm-json-node-option" className="case">
                     <Render
                         advanceRenderingConfig={'OPTION'}
-                        view={'subReact'}
+                        view={'sub'}
                         content={{
                                 "name": "npmOption",
                                 "nodeType": "npmExample:testJRender",
@@ -48,7 +48,7 @@ export const TestRender = () => {
             <div data-testid="component-npm-node-include" className="case">
                     <Render
                         advanceRenderingConfig={'INCLUDE'}
-                        view={'subReact'}/>
+                        view={'sub'}/>
             </div>
             Render a text child node :
             <div data-testid="component-text-child-node" className="case">
@@ -58,7 +58,7 @@ export const TestRender = () => {
             Render a JSON Node with mixins :
             <div data-testid="component-json-node-with-mixin" className="case">
                     <Render
-                        view={'taggedReact'}
+                        view={'tagged'}
                         content={{
                                 "name": "viewWithMixin",
                                 "nodeType": "npmExample:testJRender",
@@ -71,7 +71,7 @@ export const TestRender = () => {
             Render a JSON Node with parameters :
             <div data-testid="component-json-node-with-parameters" className="case">
                     <Render
-                        view={'parametersReact'}
+                        view={'parameters'}
                         content={{
                                 "name": "viewWithParameters",
                                 "nodeType": "npmExample:testJRender",
@@ -92,7 +92,7 @@ export const TestRender = () => {
             <div data-testid="component-npm-node-with-parameters" className="case">
                     <Render
                         advanceRenderingConfig={'INCLUDE'}
-                        view={'parametersReact'}
+                        view={'parameters'}
                         parameters={{
                                 "stringParam": "stringValue",
                                 "stringParam2": "stringValue2",
@@ -116,7 +116,7 @@ export const TestRender = () => {
 
 TestRender.jahiaComponent = {
         nodeType: 'npmExample:testJRender',
-        name: 'react',
+        name: 'default',
         displayName: 'test Render (parameters react)',
         componentType: 'view'
 }

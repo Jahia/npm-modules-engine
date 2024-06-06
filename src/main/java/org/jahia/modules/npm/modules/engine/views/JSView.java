@@ -67,11 +67,6 @@ public class JSView implements View, Comparable<View> {
         return isTemplate;
     }
 
-    // TODO (if we keep only React impl): this is only relevant for handlebars templates, due to view/template name resolution based on the file name
-    //      Handlebar templates have to provide a properties file with default:true
-    //      For React it's different since component are registered in the registry manually,
-    //      a view could already use 'default' key without conflicting with a template using also 'default' as key
-    //      if at some point we keep only React impl, we could get rid of this method and the view property default=true
     public boolean isDefaultTemplate() {
         return isDefaultTemplate;
     }

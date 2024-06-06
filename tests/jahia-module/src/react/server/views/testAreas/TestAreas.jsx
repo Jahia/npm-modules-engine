@@ -62,7 +62,7 @@ export const TestAreas = () => {
 
 TestAreas.jahiaComponent = {
     nodeType: 'npmExample:testJAreas',
-    name: 'react',
+    name: 'default',
     displayName: 'test Areas (react)',
     componentType: 'view'
 }

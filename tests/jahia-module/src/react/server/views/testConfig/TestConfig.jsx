@@ -44,7 +44,7 @@ export const TestConfig = () => {
 
 TestConfig.jahiaComponent = {
     nodeType: 'npmExample:testJConfig',
-    name: 'react',
+    name: 'default',
     displayName: 'test jConfig (react)',
     componentType: 'view'
 }

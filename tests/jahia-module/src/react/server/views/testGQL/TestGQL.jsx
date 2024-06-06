@@ -27,7 +27,7 @@ export const TestGQL = () => {
 
 TestGQL.jahiaComponent = {
     nodeType: 'npmExample:testJGQL',
-    name: 'react',
+    name: 'default',
     displayName: 'test JGQL (react)',
     componentType: 'view'
 }
