@@ -35,8 +35,6 @@ public class JSView implements View, Comparable<View> {
 
     private final boolean isTemplate;
 
-    private final boolean isDefaultTemplate;
-
     private static final Logger logger = LoggerFactory.getLogger(JSView.class);
 
     public JSView(Map<String, Object> jsValues, JahiaTemplatesPackage module) {
@@ -53,7 +51,6 @@ public class JSView implements View, Comparable<View> {
             logger.warn("Unrecognized componentType '{}' for view '{}', will be considered as a view", componentType, this.getKey());
         }
         this.isTemplate = "template".equals(componentType);
-        this.isDefaultTemplate = "true".equals(properties.getProperty("default"));
 
         this.defaultProperties = new Properties();
         this.path = getModule().getBundleKey() + "/" + getRegistryKey();
@@ -65,10 +62,6 @@ public class JSView implements View, Comparable<View> {
 
     public boolean isTemplate() {
         return isTemplate;
-    }
-
-    public boolean isDefaultTemplate() {
-        return isDefaultTemplate;
     }
 
     @Override
@@ -147,13 +140,12 @@ public class JSView implements View, Comparable<View> {
                 Objects.equals(path, jsView.path) &&
                 getNodeType().equals(jsView.getNodeType()) &&
                 getTemplateType().equals(jsView.getTemplateType()) &&
-                isTemplate() == jsView.isTemplate() &&
-                isDefaultTemplate() == jsView.isDefaultTemplate();
+                isTemplate() == jsView.isTemplate();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType(), isTemplate(), isDefaultTemplate());
+        return Objects.hash(getRegistryKey(), getKey(), module, path, getNodeType(), getTemplateType(), isTemplate());
     }
 
     @Override
