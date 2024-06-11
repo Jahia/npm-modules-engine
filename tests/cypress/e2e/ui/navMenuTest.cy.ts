@@ -144,7 +144,6 @@ describe('navMenu helper test parameters', () => {
                     return;
                 }
 
-
                 assert.fail(`a menu is not suppose to be displayed with render ${menu.render}`);
             });
         });

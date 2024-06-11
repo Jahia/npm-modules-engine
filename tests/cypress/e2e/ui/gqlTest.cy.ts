@@ -26,9 +26,9 @@ describe('Test GQL', () => {
         });
     });
 
-    it(`Check GQL execution in current view`, function () {
+    it('Check GQL execution in current view', function () {
         cy.login();
-        cy.visit(`/cms/render/default/en/sites/npmTestSite/home/testJGQL.html`);
+        cy.visit('/cms/render/default/en/sites/npmTestSite/home/testJGQL.html');
         cy.get('li[data-testid="j:nodename"]').should('contain', 'test');
         cy.get('li[data-testid="jcr:title"]').should('contain', 'NPM test component');
         cy.get('li[data-testid="prop1"]').should('contain', 'prop1 value');

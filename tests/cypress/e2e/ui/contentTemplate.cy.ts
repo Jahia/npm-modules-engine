@@ -16,11 +16,11 @@ describe('Content templates resolution testsuite', () => {
                 }
             ]).then(() => {
                 addNode({
-                    parentPathOrId: `/sites/npmTestSite/home/testFindDisplayableNode/pagecontent`,
+                    parentPathOrId: '/sites/npmTestSite/home/testFindDisplayableNode/pagecontent',
                     name: 'findDisplayableContent',
                     primaryNodeType: 'npmExample:testFindDisplayableContent',
                     properties: [
-                        {name: 'target', value: `/sites/npmTestSite/home/testEvents/events/event-a`, type: 'WEAKREFERENCE'}
+                        {name: 'target', value: '/sites/npmTestSite/home/testEvents/events/event-a', type: 'WEAKREFERENCE'}
                     ]
                 });
             });
@@ -33,7 +33,7 @@ describe('Content templates resolution testsuite', () => {
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: `/sites/npmTestSite/home/testContentTemplate/pagecontent`,
+                parentPathOrId: '/sites/npmTestSite/home/testContentTemplate/pagecontent',
                 name: 'content',
                 primaryNodeType: 'npmExample:testContentTemplate'
             });
@@ -46,7 +46,7 @@ describe('Content templates resolution testsuite', () => {
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: `/sites/npmTestSite/home/testContentTemplateWithView/pagecontent`,
+                parentPathOrId: '/sites/npmTestSite/home/testContentTemplateWithView/pagecontent',
                 name: 'content',
                 primaryNodeType: 'npmExample:testContentTemplate',
                 mixins: ['jmix:renderable'],
@@ -57,7 +57,7 @@ describe('Content templates resolution testsuite', () => {
         });
     });
 
-    it(`Verify content template for jnt:event is correctly displayed`, function () {
+    it('Verify content template for jnt:event is correctly displayed', function () {
         cy.login();
         cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/testEvents/events/event-a.full.html`);
         cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testEvents/events/event-a.full.html`);
@@ -74,16 +74,16 @@ describe('Content templates resolution testsuite', () => {
         cy.logout();
     });
 
-    it(`Verify findDisplayableNode is correctly resolving jnt:event that is using a JS content template`, function () {
+    it('Verify findDisplayableNode is correctly resolving jnt:event that is using a JS content template', function () {
         cy.login();
         cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/testFindDisplayableNode.html`);
         cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testFindDisplayableNode.html`);
 
-        cy.get('p[data-testid="displayableContent"]').contains(`Found displayable content: /sites/npmTestSite/home/testEvents/events/event-a`);
+        cy.get('p[data-testid="displayableContent"]').contains('Found displayable content: /sites/npmTestSite/home/testEvents/events/event-a');
         cy.logout();
     });
 
-    it(`Test default content template is working properly when content doesn't have specific view`, function () {
+    it('Test default content template is working properly when content doesn\'t have specific view', function () {
         cy.login();
         cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testContentTemplate/pagecontent/content.html`);
         // Check template is correctly resolved:
@@ -93,7 +93,7 @@ describe('Content templates resolution testsuite', () => {
         cy.logout();
     });
 
-    it(`Test default content template is working properly when content have specific view`, function () {
+    it('Test default content template is working properly when content have specific view', function () {
         cy.login();
         cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testContentTemplateWithView/pagecontent/content.html`);
         // Check template is correctly resolved:

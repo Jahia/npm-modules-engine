@@ -17,9 +17,9 @@ describe('Error handling test during JS view execution', () => {
         });
     });
 
-    it(`Check error handling when rendering a crashing JS view`, () => {
+    it('Check error handling when rendering a crashing JS view', () => {
         cy.login();
-        cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/testCrashingView`);
+        cy.visit('/jahia/jcontent/npmTestSite/en/pages/home/testCrashingView');
         cy.iframe('[data-sel-role="page-builder-frame-active"]', {timeout: 90000, log: true}).within(() => {
             // Check that the error information is correctly displayed
             cy.get('[data-sel-role="renderingFailureViewKey"]').should('contain', 'default');
