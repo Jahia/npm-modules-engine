@@ -10,22 +10,17 @@ const checkSectionsPresence = () => {
 };
 
 describe('Template testsuite', () => {
-    before('Create test page and contents', () => {
-        addSimplePage('/sites/npmTestSite/home', 'testTemplate', 'testTemplate', 'en', 'simple', [
-            {
-                name: 'pagecontent',
-                primaryNodeType: 'jnt:contentList'
-            }
-        ]);
+    const pageName = 'testTemplate';
 
-        addSimplePage('/sites/npmTestSite/home', 'testTemplateReact', 'testTemplateReact', 'en', 'simpleReact', [
+    before('Create test page and contents', () => {
+        addSimplePage('/sites/npmTestSite/home', pageName, pageName, 'en', 'simple', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
             }
         ]);
     });
-    const pageName = 'testTemplate';
+
     it(`${pageName}: Verify 4 sections presence`, () => {
         cy.login();
         cy.visit(`/jahia/jcontent/npmTestSite/en/pages/home/${pageName}`);

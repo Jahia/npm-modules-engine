@@ -4,68 +4,51 @@ import {addEventPageAndEvents, addSimplePage} from '../../utils/Utils';
 describe('Content templates resolution testsuite', () => {
     const siteKey = 'npmTestSite';
 
-    const testConfig = {
-        case: 'React',
-        eventsPageName: 'testEventsReact',
-        eventsPageTemplate: 'events',
-        eventTemplateInURL: '.full',
-        findDisplayableNodePageName: 'testFindDisplayableNodeReact',
-        findDisplayableNodePageTemplate: 'simple'
-    };
-
-    const secondaryTestConfig = {
-        case: 'React',
-        nodeType: 'npmExample:testReactContentTemplate',
-        template: 'simple'
-    };
-
     before('Create test page and contents', () => {
         enableModule('calendar', siteKey);
         enableModule('event', siteKey);
 
-        addEventPageAndEvents(siteKey, testConfig.eventsPageTemplate, testConfig.eventsPageName, () => {
-            addSimplePage('/sites/npmTestSite/home', testConfig.findDisplayableNodePageName, 'Simple page', 'en', testConfig.findDisplayableNodePageTemplate, [
+        addEventPageAndEvents(siteKey, 'events', 'testEvents', () => {
+            addSimplePage('/sites/npmTestSite/home', 'testFindDisplayableNode', 'Simple page', 'en', 'simple', [
                 {
                     name: 'pagecontent',
                     primaryNodeType: 'jnt:contentList'
                 }
             ]).then(() => {
                 addNode({
-                    parentPathOrId: `/sites/npmTestSite/home/${testConfig.findDisplayableNodePageName}/pagecontent`,
+                    parentPathOrId: `/sites/npmTestSite/home/testFindDisplayableNode/pagecontent`,
                     name: 'findDisplayableContent',
-                    primaryNodeType: 'npmExample:testJFindDisplayableContent',
+                    primaryNodeType: 'npmExample:testFindDisplayableContent',
                     properties: [
-                        {name: 'target', value: `/sites/npmTestSite/home/${testConfig.eventsPageName}/events/event-a`, type: 'WEAKREFERENCE'}
+                        {name: 'target', value: `/sites/npmTestSite/home/testEvents/events/event-a`, type: 'WEAKREFERENCE'}
                     ]
                 });
             });
         });
 
-        const pageName = `test${testConfig.case}ContentTemplate`;
-        const pageNameWithView = `test${testConfig.case}ContentTemplateWithView`;
-        addSimplePage('/sites/npmTestSite/home', pageName, pageName, 'en', secondaryTestConfig.template, [
+        addSimplePage('/sites/npmTestSite/home', 'testContentTemplate', 'testContentTemplate', 'en', 'simple', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: `/sites/npmTestSite/home/${pageName}/pagecontent`,
+                parentPathOrId: `/sites/npmTestSite/home/testContentTemplate/pagecontent`,
                 name: 'content',
-                primaryNodeType: secondaryTestConfig.nodeType
+                primaryNodeType: 'npmExample:testContentTemplate'
             });
         });
 
-        addSimplePage('/sites/npmTestSite/home', pageNameWithView, pageNameWithView, 'en', secondaryTestConfig.template, [
+        addSimplePage('/sites/npmTestSite/home', 'testContentTemplateWithView', 'testContentTemplateWithView', 'en', 'simple', [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
             }
         ]).then(() => {
             addNode({
-                parentPathOrId: `/sites/npmTestSite/home/${pageNameWithView}/pagecontent`,
+                parentPathOrId: `/sites/npmTestSite/home/testContentTemplateWithView/pagecontent`,
                 name: 'content',
-                primaryNodeType: secondaryTestConfig.nodeType,
+                primaryNodeType: 'npmExample:testContentTemplate',
                 mixins: ['jmix:renderable'],
                 properties: [
                     {name: 'j:view', value: 'other'}
@@ -74,10 +57,10 @@ describe('Content templates resolution testsuite', () => {
         });
     });
 
-    it(`${testConfig.case}: Verify content template for jnt:event is correctly displayed`, function () {
+    it(`Verify content template for jnt:event is correctly displayed`, function () {
         cy.login();
-        cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${testConfig.eventsPageName}/events/event-a${testConfig.eventTemplateInURL}.html`);
-        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${testConfig.eventsPageName}/events/event-a${testConfig.eventTemplateInURL}.html`);
+        cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/testEvents/events/event-a.full.html`);
+        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testEvents/events/event-a.full.html`);
 
         // Check template is good:
         cy.get('div[class="header"]').should('be.visible');
@@ -91,19 +74,18 @@ describe('Content templates resolution testsuite', () => {
         cy.logout();
     });
 
-    it(`${testConfig.case}: Verify findDisplayableNode is correctly resolving jnt:event that is using a JS content template`, function () {
+    it(`Verify findDisplayableNode is correctly resolving jnt:event that is using a JS content template`, function () {
         cy.login();
-        cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/${testConfig.findDisplayableNodePageName}.html`);
-        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${testConfig.findDisplayableNodePageName}.html`);
+        cy.visit(`/jahia/page-composer/default/en/sites/${siteKey}/home/testFindDisplayableNode.html`);
+        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testFindDisplayableNode.html`);
 
-        cy.get('p[data-testid="displayableContent"]').contains(`Found displayable content: /sites/npmTestSite/home/${testConfig.eventsPageName}/events/event-a`);
+        cy.get('p[data-testid="displayableContent"]').contains(`Found displayable content: /sites/npmTestSite/home/testEvents/events/event-a`);
         cy.logout();
     });
 
-    it(`${secondaryTestConfig.case}: test default content template is working properly when content doesn't have specific view`, function () {
-        const pageName = `test${secondaryTestConfig.case}ContentTemplate`;
+    it(`Test default content template is working properly when content doesn't have specific view`, function () {
         cy.login();
-        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageName}/pagecontent/content.html`);
+        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testContentTemplate/pagecontent/content.html`);
         // Check template is correctly resolved:
         cy.get('.header').should('exist');
         // Check content is correctly displayed:
@@ -111,10 +93,9 @@ describe('Content templates resolution testsuite', () => {
         cy.logout();
     });
 
-    it(`${secondaryTestConfig.case}: test default content template is working properly when content have specific view`, function () {
-        const pageNameWithView = `test${secondaryTestConfig.case}ContentTemplateWithView`;
+    it(`Test default content template is working properly when content have specific view`, function () {
         cy.login();
-        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/${pageNameWithView}/pagecontent/content.html`);
+        cy.visit(`/cms/render/default/en/sites/${siteKey}/home/testContentTemplateWithView/pagecontent/content.html`);
         // Check template is correctly resolved:
         cy.get('.header').should('exist');
         // Check content is correctly displayed:

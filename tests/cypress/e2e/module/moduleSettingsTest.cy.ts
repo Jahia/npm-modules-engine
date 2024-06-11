@@ -37,18 +37,18 @@ describe('Check that NPM module settings (UI extensions, rules, configs) are cor
         cy.logout();
     });
 
-    // It('Ensure Jahia rule is correctly registered and working', function () {
-    //     cy.login();
-    //     cy.visit('/cms/render/default/en/sites/npmTestSite/home/testModuleSettings.html');
-    //     cy.get('div[data-testid="testRule_triggerProp"]').should('contain', 'Trigger prop set');
-    //     cy.get('div[data-testid="testRule_resultProp"]').should('contain', 'It works');
-    //     cy.logout();
-    // });
+    it('Ensure Jahia rule is correctly registered and working', function () {
+        cy.login();
+        cy.visit('/cms/render/default/en/sites/npmTestSite/home/testModuleSettings.html');
+        cy.get('div[data-testid="testRule_triggerProp"]').should('contain', 'Trigger prop set');
+        cy.get('div[data-testid="testRule_resultProp"]').should('contain', 'It works');
+        cy.logout();
+    });
 
-    // it('Ensure Jahia URLRewrite rule is correctly registered and working', function () {
-    //     cy.login();
-    //     cy.visit('/npmModuleURLRewriteTest');
-    //     cy.get('div[data-testid="testRule_triggerProp"]').should('contain', 'Trigger prop set');
-    //     cy.logout();
-    // });
+    it('Ensure Jahia URLRewrite rule is correctly registered and working', function () {
+        cy.login();
+        cy.visit('/npmModuleURLRewriteTest');
+        cy.get('div[data-testid="testRule_triggerProp"]').should('contain', 'Trigger prop set');
+        cy.logout();
+    });
 });

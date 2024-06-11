@@ -45,12 +45,12 @@
 [npmExample:simpleText] > jnt:content
  - text (string) = 'Hello world !' i18n
 
-[npmExample:testReactContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
-[npmExample:testReactJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
 
-[npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testReactViewRegistration] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testJCRQuery] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
@@ -88,8 +88,6 @@
 
 [npmExample:testCrashingView] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
-[npmExample:testCtx] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
 [npmExample:testCurrentContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)
@@ -98,23 +96,18 @@
  - propRichText (string, richtext)
  + * (jmix:droppableContent)
 
-[npmExample:testJAbsoluteAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testAbsoluteAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
 
-[npmExample:testJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
 
-[npmExample:testJAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
- + * (jmix:droppableContent) = jmix:droppableContent
+[npmExample:testConfig] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
-[npmExample:testJConfig] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
-[npmExample:testJCurrentSite] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
-[npmExample:testJFindDisplayableContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testFindDisplayableContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - target (weakreference)
 
-[npmExample:testJGQL] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testGQL] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)
  - propMultiple (string) multiple
@@ -122,13 +115,7 @@
  - propRichText (string, richtext)
  + * (jmix:droppableContent)
 
-[npmExample:testJGetContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
-[npmExample:testJLoadJSON] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
-[npmExample:testJMainContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
-
-[npmExample:testJRender] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testRender] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)
  - propMultiple (string) multiple
@@ -136,7 +123,7 @@
  - propRichText (string, richtext)
  + * (jmix:droppableContent)
 
-[npmExample:testJUrl] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testUrl] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - image (weakreference, picker[type='image']) < 'jmix:image'
  - linknode (weakreference, picker[type='editoriallink']) internationalized < 'jmix:droppableContent', 'jnt:page'
 

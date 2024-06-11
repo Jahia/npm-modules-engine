@@ -48,12 +48,12 @@ export const TestAreas = () => {
 
             <h2>Area type</h2>
             <div data-testid="areaType">
-                <Area name="areaType" areaType="npmExample:testReactJAreaColumns"/>
+                <Area name="areaType" areaType="npmExample:testAreaColumns"/>
             </div>
 
             <h2>Area parameters</h2>
             <div data-testid="areaParameters">
-                <Area name="areaParameters" areaView="parametersReact" parameters={{ "stringParam1": "stringValue1", "stringParam2": "stringValue2"}} />
+                <Area name="areaParameters" areaView="parameters" parameters={{ "stringParam1": "stringValue1", "stringParam2": "stringValue2"}} />
             </div>
 
         </>
@@ -61,7 +61,7 @@ export const TestAreas = () => {
 }
 
 TestAreas.jahiaComponent = {
-    nodeType: 'npmExample:testJAreas',
+    nodeType: 'npmExample:testAreas',
     name: 'default',
     displayName: 'test Areas (react)',
     componentType: 'view'

@@ -38,7 +38,7 @@ export const TestRender = () => {
                         view={'sub'}
                         content={{
                                 "name": "npmOption",
-                                "nodeType": "npmExample:testJRender",
+                                "nodeType": "npmExample:testRender",
                                 "properties": {
                                         "prop1": "prop1 value it is"
                                 }
@@ -61,7 +61,7 @@ export const TestRender = () => {
                         view={'tagged'}
                         content={{
                                 "name": "viewWithMixin",
-                                "nodeType": "npmExample:testJRender",
+                                "nodeType": "npmExample:testRender",
                                 "mixins": ["jmix:tagged"],
                                 "properties": {
                                         "j:tagList": ["tag1", "tag2"]
@@ -74,7 +74,7 @@ export const TestRender = () => {
                         view={'parameters'}
                         content={{
                                 "name": "viewWithParameters",
-                                "nodeType": "npmExample:testJRender",
+                                "nodeType": "npmExample:testRender",
                                 "properties": {
                                         "prop1": "prop1 value it is"
                                 }
@@ -115,7 +115,7 @@ export const TestRender = () => {
 }
 
 TestRender.jahiaComponent = {
-        nodeType: 'npmExample:testJRender',
+        nodeType: 'npmExample:testRender',
         name: 'default',
         displayName: 'test Render (parameters react)',
         componentType: 'view'
