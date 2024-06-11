@@ -7,18 +7,16 @@ describe('Content templates resolution testsuite', () => {
     const testConfig = {
         case: 'React',
         eventsPageName: 'testEventsReact',
-        eventsPageTemplate: 'eventsReact',
-        eventTemplateInURL: '.fullReact',
+        eventsPageTemplate: 'events',
+        eventTemplateInURL: '.full',
         findDisplayableNodePageName: 'testFindDisplayableNodeReact',
-        findDisplayableNodePageTemplate: 'events',
-        findDisplayableNodeContentMixins: ['jmix:renderable'],
-        findDisplayableNodeContentProps: [{name: 'j:view', value: 'react'}]
+        findDisplayableNodePageTemplate: 'simple'
     };
 
     const secondaryTestConfig = {
         case: 'React',
         nodeType: 'npmExample:testReactContentTemplate',
-        template: 'default'
+        template: 'simple'
     };
 
     before('Create test page and contents', () => {
@@ -36,9 +34,7 @@ describe('Content templates resolution testsuite', () => {
                     parentPathOrId: `/sites/npmTestSite/home/${testConfig.findDisplayableNodePageName}/pagecontent`,
                     name: 'findDisplayableContent',
                     primaryNodeType: 'npmExample:testJFindDisplayableContent',
-                    mixins: testConfig.findDisplayableNodeContentMixins,
                     properties: [
-                        ...testConfig.findDisplayableNodeContentProps,
                         {name: 'target', value: `/sites/npmTestSite/home/${testConfig.eventsPageName}/events/event-a`, type: 'WEAKREFERENCE'}
                     ]
                 });
@@ -47,7 +43,7 @@ describe('Content templates resolution testsuite', () => {
 
         const pageName = `test${testConfig.case}ContentTemplate`;
         const pageNameWithView = `test${testConfig.case}ContentTemplateWithView`;
-        addSimplePage('/sites/npmTestSite/home', pageName, pageName, 'en', testConfig.template, [
+        addSimplePage('/sites/npmTestSite/home', pageName, pageName, 'en', secondaryTestConfig.template, [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
@@ -56,11 +52,11 @@ describe('Content templates resolution testsuite', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/${pageName}/pagecontent`,
                 name: 'content',
-                primaryNodeType: testConfig.nodeType
+                primaryNodeType: secondaryTestConfig.nodeType
             });
         });
 
-        addSimplePage('/sites/npmTestSite/home', pageNameWithView, pageNameWithView, 'en', testConfig.template, [
+        addSimplePage('/sites/npmTestSite/home', pageNameWithView, pageNameWithView, 'en', secondaryTestConfig.template, [
             {
                 name: 'pagecontent',
                 primaryNodeType: 'jnt:contentList'
@@ -69,7 +65,7 @@ describe('Content templates resolution testsuite', () => {
             addNode({
                 parentPathOrId: `/sites/npmTestSite/home/${pageNameWithView}/pagecontent`,
                 name: 'content',
-                primaryNodeType: testConfig.nodeType,
+                primaryNodeType: secondaryTestConfig.nodeType,
                 mixins: ['jmix:renderable'],
                 properties: [
                     {name: 'j:view', value: 'other'}

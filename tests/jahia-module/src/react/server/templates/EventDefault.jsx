@@ -1,8 +1,8 @@
 import React from 'react';
 import {AddResources, Area, Render, useServerContext} from '@jahia/js-server-core';
-import {footer, header, login, navMenu} from "../pageComponents";
+import {footer, header, login, navMenu} from "./pageComponents";
 
-export const EventFull = () => {
+export const EventDefault = () => {
     const {currentResource} = useServerContext();
     return (<>
         <head>
@@ -39,9 +39,9 @@ export const EventFull = () => {
     </>)
 }
 
-EventFull.jahiaComponent = {
+EventDefault.jahiaComponent = {
     nodeType: 'jnt:event',
-    name: 'fullReact',
-    displayName: 'Full event (react)',
+    name: 'default',
+    displayName: 'Default event template',
     componentType: 'template'
 }

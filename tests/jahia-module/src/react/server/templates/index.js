@@ -1,4 +1,5 @@
-export * from './event';
+export * from './EventDefault';
+export * from './EventFull';
 export * from './PageEvent';
 export * from './PageNavMenu';
 export * from './PageSimple';

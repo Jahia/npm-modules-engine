@@ -1,8 +1,9 @@
 import React from 'react';
-import {AddResources, Area, Render} from '@jahia/js-server-core';
-import {calendar, facets, footer, header, login, navMenu} from "./pageComponents";
+import {AddResources, Area, Render, useServerContext} from '@jahia/js-server-core';
+import {footer, header, login, navMenu} from "./pageComponents";
 
-export const PageEvent = () => {
+export const EventFull = () => {
+    const {currentResource} = useServerContext();
     return (<>
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
@@ -22,11 +23,10 @@ export const PageEvent = () => {
             </div>
             <div className="main">
                 <div className="article">
-                    <Area name={'events'} allowedTypes={['jnt:event']}/>
+                    <Render path={currentResource.getNode().getPath()}/>
                 </div>
                 <div className="aside">
-                    <Render content={calendar}/>
-                    <Render content={facets}/>
+                    <Area name={'aside'}/>
                 </div>
             </div>
             <div className="footer">
@@ -39,12 +39,9 @@ export const PageEvent = () => {
     </>)
 }
 
-PageEvent.jahiaComponent = {
-    nodeType: 'jnt:page',
-    name: 'events',
-    displayName: 'Events page',
-    componentType: 'template',
-    properties: {
-        'cache.requestParameters': 'N-*'
-    }
+EventFull.jahiaComponent = {
+    nodeType: 'jnt:event',
+    name: 'full',
+    displayName: 'Full event template',
+    componentType: 'template'
 }
