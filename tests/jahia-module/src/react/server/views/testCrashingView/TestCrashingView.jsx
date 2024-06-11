@@ -14,7 +14,7 @@ export const TestCrashingView = () => {
 
 TestCrashingView.jahiaComponent = {
     nodeType: 'npmExample:testCrashingView',
-    name: 'react',
-    displayName: 'test crashing view (react)',
+    name: 'default',
+    displayName: 'test crashing view',
     componentType: 'view'
 }

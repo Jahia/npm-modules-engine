@@ -42,8 +42,8 @@ export const NavMenu = () => {
 
 NavMenu.jahiaComponent = {
     nodeType: 'npmExample:navMenu',
-    name: 'react',
-    displayName: 'navMenu (react)',
+    name: 'default',
+    displayName: 'navMenu',
     componentType: 'view',
     properties: {
         'cache.mainResource': 'true'

@@ -41,8 +41,8 @@ export const PageEvent = () => {
 
 PageEvent.jahiaComponent = {
     nodeType: 'jnt:page',
-    name: 'eventsReact',
-    displayName: 'Events page (react)',
+    name: 'events',
+    displayName: 'Events page',
     componentType: 'template',
     properties: {
         'cache.requestParameters': 'N-*'

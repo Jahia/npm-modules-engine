@@ -26,8 +26,8 @@ export const TestFindDisplayableContent = () => {
 }
 
 TestFindDisplayableContent.jahiaComponent = {
-    nodeType: 'npmExample:testJFindDisplayableContent',
-    name: 'react',
-    displayName: 'test jFindDisplayableContent (react)',
+    nodeType: 'npmExample:testFindDisplayableContent',
+    name: 'default',
+    displayName: 'test jFindDisplayableContent',
     componentType: 'view'
 }

@@ -197,23 +197,11 @@ public class ViewsRegistrar implements ScriptResolver, TemplateResolver, Registr
         return (JSView) nodeTypeList.stream().flatMap(nodeType -> getViewsSet(nodeType, site, resource.getTemplateType(), pageRendering).stream())
                 .filter(v -> {
                     JSView jsv = (JSView) v;
+                    // pageRendering -> JSView should be a template
+                    boolean templateMatch = pageRendering == jsv.isTemplate();
+                    // view key should match the resolved template
                     boolean viewMatch = v.getKey().equals(template);
-                    // TODO (if we keep only React impl): we could simply this code and remove usage of jsv.isDefaultTemplate()
-                    if (pageRendering) {
-                        // Template resolution here
-                        if (jsv.isTemplate()) {
-                            // Template matching view key
-                            if (viewMatch) {
-                                return true;
-                            }
-                            // Template view is configured as default no matter the template view key
-                            return "default".equals(template) && jsv.isDefaultTemplate();
-                        }
-                        return false;
-                    } else {
-                        // View resolution here
-                        return !jsv.isTemplate() && viewMatch;
-                    }
+                    return templateMatch && viewMatch;
                 })
                 .findFirst()
                 .orElseThrow(() -> new TemplateNotFoundException(resource.getResolvedTemplate()));

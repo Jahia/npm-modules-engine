@@ -45,12 +45,12 @@
 [npmExample:simpleText] > jnt:content
  - text (string) = 'Hello world !' i18n
 
-[npmExample:testReactContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testContentTemplate] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
-[npmExample:testReactJAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testAreaColumns] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  + * (jmix:droppableContent) = jmix:droppableContent
 
-[npmExample:testReactRegistry] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+[npmExample:testReactViewRegistration] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
 [npmExample:testJCRQuery] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
 
@@ -67,3 +67,66 @@
 [npmExample:testBoundComponent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent
 
 [npmExample:testI18n] > jnt:content, npmExampleMix:npmExampleComponent, mix:title, jmix:bindedComponent
+
+[npmExample:navMenu] > jnt:content, mix:title, jmix:navMenuComponent, npmExampleMix:npmExampleComponent
+ orderable
+ - j:baselineNode (string,choicelist) nofulltext < 'home', 'currentPage'
+ - j:maxDepth (long) = 2 mandatory
+ - j:startLevel (long) = 0
+ - j:menuItemView (string,choicelist[templates='jmix:navMenuItem,menuItem',resourceBundle,image]) = menuElement nofulltext
+
+[npmExample:test] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - prop1 (string)
+ - prop2 (string)
+ - propMultiple (string) multiple
+ - propI18n (string) i18n
+ - propRichText (string, richtext)
+ + * (jmix:droppableContent)
+
+[npmExample:testContentEditorExtension] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - prop1 (string)
+
+[npmExample:testCrashingView] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testCurrentContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - prop1 (string)
+ - prop2 (string)
+ - propMultiple (string) multiple
+ - propI18n (string) i18n
+ - propRichText (string, richtext)
+ + * (jmix:droppableContent)
+
+[npmExample:testAbsoluteAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ + * (jmix:droppableContent) = jmix:droppableContent
+
+[npmExample:testAreas] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ + * (jmix:droppableContent) = jmix:droppableContent
+
+[npmExample:testConfig] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+
+[npmExample:testFindDisplayableContent] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - target (weakreference)
+
+[npmExample:testGQL] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - prop1 (string)
+ - prop2 (string)
+ - propMultiple (string) multiple
+ - propI18n (string) i18n
+ - propRichText (string, richtext)
+ + * (jmix:droppableContent)
+
+[npmExample:testRender] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - prop1 (string)
+ - prop2 (string)
+ - propMultiple (string) multiple
+ - propI18n (string) i18n
+ - propRichText (string, richtext)
+ + * (jmix:droppableContent)
+
+[npmExample:testUrl] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - image (weakreference, picker[type='image']) < 'jmix:image'
+ - linknode (weakreference, picker[type='editoriallink']) internationalized < 'jmix:droppableContent', 'jnt:page'
+
+[npmExample:testRule] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
+ - triggerProp (string)
+ - resultProp (string)

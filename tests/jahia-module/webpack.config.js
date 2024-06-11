@@ -17,7 +17,6 @@ module.exports = env => {
             'react-i18next': 'jsServerCoreLibraryBuilder.getSharedLibrary(\'react-i18next\')',
             i18next: 'jsServerCoreLibraryBuilder.getSharedLibrary(\'i18next\')',
             'styled-jsx/style': 'jsServerCoreLibraryBuilder.getSharedLibrary(\'styled-jsx\')',
-            handlebars: 'jsServerCoreLibraryBuilder.getSharedLibrary(\'handlebars\')'
         },
         resolve: {
             extensions: ['.js', '.jsx']

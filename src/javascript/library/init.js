@@ -1,6 +1,5 @@
 import * as jsServerCore from '@jahia/js-server-core';
 import jsServerCoreBuilder from '@jahia/js-server-core-builder';
-import Handlebars from 'handlebars';
 import React from 'react';
 import * as ReactI18Next from 'react-i18next';
 import I18next from 'i18next';
@@ -12,8 +11,6 @@ export default () => {
         jsServerCoreBuilder.addToLibrary(key, value);
     }
 
-    // Declared shared libraries
-    jsServerCoreBuilder.addSharedLibrary('handlebars', Handlebars);
     jsServerCoreBuilder.addSharedLibrary('react', React);
     jsServerCoreBuilder.addSharedLibrary('react-i18next', ReactI18Next);
     jsServerCoreBuilder.addSharedLibrary('i18next', I18next);

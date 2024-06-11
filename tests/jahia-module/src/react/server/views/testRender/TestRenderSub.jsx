@@ -12,8 +12,8 @@ export const TestRenderSub = () => {
 }
 
 TestRenderSub.jahiaComponent = {
-    nodeType: 'npmExample:testJRender',
-    name: 'subReact',
+    nodeType: 'npmExample:testRender',
+    name: 'sub',
     displayName: 'test Render (sub react)',
     componentType: 'view'
 }
