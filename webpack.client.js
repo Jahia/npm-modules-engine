@@ -1,6 +1,14 @@
 const path = require('path');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const deps = require('./package.json').dependencies;
+const {CycloneDxWebpackPlugin} = require('@cyclonedx/webpack-plugin');
+
+/** @type {import('@cyclonedx/webpack-plugin').CycloneDxWebpackPluginOptions} */
+const cycloneDxWebpackPluginOptions = {
+    specVersion: '1.4',
+    rootComponentType: 'library',
+    outputLocation: './bom'
+};
 
 module.exports = (env, argv) => {
     let config = {
@@ -50,7 +58,8 @@ module.exports = (env, argv) => {
                     '@apollo/react-hooks': {},
                     '@jahia/data-helper': {}
                 }
-            })
+            }),
+            new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
         ],
         devtool: 'inline-source-map',
         mode: 'development'
