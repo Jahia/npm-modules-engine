@@ -61,8 +61,22 @@ module.exports = env => {
         devtool: 'inline-source-map'
     };
 
+
+    if (env.pack) {
+        console.log("packing ...")
+        config.plugins.push(
+            // This plugin allows you to run any shell commands before or after webpack builds.
+            new WebpackShellPluginNext({
+                onAfterDone: {
+                    scripts: ['yarn jahia-pack']
+                }
+            })
+        );
+    }
+
     if (env.deploy) {
         config.plugins.push(
+            // This plugin allows you to run any shell commands before or after webpack builds.
             new WebpackShellPluginNext({
                 onAfterDone: {
                     scripts: ['yarn jahia-deploy pack']
