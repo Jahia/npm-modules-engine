@@ -62,7 +62,7 @@ jobs:
 
   integration-tests-standalone:
     name: Integration Tests (Standalone)
-    needs: build
+#    needs: build
     runs-on: self-hosted
     strategy:
       fail-fast: false
@@ -83,7 +83,7 @@ jobs:
           tests_manifest: provisioning-manifest-build.yml
           jahia_image: jahia/jahia-ee-dev:8-SNAPSHOT
           jahia_license: ${{ secrets.JAHIA_LICENSE_8X_FULL }}
-          should_use_build_artifacts: false
+          should_use_build_artifacts: true
           github_artifact_name: npm-eng-${{ github.run_number }}
           bastion_ssh_private_key: ${{ secrets.BASTION_SSH_PRIVATE_KEY_JAHIACI }}
           docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
