@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "Jahia Solutions Group SA",
   "scripts": {
-    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development --env deploy",
+    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development --env pack",
     "build:production": "webpack --mode=production && webpack --config webpack.client.js --mode=production --env pack",
     "deploy": "jahia-deploy pack",
     "watch": "webpack --mode=development && webpack --config webpack.client.js --mode=development --env deploy",
