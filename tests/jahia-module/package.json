@@ -5,9 +5,10 @@
   "license": "MIT",
   "author": "Jahia Solutions Group SA",
   "scripts": {
-    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
+    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development --env pack",
+    "build:production": "webpack --mode=production && webpack --config webpack.client.js --mode=production --env pack",
     "deploy": "jahia-deploy pack",
-    "watch": "yarn build --env deploy=true --watch",
+    "watch": "webpack --mode=development && webpack --config webpack.client.js --mode=development --env deploy",
     "lint": "eslint .",
     "test": "yarn lint"
   },
