@@ -63,7 +63,6 @@ module.exports = env => {
 
 
     if (env.pack) {
-        console.log("packing ...")
         config.plugins.push(
             // This plugin allows you to run any shell commands before or after webpack builds.
             new WebpackShellPluginNext({
@@ -79,7 +78,7 @@ module.exports = env => {
             // This plugin allows you to run any shell commands before or after webpack builds.
             new WebpackShellPluginNext({
                 onAfterDone: {
-                    scripts: ['yarn jahia-deploy pack']
+                    scripts: ['yarn jahia-deploy']
                 }
             })
         );
