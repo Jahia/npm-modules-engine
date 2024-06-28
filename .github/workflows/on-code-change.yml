@@ -62,7 +62,7 @@ jobs:
 
   integration-tests-standalone:
     name: Integration Tests (Standalone)
-#    needs: build
+    needs: build
     runs-on: self-hosted
     strategy:
       fail-fast: false
