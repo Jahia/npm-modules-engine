@@ -1,5 +1,5 @@
 import React from 'react';
-import { useServerContext } from '@jahia/js-server-core';
+import {defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const testHasPermission = () => {
     const {currentNode} = useServerContext();
@@ -13,9 +13,9 @@ export const testHasPermission = () => {
     );
 }
 
-testHasPermission.jahiaComponent = {
+testHasPermission.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testHasPermission',
     name: 'default',
     displayName: 'test has permission',
     componentType: 'view'
-}
+});

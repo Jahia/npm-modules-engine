@@ -1,5 +1,5 @@
 import React from 'react';
-import {server} from '@jahia/js-server-core';
+import {defineJahiaComponent, server} from '@jahia/js-server-core';
 
 export const TestConfig = () => {
     const configValues = server.config.getConfigValues('org.jahia.modules.test');
@@ -42,9 +42,9 @@ export const TestConfig = () => {
     )
 }
 
-TestConfig.jahiaComponent = {
+TestConfig.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testConfig',
     name: 'default',
     displayName: 'test jConfig',
     componentType: 'view'
-}
+});

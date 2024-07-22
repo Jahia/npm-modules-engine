@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddResources, Area, Render} from '@jahia/js-server-core';
+import {AddResources, Area, defineJahiaComponent, Render} from '@jahia/js-server-core';
 import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageBoundComponent = () => {
@@ -42,9 +42,9 @@ export const PageBoundComponent = () => {
     </>)
 }
 
-PageBoundComponent.jahiaComponent = {
+PageBoundComponent.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:page',
     name: 'boundComponent',
     displayName: 'Bound component page',
     componentType: 'template'
-}
+})

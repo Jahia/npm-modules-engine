@@ -1,5 +1,5 @@
 import React from 'react';
-import {Area, useServerContext} from '@jahia/js-server-core';
+import {Area, defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const TestAreaColumns = () => {
     const {currentNode} = useServerContext();
@@ -15,8 +15,8 @@ export const TestAreaColumns = () => {
     );
 };
 
-TestAreaColumns.jahiaComponent = {
+TestAreaColumns.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testAreaColumns',
     name: 'default',
     componentType: 'view'
-};
+});

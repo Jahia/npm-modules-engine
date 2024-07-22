@@ -1,5 +1,5 @@
 import React from 'react';
-import {buildNavMenu, useServerContext} from '@jahia/js-server-core';
+import {buildNavMenu, defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 import {menuEntryCss} from "../../../../helpers/menuEntryCss";
 
 const NavMenuEntry = ({menuEntry, fist, last, level}) => {
@@ -40,7 +40,7 @@ export const NavMenu = () => {
     )
 }
 
-NavMenu.jahiaComponent = {
+NavMenu.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:navMenu',
     name: 'default',
     displayName: 'navMenu',
@@ -48,4 +48,4 @@ NavMenu.jahiaComponent = {
     properties: {
         'cache.mainResource': 'true'
     }
-}
+});

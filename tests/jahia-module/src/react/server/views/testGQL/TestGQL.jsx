@@ -1,5 +1,5 @@
 import React from 'react';
-import {useQuery, useServerContext} from "@jahia/js-server-core";
+import {defineJahiaComponent, useQuery, useServerContext} from "@jahia/js-server-core";
 
 export const TestGQL = () => {
     const {currentNode} = useServerContext();
@@ -25,9 +25,9 @@ export const TestGQL = () => {
     )
 }
 
-TestGQL.jahiaComponent = {
+TestGQL.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testGQL',
     name: 'default',
     displayName: 'test JGQL (react)',
     componentType: 'view'
-}
+});

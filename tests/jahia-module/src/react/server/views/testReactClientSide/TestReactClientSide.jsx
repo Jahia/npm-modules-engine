@@ -1,5 +1,5 @@
 import React from 'react';
-import {HydrateInBrowser, RenderInBrowser, useServerContext} from '@jahia/js-server-core';
+import {defineJahiaComponent, HydrateInBrowser, RenderInBrowser, useServerContext} from '@jahia/js-server-core';
 import SampleHydrateInBrowserReact from "../../../../client/SampleHydrateInBrowserReact";
 import SampleRenderInBrowserReact from "../../../../client/SampleRenderInBrowserReact";
 
@@ -15,8 +15,8 @@ export const TestReactClientSide = () => {
     )
 }
 
-TestReactClientSide.jahiaComponent = {
+TestReactClientSide.jahiaComponent = defineJahiaComponent({
     id: 'test_react_react_client_side',
     nodeType: 'npmExample:testReactClientSide',
     componentType: 'view'
-}
+});

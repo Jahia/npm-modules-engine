@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddResources, Area, Render} from '@jahia/js-server-core';
+import {AddResources, Area, defineJahiaComponent, Render} from '@jahia/js-server-core';
 import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageSimple = () => {
@@ -51,9 +51,9 @@ export const PageSimple = () => {
     </>)
 }
 
-PageSimple.jahiaComponent = {
+PageSimple.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:page',
     name: 'simple',
     displayName: 'Simple page',
     componentType: 'template'
-}
+});
