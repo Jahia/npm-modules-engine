@@ -1,5 +1,5 @@
 import React from 'react';
-import {server, useServerContext} from '@jahia/js-server-core';
+import {defineJahiaComponent, server, useServerContext} from '@jahia/js-server-core';
 
 export const TestFindDisplayableContent = () => {
     const {currentResource, renderContext} = useServerContext();
@@ -25,9 +25,9 @@ export const TestFindDisplayableContent = () => {
     )
 }
 
-TestFindDisplayableContent.jahiaComponent = {
+TestFindDisplayableContent.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testFindDisplayableContent',
     name: 'default',
     displayName: 'test jFindDisplayableContent',
     componentType: 'view'
-}
+});

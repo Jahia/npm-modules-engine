@@ -1,5 +1,5 @@
 import React from 'react';
-import { useServerContext } from '@jahia/js-server-core';
+import {defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const TestLocale = () => {
     const {renderContext, currentResource} = useServerContext();
@@ -34,9 +34,9 @@ export const TestLocale = () => {
     );
 }
 
-TestLocale.jahiaComponent = {
+TestLocale.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testLocale',
     name: 'default',
     displayName: 'test locale',
     componentType: 'view'
-}
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useServerContext} from '@jahia/js-server-core';
+import {defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const ContentListParameters = () => {
     const {currentResource} = useServerContext();
@@ -16,9 +16,9 @@ export const ContentListParameters = () => {
     )
 }
 
-ContentListParameters.jahiaComponent = {
+ContentListParameters.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:contentList',
     name: 'parameters',
     displayName: 'Test Area with parameters',
     componentType: 'view'
-}
+});

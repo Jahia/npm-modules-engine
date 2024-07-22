@@ -1,6 +1,6 @@
 import React from 'react';
 import SampleI18n from "../../../../client/SampleI18n";
-import {HydrateInBrowser, RenderInBrowser} from "@jahia/js-server-core";
+import {defineJahiaComponent, HydrateInBrowser, RenderInBrowser} from "@jahia/js-server-core";
 
 export const TestI18n = () => {
     return (
@@ -23,9 +23,9 @@ export const TestI18n = () => {
     );
 }
 
-TestI18n.jahiaComponent = {
+TestI18n.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testI18n',
     name: 'default',
     displayName: 'test i18n',
     componentType: 'view'
-}
+});

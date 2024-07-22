@@ -1,5 +1,5 @@
 import React from 'react';
-import {getNodeProps, useServerContext} from '@jahia/js-server-core';
+import {defineJahiaComponent, getNodeProps, useServerContext} from '@jahia/js-server-core';
 
 export const TestRule = () => {
     const {currentNode} = useServerContext();
@@ -15,9 +15,9 @@ export const TestRule = () => {
     )
 }
 
-TestRule.jahiaComponent = {
+TestRule.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testRule',
     name: 'default',
     displayName: 'test rule registration',
     componentType: 'view'
-}
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import {buildUrl, server, useServerContext} from '@jahia/js-server-core';
+import {buildUrl, defineJahiaComponent, server, useServerContext} from '@jahia/js-server-core';
 
 export const TestUrl = () => {
     const {currentResource, renderContext} = useServerContext();
@@ -70,9 +70,9 @@ export const TestUrl = () => {
     )
 }
 
-TestUrl.jahiaComponent = {
+TestUrl.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testUrl',
     name: 'default',
     displayName: 'test buildUrl',
     componentType: 'view'
-}
+});

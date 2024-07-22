@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddContentButtons, getChildNodes, useServerContext} from '@jahia/js-server-core';
+import {AddContentButtons, defineJahiaComponent, getChildNodes, useServerContext} from '@jahia/js-server-core';
 
 const PrintChildren = ({children, title, testid}) => {
     return (
@@ -51,9 +51,9 @@ export const TestGetChildNodes = () => {
     )
 }
 
-TestGetChildNodes.jahiaComponent = {
+TestGetChildNodes.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testGetChildNodes',
     name: 'default',
     displayName: 'test getChildNodes',
     componentType: 'view'
-}
+});

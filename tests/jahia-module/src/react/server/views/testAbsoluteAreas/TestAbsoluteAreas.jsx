@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteArea} from '@jahia/js-server-core';
+import {AbsoluteArea, defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestAbsoluteAreas = () => {
     return (
@@ -71,9 +71,9 @@ export const TestAbsoluteAreas = () => {
     )
 }
 
-TestAbsoluteAreas.jahiaComponent = {
+TestAbsoluteAreas.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testAbsoluteAreas',
     name: 'default',
     displayName: 'Test Absolute Areas (react)',
     componentType: 'view'
-}
+});

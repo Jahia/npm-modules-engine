@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddResources, Area, Render, useServerContext} from '@jahia/js-server-core';
+import {AddResources, Area, defineJahiaComponent, Render, useServerContext} from '@jahia/js-server-core';
 import {footer, header, login, navMenu} from "./pageComponents";
 
 export const EventFull = () => {
@@ -39,9 +39,9 @@ export const EventFull = () => {
     </>)
 }
 
-EventFull.jahiaComponent = {
+EventFull.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:event',
     name: 'full',
     displayName: 'Full event template',
     componentType: 'template'
-}
+});

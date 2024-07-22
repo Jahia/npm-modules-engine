@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddResources, Area, Render} from '@jahia/js-server-core';
+import {AddResources, Area, defineJahiaComponent, Render} from '@jahia/js-server-core';
 import {calendar, facets, footer, header, login, navMenu} from "./pageComponents";
 
 export const PageEvent = () => {
@@ -39,7 +39,7 @@ export const PageEvent = () => {
     </>)
 }
 
-PageEvent.jahiaComponent = {
+PageEvent.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:page',
     name: 'events',
     displayName: 'Events page',
@@ -47,4 +47,4 @@ PageEvent.jahiaComponent = {
     properties: {
         'cache.requestParameters': 'N-*'
     }
-}
+});

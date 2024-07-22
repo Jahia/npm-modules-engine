@@ -1,5 +1,5 @@
 import React from 'react';
-import { useServerContext } from '@jahia/js-server-core';
+import {defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const TestIsNodeType = () => {
     const {currentNode} = useServerContext();
@@ -14,9 +14,9 @@ export const TestIsNodeType = () => {
     );
 }
 
-TestIsNodeType.jahiaComponent = {
+TestIsNodeType.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testIsNodeType',
     name: 'default',
     displayName: 'test is node type',
     componentType: 'view'
-}
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import {buildNavMenu, useServerContext} from '@jahia/js-server-core';
+import {buildNavMenu, defineJahiaComponent, useServerContext} from '@jahia/js-server-core';
 
 export const PageNavMenu = () => {
     const {renderContext, currentResource} = useServerContext();
@@ -13,9 +13,9 @@ export const PageNavMenu = () => {
     )
 }
 
-PageNavMenu.jahiaComponent = {
+PageNavMenu.jahiaComponent = defineJahiaComponent({
     nodeType: 'jnt:page',
     name: 'navMenu',
     displayName: 'Nav Menu',
     componentType: 'template'
-}
+});

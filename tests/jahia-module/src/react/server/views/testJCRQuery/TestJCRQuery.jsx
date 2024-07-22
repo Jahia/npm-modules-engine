@@ -1,5 +1,5 @@
 import React from 'react';
-import {getNodesByJCRQuery, server, useServerContext} from '@jahia/js-server-core';
+import {defineJahiaComponent, getNodesByJCRQuery, server, useServerContext} from '@jahia/js-server-core';
 
 const PrintQueryResults = ({title, testid, nodes}) => {
     return (
@@ -42,8 +42,8 @@ export const TestJCRQuery = () => {
     )
 }
 
-TestJCRQuery.jahiaComponent = {
+TestJCRQuery.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testJCRQuery',
     displayName: 'Test JCR query',
     componentType: 'view'
-}
+});
