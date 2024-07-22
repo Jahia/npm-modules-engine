@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@jahia/data-helper": "^1.0.3",
-    "@jahia/js-server-core": "^0.0.11",
+    "@jahia/js-server-core": "^0.0.12",
     "i18next": "^23.10.1",
     "react": "^18.2.0",
     "react-i18next": "^14.1.0"
