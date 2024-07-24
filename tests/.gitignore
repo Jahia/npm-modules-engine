@@ -7,3 +7,14 @@ run-artifacts
 .env
 artifacts
 build-dependencies
+
+#Yarn
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+yarn-error.log
+.pnp.*
