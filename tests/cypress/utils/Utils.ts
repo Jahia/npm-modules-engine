@@ -24,7 +24,6 @@ export const addSimplePage = (
         ],
         children: children
     };
-    console.log('variables', variables);
     return addNode(variables);
 };
 
