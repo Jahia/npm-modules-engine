@@ -165,9 +165,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/cypress@npm:^3.19.4":
-  version: 3.19.4
-  resolution: "@jahia/cypress@npm:3.19.4"
+"@jahia/cypress@npm:^3.21.2":
+  version: 3.21.2
+  resolution: "@jahia/cypress@npm:3.21.2"
   dependencies:
     "@apollo/client": "npm:^3.4.9"
     cypress-real-events: "npm:^1.11.0"
@@ -178,7 +178,7 @@ __metadata:
     ci.startup: ci.startup.sh
     env.debug: env.debug.sh
     env.run: env.run.sh
-  checksum: 10c0/8bf301efe5b7286d7ab51b1e9a2241c76cdc0f4aa68cc7563074d809362cf1de429f036d3bb630d4bb492c66fd5ba471b86c7e041dfdd9e8175e35497c7abbdf
+  checksum: 10c0/b98c1982fd4710023673d51e3113728a5133226e8c220a20794b1a6bf8654876447baf57a513075fab03c0dc3389b4178c8eba169851112438eebaebe707fd44
   languageName: node
   linkType: hard
 
@@ -219,12 +219,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/jcontent-cypress@npm:^3.0.0-tests.2":
-  version: 3.0.0-tests.2
-  resolution: "@jahia/jcontent-cypress@npm:3.0.0-tests.2"
+"@jahia/jcontent-cypress@npm:^3.0.0-tests.8":
+  version: 3.0.0-tests.8
+  resolution: "@jahia/jcontent-cypress@npm:3.0.0-tests.8"
   dependencies:
     cypress-real-events: "npm:^1.7.6"
-  checksum: 10c0/c053142a4884590ccb0a547e4a449882240697566a8f6ceb23b70e4791afd0bcac1bcb6f9241d1356540590f9c2e3b5da2d940f4769e8f374ce41e7d450a7d4b
+  checksum: 10c0/fded981a6bd34b497a7bb80072298c1b5c98f14d19d4532c449bb484c17d9ec924276e1b7e6f17ac941892547209572ab8cf0ac98b1c19c42ed6e2364d563476
   languageName: node
   linkType: hard
 
@@ -233,9 +233,9 @@ __metadata:
   resolution: "@jahia/npm-modules-engine-cypress@workspace:."
   dependencies:
     "@4tw/cypress-drag-drop": "npm:^2.2.1"
-    "@jahia/cypress": "npm:^3.19.4"
+    "@jahia/cypress": "npm:^3.21.2"
     "@jahia/jahia-reporter": "npm:^1.0.30"
-    "@jahia/jcontent-cypress": "npm:^3.0.0-tests.2"
+    "@jahia/jcontent-cypress": "npm:^3.0.0-tests.8"
     "@types/node": "npm:^18.11.18"
     "@typescript-eslint/eslint-plugin": "npm:^5.48.1"
     "@typescript-eslint/parser": "npm:^5.48.1"

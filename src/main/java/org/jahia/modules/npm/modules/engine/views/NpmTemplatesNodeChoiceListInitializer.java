@@ -96,7 +96,7 @@ public class NpmTemplatesNodeChoiceListInitializer implements ChoiceListInitiali
             List<ChoiceListValue> newValues = addTemplates(site, session, nodetype, defaultTemplate, epd, locale, context);
 
             if (values.isEmpty()) {
-                values.addAll(0, newValues);
+                values.addAll(newValues);
             } else {
                 // in case of page mode, the templates are rendered in a separate subsection
                 String templatesTitle = Messages.getInternal("org.jahia.services.content.nodetypes.initializers.templates.title", locale);
