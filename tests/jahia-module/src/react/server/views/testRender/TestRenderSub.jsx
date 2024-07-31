@@ -1,5 +1,5 @@
 import React from 'react';
-import {useServerContext} from '@jahia/js-server-core';
+import {useServerContext, defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestRenderSub = () => {
     const {currentResource} = useServerContext();
@@ -11,9 +11,9 @@ export const TestRenderSub = () => {
     )
 }
 
-TestRenderSub.jahiaComponent = {
+TestRenderSub.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testRender',
     name: 'sub',
     displayName: 'test Render (sub react)',
     componentType: 'view'
-}
+});

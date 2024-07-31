@@ -1,5 +1,5 @@
 import React from 'react';
-import {AddContentButtons, Render} from '@jahia/js-server-core';
+import {AddContentButtons, Render, defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestRender = () => {
     return (
@@ -114,12 +114,12 @@ export const TestRender = () => {
     )
 }
 
-TestRender.jahiaComponent = {
+TestRender.jahiaComponent = defineJahiaComponent({
         nodeType: 'npmExample:testRender',
         name: 'default',
         displayName: 'test Render (parameters react)',
         componentType: 'view'
-}
+});
 
 let css = `
 html {

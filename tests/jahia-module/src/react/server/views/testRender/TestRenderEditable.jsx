@@ -1,5 +1,5 @@
 import React from 'react';
-import {getChildNodes, getNodeProps, Render, useServerContext} from '@jahia/js-server-core';
+import {getChildNodes, getNodeProps, Render, useServerContext, defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestRenderEditable = () => {
     const {currentNode} = useServerContext();
@@ -34,11 +34,11 @@ export const TestRenderEditable = () => {
     )
 }
 
-TestRenderEditable.jahiaComponent = {
+TestRenderEditable.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testRenderEditable',
     displayName: 'Test JRender Editable',
     componentType: 'view'
-}
+});
 
 export const SimpleText = () => {
     const {currentNode} = useServerContext();
@@ -50,9 +50,9 @@ export const SimpleText = () => {
     )
 }
 
-SimpleText.jahiaComponent = {
+SimpleText.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:simpleText',
     displayName: 'Simple Text',
     componentType: 'view'
-}
+});
 

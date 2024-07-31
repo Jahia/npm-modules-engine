@@ -1,5 +1,5 @@
 import React from 'react';
-import {server} from '@jahia/js-server-core';
+import {server, defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestReactViewRegistration = () => {
     const testAreasName = server.registry.get('view', 'jahia-npm-module-example_view_npmExample:testAreas_default').name;
@@ -21,10 +21,10 @@ export const TestReactViewRegistration = () => {
     )
 }
 
-TestReactViewRegistration.jahiaComponent = {
+TestReactViewRegistration.jahiaComponent = defineJahiaComponent({
     // we provide an id here to make sure the registration also works properly for this case, by it is not mandatory
     id: '@@@customid//for-testing@@@_view_npmExample:testReactViewRegistration_default',
     nodeType: 'npmExample:testReactViewRegistration',
     displayName: 'Test React registration',
     componentType: 'view'
-}
+});

@@ -1,4 +1,5 @@
 import React from 'react';
+import {defineJahiaComponent} from '@jahia/js-server-core';
 
 export const TestContentTemplateView = () => {
     return (
@@ -8,7 +9,7 @@ export const TestContentTemplateView = () => {
     )
 }
 
-TestContentTemplateView.jahiaComponent = {
+TestContentTemplateView.jahiaComponent = defineJahiaComponent({
     nodeType: 'npmExample:testContentTemplate',
     componentType: 'view'
-}
+});
