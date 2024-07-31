@@ -6,7 +6,9 @@ export const addSimplePage = (
     pageTitle: string,
     language: string,
     template = 'home',
-    children = []
+    children = [],
+    mixins = [],
+    properties = []
 ): any => {
     const variables = {
         parentPathOrId: parentPathOrId,
@@ -14,7 +16,9 @@ export const addSimplePage = (
         title: pageTitle,
         primaryNodeType: 'jnt:page',
         template: 'home',
+        mixins: mixins,
         properties: [
+            ...properties,
             {name: 'jcr:title', value: pageTitle, language: language},
             {name: 'j:templateName', type: 'STRING', value: template}
         ],
