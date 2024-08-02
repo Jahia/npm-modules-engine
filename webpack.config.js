@@ -1,5 +1,4 @@
 const path = require('path');
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 const {CycloneDxWebpackPlugin} = require('@cyclonedx/webpack-plugin');
 
 /** @type {import('@cyclonedx/webpack-plugin').CycloneDxWebpackPluginOptions} */
@@ -59,9 +58,6 @@ module.exports = (env, argv) => {
             ]
         },
         plugins: [
-            new NodePolyfillPlugin({
-                excludeAliases: ["console"]
-            }),
             new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
         ],
         devtool: "inline-source-map",
