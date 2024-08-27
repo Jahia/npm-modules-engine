@@ -9,7 +9,7 @@ const backend = {
     read: function (language, namespace, callback) {
         const bundle = server.osgi.getBundle(namespace);
         if (bundle) {
-            let content = server.osgi.loadResource(bundle, 'locales/' + language + '.json', true);
+            let content = server.osgi.loadResource(bundle, 'public/locales/' + language + '.json', true);
             if (content) {
                 callback(null, JSON.parse(content));
             } else {
