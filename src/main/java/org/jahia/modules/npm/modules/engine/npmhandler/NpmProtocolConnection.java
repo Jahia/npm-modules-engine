@@ -42,7 +42,7 @@ public class NpmProtocolConnection extends URLConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(NpmProtocolConnection.class);
 
-    private final URL wrappedUrl;
+    private URL wrappedUrl;
 
     public NpmProtocolConnection(URL url) throws MalformedURLException {
         super(url);
@@ -53,6 +53,7 @@ public class NpmProtocolConnection extends URLConnection {
             wrappedUrl = new URL(urlStr.substring("npm:".length()));
         }
     }
+
 
     @Override
     public void connect() throws IOException {
@@ -95,10 +96,28 @@ public class NpmProtocolConnection extends URLConnection {
                 }
 
                 // Copy file path (try to detect good path for file in the final package jar.)
-                if (packageRelativePath.equals("import.xml")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/" + packageRelativePath));
-                } else if (packageRelativePath.startsWith("settings/")) {
+                if (packageRelativePath.startsWith("settings/")) {
                     jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(packageRelativePath, "settings/")));
+                } else if (packageRelativePath.startsWith("public")) {
+                    String filePath = StringUtils.substringAfter(packageRelativePath, "public/");
+                    if (filePath.startsWith("locales")) {
+                        jos.putNextEntry(new ZipEntry(filePath));
+                    } else if (filePath.startsWith("javascript")) {
+                        jos.putNextEntry(new ZipEntry(filePath));
+                    } else {
+                        jos.putNextEntry(new ZipEntry("assets/" + filePath));
+                    }
+                } else if (packageRelativePath.startsWith("configuration")) {
+                    String filePath = StringUtils.substringAfter(packageRelativePath, "configuration/");
+                    if (filePath.equals("import.xml")) {
+                        jos.putNextEntry(new ZipEntry("META-INF/" + filePath));
+                    } else if(filePath.startsWith("content-editor-forms")) {
+                        jos.putNextEntry(new ZipEntry("META-INF/jahia-" + filePath));
+                    }  else if(filePath.startsWith("content-types-icons")) {
+                        jos.putNextEntry(new ZipEntry("icons/" + StringUtils.substringAfter(filePath, "content-types-icons/")));
+                    } else if(filePath.startsWith("resources") && filePath.endsWith(".properties")) {
+                        jos.putNextEntry(new ZipEntry(filePath));
+                    }
                 } else if (packageRelativePath.startsWith("components") && packageRelativePath.endsWith(".png")) {
                     String[] parts = StringUtils.split(packageRelativePath, "/");
                     String nodeTypeName = parts[2];
