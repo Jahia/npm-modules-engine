@@ -28,7 +28,7 @@ module.exports = (env, mode) => {
                 'jahia-npm-module-example': path.resolve(__dirname, './src/client/index')
             },
             output: {
-                path: path.resolve(__dirname, 'javascript/client')
+                path: path.resolve(__dirname, 'public/javascript/client')
             },
             resolve: {
                 mainFields: ['module', 'main'],
