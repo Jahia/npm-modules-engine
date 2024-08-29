@@ -42,7 +42,7 @@ public class NpmProtocolConnection extends URLConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(NpmProtocolConnection.class);
 
-    private URL wrappedUrl;
+    private final URL wrappedUrl;
 
     public NpmProtocolConnection(URL url) throws MalformedURLException {
         super(url);
