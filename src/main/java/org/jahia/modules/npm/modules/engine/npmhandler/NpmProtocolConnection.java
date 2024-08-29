@@ -110,7 +110,7 @@ public class NpmProtocolConnection extends URLConnection {
                 } else if (packageRelativePath.startsWith("configuration")) {
                     String filePath = StringUtils.substringAfter(packageRelativePath, "configuration/");
                     if (filePath.equals("import.xml")) {
-                        jos.putNextEntry(new ZipEntry("META-INF/" + filePath));
+                        jos.putNextEntry(new ZipEntry(filePath));
                     } else if(filePath.startsWith("content-editor-forms")) {
                         jos.putNextEntry(new ZipEntry("META-INF/jahia-" + filePath));
                     }  else if(filePath.startsWith("content-types-icons")) {
