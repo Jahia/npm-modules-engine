@@ -54,7 +54,6 @@ public class NpmProtocolConnection extends URLConnection {
         }
     }
 
-
     @Override
     public void connect() throws IOException {
         // Do nothing
@@ -111,6 +110,8 @@ public class NpmProtocolConnection extends URLConnection {
                     String filePath = StringUtils.substringAfter(packageRelativePath, "configuration/");
                     if (filePath.equals("import.xml")) {
                         jos.putNextEntry(new ZipEntry(filePath));
+                    } else if(filePath.equals("template-thumbnail.png")) {
+                         jos.putNextEntry(new ZipEntry("configuration/" + filePath));
                     } else if(filePath.startsWith("content-editor-forms")) {
                         jos.putNextEntry(new ZipEntry("META-INF/jahia-" + filePath));
                     }  else if(filePath.startsWith("content-types-icons")) {
