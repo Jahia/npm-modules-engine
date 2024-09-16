@@ -30,7 +30,7 @@
     "module-type": "templatesSet",
     "required-version": "8.2.0.0-SNAPSHOT",
     "server": "dist/main.js",
-    "static-resources": "/css,/images,/javascript"
+    "static-resources": "/css,/images,/javascript,/icons"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",

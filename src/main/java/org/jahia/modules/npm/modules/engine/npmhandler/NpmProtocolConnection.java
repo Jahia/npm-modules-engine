@@ -98,7 +98,26 @@ public class NpmProtocolConnection extends URLConnection {
                 if (packageRelativePath.equals("import.xml")) {
                     jos.putNextEntry(new ZipEntry("META-INF/" + packageRelativePath));
                 } else if (packageRelativePath.startsWith("settings/")) {
-                    jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(packageRelativePath, "settings/")));
+                    // Special mapping settings/content-editor-forms to META-INF/jahia-content-editor-forms
+                    if (packageRelativePath.startsWith("settings/content-editor-forms/")) {
+                        jos.putNextEntry(new ZipEntry("META-INF/jahia-content-editor-forms/" + StringUtils.substringAfter(packageRelativePath, "settings/content-editor-forms/")));
+                    }
+                    // Special mapping settings/content-types-icons to icons/
+                    else if(packageRelativePath.startsWith("settings/content-types-icons/")) {
+                        jos.putNextEntry(new ZipEntry("icons/" + StringUtils.substringAfter(packageRelativePath, "content-types-icons/")));
+                    }
+                    // Special mapping settings/resources/*.properties to resources/*.properties
+                    else if(packageRelativePath.startsWith("settings/resources/") && packageRelativePath.endsWith(".properties")) {
+                        jos.putNextEntry(new ZipEntry(StringUtils.substringAfter(packageRelativePath, "settings/")));
+                    }
+                    // Special mapping settings/template-thumbnail.png to images/template-preview/template-thumbnail.png
+                    else if (packageRelativePath.equals("settings/template-thumbnail.png")) {
+                        jos.putNextEntry(new ZipEntry("images/template-preview/" + StringUtils.substringAfter(packageRelativePath, "settings/")));
+                    }
+                    // Map everything else in settings/ to META-INF/
+                    else {
+                        jos.putNextEntry(new ZipEntry("META-INF/" + StringUtils.substringAfter(packageRelativePath, "settings/")));
+                    }
                 } else if (packageRelativePath.startsWith("components") && packageRelativePath.endsWith(".png")) {
                     String[] parts = StringUtils.split(packageRelativePath, "/");
                     String nodeTypeName = parts[2];
