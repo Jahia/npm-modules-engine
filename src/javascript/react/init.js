@@ -42,7 +42,8 @@ export default () => {
             const styles = ReactDOMServer.renderToStaticMarkup(styleRegistry.styles());
             const stylesResource = styles ? `<jahia:resource type="inline" key="styles${props.id}">${styles}</jahia:resource>` : '';
             if (currentResource.getContextConfiguration() === 'page') {
-                return `<html>${cleanedRenderedElement}${stylesResource}</html>`;
+                // Set the HTML5 doctype that can't be rendered in JSX
+                return `<!DOCTYPE html>${cleanedRenderedElement}${stylesResource}`;
             }
 
             return `${cleanedRenderedElement}${stylesResource}`;

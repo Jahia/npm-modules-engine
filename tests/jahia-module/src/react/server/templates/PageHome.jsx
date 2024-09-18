@@ -4,7 +4,7 @@ import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageHome = () => {
   return (
-    <>
+    <html lang="en">
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
@@ -33,7 +33,7 @@ export const PageHome = () => {
                 </div>
             </div>
         </body>
-    </>
+    </html>
   )
 }
 

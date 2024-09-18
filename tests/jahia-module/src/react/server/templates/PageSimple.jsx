@@ -13,14 +13,14 @@ export const PageSimple = () => {
         '            });\n' +
         '        </script>';
 
-    return (<>
+    return (<html lang="en">
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
         <body>
         <AddResources type={'inline'} key={'inline-script-test'} inlineResource={inlineScript}/>
         <AddResources type={'javascript'} resources={'body-script.js'} targetTag={'body'}/>
-        <AddResources type={'javascript'} resources={'head-script.js'} />
+        <AddResources type={'javascript'} resources={'head-script.js'}/>
         <div className="page">
             <div className="header">
                 <div className="headerContent">
@@ -48,7 +48,7 @@ export const PageSimple = () => {
             </div>
         </div>
         </body>
-    </>)
+    </html>)
 }
 
 PageSimple.jahiaComponent = defineJahiaComponent({
