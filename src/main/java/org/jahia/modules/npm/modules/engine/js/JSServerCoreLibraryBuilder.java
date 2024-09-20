@@ -32,6 +32,7 @@ public class JSServerCoreLibraryBuilder {
         server.put("render", new RenderHelper(contextProvider));
         server.put("gql", new GQLHelper(contextProvider));
         server.put("osgi", new OSGiHelper(contextProvider));
+        server.put("doAsGuest", new DoAsGuestHelper());
 
         for (Map.Entry<String, Object> entry : server.entrySet()) {
             try {

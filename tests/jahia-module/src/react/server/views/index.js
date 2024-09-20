@@ -26,3 +26,4 @@ export * from './testCrashingView/TestCrashingView';
 export * from './testBoundComponent/TestBoundComponent';
 export * from './testI18n/TestI18n';
 export * from './testRule/TestRule';
+export * from './hydratedNavMenu/HydratedNavMenu';
