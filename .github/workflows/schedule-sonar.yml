@@ -9,7 +9,7 @@ on:
 
 jobs:
   sonar-analysis:
-    uses: Jahia/jahia-modules-workflows/sonar-scan/sonar-scan.yml@PIPELINE-76
+    uses: Jahia/jahia-modules-action/.github/workflows/sonar-scan/sonar-scan.yml@PIPELINE-76
     secrets: inherit
     # Keeping a matrix since 
     strategy:
