@@ -20,3 +20,4 @@ jobs:
       module_id: npm-modules-engine
       tests_module_type: npm
       git_branch: ${{ matrix.git_branch }}
+      incident_service: npm-modules-engine-sonar
