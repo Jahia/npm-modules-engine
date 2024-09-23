@@ -176,14 +176,15 @@ public class NpmProtocolConnection extends URLConnection {
                 .replace('/', '-')
                 .replaceAll("[^a-zA-Z0-9\\-\\.\\s]", "_"));
         setIfPresent(properties, "author", instructions, "Bundle-Vendor");
-        instructions.put("Bundle-Version", properties.get("version"));
+        instructions.put("Bundle-Version", getBundleVersion(properties, jahiaProps));
+        instructions.put("Implementation-Version", getImplementationVersion(properties, jahiaProps));
         setIfPresent(properties, "license", instructions, "Bundle-License");
 
         // Next lets setup Jahia headers
         instructions.put("Jahia-Depends", jahiaProps.getOrDefault("module-dependencies", "default"));
         setIfPresent(jahiaProps, "deploy-on-site", instructions, "Jahia-Deploy-On-Site");
         instructions.put("Jahia-GroupId", jahiaProps.getOrDefault("group-id", "org.jahia.npm"));
-        setIfPresent(jahiaProps,"module-signature", instructions, "Jahia-Module-Signature");
+        setIfPresent(jahiaProps, "module-signature", instructions, "Jahia-Module-Signature");
         setIfPresent(jahiaProps, "module-priority", instructions, "Jahia-Module-Priority");
         instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
         setIfPresent(jahiaProps, "private-app-store", instructions, "Jahia-Private-App-Store");
@@ -195,7 +196,20 @@ public class NpmProtocolConnection extends URLConnection {
         return instructions;
     }
 
-    private void setIfPresent(Map<String, Object> inputProperties,String propertyName, Properties instructions, String instructionName) {
+    static String getBundleVersion(Map<String, Object> properties, Map<String, Object> jahiaProps) {
+        return getVersionWithSnapshotSuffix(properties, jahiaProps, ".SNAPSHOT");
+    }
+
+    static String getImplementationVersion(Map<String, Object> properties, Map<String, Object> jahiaProps) {
+        return getVersionWithSnapshotSuffix(properties, jahiaProps, "-SNAPSHOT");
+    }
+
+    private static String getVersionWithSnapshotSuffix(Map<String, Object> properties, Map<String, Object> jahiaProps, String snapshotSuffix) {
+        Object snapshotModeObj = jahiaProps.getOrDefault("snapshot", false);
+        return properties.get("version") + (Boolean.parseBoolean(String.valueOf(snapshotModeObj)) ? snapshotSuffix : "");
+    }
+
+    private void setIfPresent(Map<String, Object> inputProperties, String propertyName, Properties instructions, String instructionName) {
         if (inputProperties.containsKey(propertyName)) {
             instructions.put(instructionName, inputProperties.get(propertyName));
         }
