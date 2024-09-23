@@ -177,6 +177,7 @@ public class NpmProtocolConnection extends URLConnection {
                 .replaceAll("[^a-zA-Z0-9\\-\\.\\s]", "_"));
         setIfPresent(properties, "author", instructions, "Bundle-Vendor");
         instructions.put("Bundle-Version", getBundleVersion(properties, jahiaProps));
+        instructions.put("Implementation-Version", getImplementationVersion(properties, jahiaProps));
         setIfPresent(properties, "license", instructions, "Bundle-License");
 
         // Next lets setup Jahia headers
@@ -196,8 +197,16 @@ public class NpmProtocolConnection extends URLConnection {
     }
 
     static String getBundleVersion(Map<String, Object> properties, Map<String, Object> jahiaProps) {
+        return getVersionWithSnapshotSuffix(properties, jahiaProps, ".SNAPSHOT");
+    }
+
+    static String getImplementationVersion(Map<String, Object> properties, Map<String, Object> jahiaProps) {
+        return getVersionWithSnapshotSuffix(properties, jahiaProps, "-SNAPSHOT");
+    }
+
+    private static String getVersionWithSnapshotSuffix(Map<String, Object> properties, Map<String, Object> jahiaProps, String snapshotSuffix) {
         Object snapshotModeObj = jahiaProps.getOrDefault("snapshot", false);
-        return properties.get("version") + (Boolean.parseBoolean(String.valueOf(snapshotModeObj)) ? ".SNAPSHOT" : "");
+        return properties.get("version") + (Boolean.parseBoolean(String.valueOf(snapshotModeObj)) ? snapshotSuffix : "");
     }
 
     private void setIfPresent(Map<String, Object> inputProperties, String propertyName, Properties instructions, String instructionName) {
