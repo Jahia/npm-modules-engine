@@ -11,7 +11,7 @@ jobs:
   sonar-analysis:
     uses: Jahia/jahia-modules-action/.github/workflows/sonar-scan.yml@v2
     secrets: inherit
-    # Keeping a matrix since 
+    # Keeping a matrix as it becomes useful when a maintenance branch is present.
     strategy:
       fail-fast: false
       matrix:
