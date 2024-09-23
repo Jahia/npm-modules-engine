@@ -32,10 +32,9 @@ public class TarUtils {
     static List<File> unTar(final InputStream is, final File outputDir) throws IOException {
 
         final List<File> untaredFiles = new LinkedList<>();
-        try {
-            final TarArchiveInputStream debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-            TarArchiveEntry entry = null;
-            while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
+        try (final TarArchiveInputStream debInputStream = new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
+            TarArchiveEntry entry;
+            while ((entry = debInputStream.getNextEntry()) != null) {
                 final File outputFile = new File(outputDir, entry.getName());
                 if (entry.isDirectory()) {
                     if (!outputFile.exists()) {
@@ -45,13 +44,12 @@ public class TarUtils {
                     }
                 } else {
                     outputFile.getParentFile().mkdirs();
-                    final OutputStream outputFileStream = new FileOutputStream(outputFile);
-                    IOUtils.copy(debInputStream, outputFileStream);
-                    outputFileStream.close();
+                    try (OutputStream outputFileStream = new FileOutputStream(outputFile)) {
+                        IOUtils.copy(debInputStream, outputFileStream);
+                    }
                 }
                 untaredFiles.add(outputFile);
             }
-            debInputStream.close();
         } catch (ArchiveException e) {
             throw new IOException(e);
         }
