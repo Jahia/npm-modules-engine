@@ -1588,9 +1588,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/js-server-core@npm:^0.0.13":
-  version: 0.0.13
-  resolution: "@jahia/js-server-core@npm:0.0.13"
+"@jahia/js-server-core@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@jahia/js-server-core@npm:0.0.14"
   dependencies:
     graphql: "npm:^16.0.1"
     graphql-tag: "npm:^2.12.6"
@@ -1598,7 +1598,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
     react-i18next: "npm:^14.1.0"
-  checksum: 10c0/9895acd3a66a72da69a5c73b73a6741cd65ad1caf80e2784e5b57713e1a202739117e7886ec89076edd1f705b7aa574bef50063e9d2d48dbabc73ad8e6a9c4ab
+  checksum: 10c0/c513f00f7adecbe24bbd576e865305c2bbd3251f5f9959c905cf82c7f5eeac58a2f8cd5fe1b6ad6f16ab9376898e5b710c49b9bd840a4ceea8922faec7920c0a
   languageName: node
   linkType: hard
 
@@ -4899,7 +4899,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.22.15"
     "@cyclonedx/webpack-plugin": "npm:^3.11.0"
     "@jahia/eslint-config": "npm:^1.1.0"
-    "@jahia/js-server-core": "npm:^0.0.13"
+    "@jahia/js-server-core": "npm:^0.0.14"
     babel-loader: "npm:^8.2.3"
     eslint: "npm:^6.7.2"
     eslint-plugin-jest: "npm:^23.8.0"
