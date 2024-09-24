@@ -16,7 +16,7 @@ describe('Check that the NPM module has been transformed properly and has the pr
                     expect(result).to.contain('Jahia-Module-Type: templatesSet');
                     expect(result).to.contain('Jahia-NPM-InitScript: dist/main.js');
                     expect(result).to.contain('Jahia-Required-Version: 8.2.0.0-SNAPSHOT');
-                    expect(result).to.contain('Jahia-Static-Resources: /css,/images,/javascript');
+                    expect(result).to.contain('Jahia-Static-Resources: /css,/images,/javascript,/icons');
                 });
         });
     }
