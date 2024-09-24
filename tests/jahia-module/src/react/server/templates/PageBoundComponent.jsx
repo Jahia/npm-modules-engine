@@ -3,7 +3,7 @@ import {AddResources, Area, defineJahiaComponent, Render} from '@jahia/js-server
 import {footer, header, login, navMenu} from "./pageComponents";
 
 export const PageBoundComponent = () => {
-    return (<>
+    return (<html lang="en">
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
@@ -39,7 +39,7 @@ export const PageBoundComponent = () => {
             </div>
         </div>
         </body>
-    </>)
+    </html>)
 }
 
 PageBoundComponent.jahiaComponent = defineJahiaComponent({

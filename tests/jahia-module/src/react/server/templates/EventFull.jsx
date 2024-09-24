@@ -4,7 +4,7 @@ import {footer, header, login, navMenu} from "./pageComponents";
 
 export const EventFull = () => {
     const {currentResource} = useServerContext();
-    return (<>
+    return (<html lang="en">
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
@@ -36,7 +36,7 @@ export const EventFull = () => {
             </div>
         </div>
         </body>
-    </>)
+    </html>)
 }
 
 EventFull.jahiaComponent = defineJahiaComponent({

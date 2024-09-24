@@ -20,7 +20,7 @@ const menuUrl = (template, depth, lvl = 0, page = '', base = 'home') =>
     `/cms/render/default/en/sites/npmTestSite/home${page}.${template}.html?maxDepth=${depth}&baseline=${base}&startLevel=${lvl}`;
 
 const cleanHTMLTags = str => {
-    if (str.includes('<html>')) {
+    if (str.includes('<!DOCTYPE html>')) {
         return str.substring(str.indexOf('['), str.lastIndexOf(']') + 1);
     }
 

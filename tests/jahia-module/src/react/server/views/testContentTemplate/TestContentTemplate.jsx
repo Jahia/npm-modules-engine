@@ -4,7 +4,7 @@ import {footer, header, login, navMenu} from '../../templates/pageComponents';
 
 export const TestContentTemplate = () => {
     const {currentResource} = useServerContext();
-    return (<>
+    return (<html lang="en">
         <head>
             <AddResources type={'css'} resources={'styles.css'}/>
         </head>
@@ -36,7 +36,7 @@ export const TestContentTemplate = () => {
             </div>
         </div>
         </body>
-    </>)
+    </html>)
 }
 
 TestContentTemplate.jahiaComponent = defineJahiaComponent({
