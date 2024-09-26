@@ -135,5 +135,6 @@ describe('Check on bound components', () => {
         publishAndWaitJobEnding('/sites/npmTestSite/home/testBoundComponent');
         cy.visit('/sites/npmTestSite/home/testBoundComponent.html', {failOnStatusCode: false});
         cy.get('[data-testid="boundComponent_path"]').should('contain', '/npmTestSite/home/testBoundComponent/events');
+        cy.logout();
     });
 });
