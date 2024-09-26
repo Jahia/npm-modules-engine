@@ -6,3 +6,4 @@ export * from './PageMenuComponent';
 export * from './PageSimple';
 export * from './PageBoundComponent';
 export * from './PageHome';
+export * from './PageHomeHydratedMenu';
