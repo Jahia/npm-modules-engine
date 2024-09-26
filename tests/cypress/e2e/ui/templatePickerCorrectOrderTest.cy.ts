@@ -12,6 +12,7 @@ describe('Template Picker Correct Order Test', () => {
             'Bound component page',
             'Events page',
             'Home page',
+            'Home page with hydrated menu',
             'Nav Menu',
             'Simple page',
             '===== PAGE MODELS =====',
