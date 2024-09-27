@@ -37,7 +37,7 @@
     </scm>
 
     <properties>
-        <jahia-module-signature>MC0CFQCLzm5n1Gayw1qAslhLJ7AQhaJxngIUXnwHUy9jY3iILo3/1oBxm4nGisw=</jahia-module-signature>
+        <jahia-module-signature>MC0CFQCJKtCm1I+ehyiZ5o25hG2dqyvNUQIUeuOf5obgfPppNRDgSDku+5EPlxc=</jahia-module-signature>
         <import-package>
             graphql.annotations.annotationTypes;version="[7.2,99)",
             graphql.schema;version="[13.0,22)",
