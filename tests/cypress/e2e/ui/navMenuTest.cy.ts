@@ -58,6 +58,7 @@ describe('navMenu helper test parameters', () => {
             expect(tree.filter(menu => menu.render === '<a href="https://www.jahia.com" >externalLink</a>')).to
                 .exist;
         });
+        cy.logout();
     });
 
     it(`${templateName}: should have the dedicated view (menuComponent) for pages`, () => {
@@ -66,6 +67,7 @@ describe('navMenu helper test parameters', () => {
             const tree = JSON.parse(cleanHTMLTags(resp.body));
             expect(tree.filter(menu => menu.render === '/sites/npmTestSite/home/pageA')).to.exist;
         });
+        cy.logout();
     });
 
     it(`${templateName}: should display the selected depth of items`, () => {
@@ -98,6 +100,7 @@ describe('navMenu helper test parameters', () => {
                 }
             });
         });
+        cy.logout();
     });
 
     it(`${templateName}: should display the menu at the selected level`, () => {
@@ -122,6 +125,7 @@ describe('navMenu helper test parameters', () => {
                 }
             });
         });
+        cy.logout();
     });
 
     it(`${templateName}: should display the selected basenode menu`, () => {
@@ -147,6 +151,7 @@ describe('navMenu helper test parameters', () => {
                 assert.fail(`a menu is not suppose to be displayed with render ${menu.render}`);
             });
         });
+        cy.logout();
     });
 
     it(`${templateName}: should set the inPath and selected values for a menu entry`, () => {
@@ -194,5 +199,6 @@ describe('navMenu helper test parameters', () => {
                 }
             });
         });
+        cy.logout();
     });
 });
