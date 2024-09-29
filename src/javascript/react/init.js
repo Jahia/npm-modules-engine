@@ -2,7 +2,7 @@ import {server} from '@jahia/js-server-core-private';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {createStyleRegistry, StyleRegistry} from 'styled-jsx';
-import {ServerContextProvider} from '@jahia/js-server-core';
+import {ServerContextProvider, UrlBuilderContextProvider} from '@jahia/js-server-core';
 import i18n from 'i18next';
 import {I18nextProvider} from 'react-i18next';
 
@@ -30,8 +30,9 @@ export default () => {
             const styleRegistry = createStyleRegistry();
             const currentNode = currentResource.getNode();
             const mainNode = renderContext.getMainResource().getNode();
+            const urlBuilderContext = React.createElement(UrlBuilderContextProvider, {renderContext, currentResource, currentNode, mainNode});
             const element =
-                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
+                React.createElement(StyleRegistry, {registry: styleRegistry}, React.createElement(ServerContextProvider, {renderContext, currentResource, currentNode, mainNode, bundleKey}, urlBuilderContext, React.createElement(I18nextProvider, {i18n}, React.createElement(view.component, {...props}))));
 
             // Some server side components are using dangerouslySetInnerHTML to render their content,
             // we need to clean the output to avoid having unwanted divs in the final output (e.g. <unwanteddiv>content</unwanteddiv>)
