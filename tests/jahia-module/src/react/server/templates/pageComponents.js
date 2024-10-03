@@ -20,7 +20,18 @@ export const navMenu = {
     properties: {
         'j:maxDepth': '10',
         'j:baselineNode': 'home',
-        'j:menuItemView': 'menuElement',
+        'j:menuItemView': 'menuElement'
+    }
+};
+
+export const hydratedNavMenu = {
+    name: 'hydratedNavMenu',
+    nodeType: 'npmExample:hydratedNavMenu',
+    mixins: ['jmix:renderable'],
+    properties: {
+        'j:maxDepth': '10',
+        'j:baselineNode': 'hydratedNavMenu',
+        'j:menuItemView': 'menuElement'
     }
 };
 

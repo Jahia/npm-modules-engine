@@ -15,7 +15,7 @@ export const addSimplePage = (
         name: pageName,
         title: pageTitle,
         primaryNodeType: 'jnt:page',
-        template: 'home',
+        template: template,
         mixins: mixins,
         properties: [
             ...properties,

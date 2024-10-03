@@ -75,6 +75,13 @@
  - j:startLevel (long) = 0
  - j:menuItemView (string,choicelist[templates='jmix:navMenuItem,menuItem',resourceBundle,image]) = menuElement nofulltext
 
+[npmExample:hydratedNavMenu] > jnt:content, mix:title, jmix:navMenuComponent, npmExampleMix:npmExampleComponent
+ orderable
+ - j:baselineNode (string,choicelist) nofulltext < 'home', 'currentPage'
+ - j:maxDepth (long) = 2 mandatory
+ - j:startLevel (long) = 0
+ - j:menuItemView (string,choicelist[templates='jmix:navMenuItem,menuItem',resourceBundle,image]) = menuElement nofulltext
+
 [npmExample:test] > jnt:content, npmExampleMix:npmExampleComponent, mix:title
  - prop1 (string)
  - prop2 (string)

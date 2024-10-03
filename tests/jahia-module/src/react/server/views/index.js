@@ -1,3 +1,4 @@
+export * from './hydratedNavMenu/HydratedNavMenu';
 export * from './navMenu/NavMenu';
 export * from './testCurrentContent/TestCurrentContent';
 export * from './testAreaColumns/TestAreaColumns';
