@@ -209,8 +209,8 @@ public class NpmProtocolConnection extends URLConnection {
         setIfPresent(jahiaProps, "private-app-store", instructions, "Jahia-Private-App-Store");
         instructions.put("Jahia-Required-Version", jahiaProps.getOrDefault("required-version", "8.2.0.0"));
         setIfPresent(jahiaProps, "server", instructions, BUNDLE_HEADER_NPM_INIT_SCRIPT);
-        instructions.put("Jahia-Static-Resources", jahiaProps.getOrDefault("static-resources", "/css,/icons,/images,/img,/javascript"));
-
+        // always include "/static" as folder for the static resources
+        instructions.put("Jahia-Static-Resources", StringUtils.defaultIfEmpty((String) jahiaProps.get("static-resources"), "/css,/icons,/images,/img,/javascript") + ",/static");
         instructions.put("-removeheaders", "Private-Package, Export-Package");
         return instructions;
     }
