@@ -3,7 +3,7 @@ import {buildUrl, defineJahiaComponent, server, useServerContext, useUrlBuilder}
 
 export const TestUrl = () => {
     const {currentResource, renderContext} = useServerContext();
-    const {buildStaticUrl} = useUrlBuilder();
+    const {buildNodeUrl, buildStaticUrl, buildHtmlFragmentUrl} = useUrlBuilder();
 
     const imageNodeRef = currentResource.getNode().hasProperty('image') ?
         currentResource.getNode().getProperty('image').getValue().getNode() :
@@ -25,7 +25,7 @@ export const TestUrl = () => {
 
             {imageNodeRef &&
                 <div data-testid="image_reference">
-                    <img height="150" src={buildUrl({path: imageNodeRef.getPath()}, renderContext, currentResource)} alt="image"/>
+                    <img height="150" src={buildNodeUrl({nodePath: imageNodeRef.getPath()})} alt="image"/>
                 </div>}
 
             <div data-testid="image_static_resource">
@@ -35,33 +35,37 @@ export const TestUrl = () => {
             {linkNodeRef &&
                 <>
                     <div data-testid="content_link">
-                        <a href={buildUrl({path: linkNodeRef.getPath()}, renderContext, currentResource)}>content link - current context</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath()})}>content link - current context</a>
                     </div>
                     <div data-testid="content_link_mode_edit">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), mode:'edit'}, renderContext, currentResource)}>content link - edit</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath(), mode: 'edit'},)}>content link - edit</a>
                     </div>
                     <div data-testid="content_link_mode_preview">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), mode:'preview'}, renderContext, currentResource)}>content link - preview</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath(), mode: 'preview'})}>content link -
+                            preview</a>
                     </div>
                     <div data-testid="content_link_mode_live">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), mode:'live'}, renderContext, currentResource)}>content link - live</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath(), mode: 'live'})}>content link - live</a>
                     </div>
                     <div data-testid="content_link_language_fr">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), language:'fr'}, renderContext, currentResource)}>content link - FR</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath(), language: 'fr'})}>content link - FR</a>
                     </div>
                     <div data-testid="content_link_parameters">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), parameters: {param1: 'value1', param2: 'value2'}}, renderContext, currentResource)}>content link - parameters</a>
+                        <a href={buildNodeUrl({
+                            nodePath: linkNodeRef.getPath(),
+                            parameters: {param1: 'value1', param2: 'value2'}
+                        })}>content link - parameters</a>
                     </div>
                     <div data-testid="action_url">
-                        <a href={buildUrl({path: linkNodeRef.getPath(), extension:'.myAction.do'}, renderContext, currentResource)}>action link</a>
+                        <a href={buildNodeUrl({nodePath: linkNodeRef.getPath(), extension: '.myAction.do'})}>action
+                            link</a>
                     </div>
                 </>}
-
-            <div data-testid="absolute_external_link">
-                <a href={buildUrl({value: 'https://www.google.com'}, renderContext, currentResource)}>External absolute link</a>
+            <div data-testid="fragment_link">
+                <a href={buildHtmlFragmentUrl({nodePath: '/sites/npmTestSite/home/testUrl/pagecontent/test'})}>fragment link</a>
             </div>
             <div data-testid="path_not_exists">
-                <a href={buildUrl({path: '/sites/mySiteNotExists/home'}, renderContext, currentResource)}>Using a path of node that does not exists</a>
+                <a href={buildNodeUrl({nodePath: '/sites/mySiteNotExists/home'})}>Using a path of node that does not exists</a>
             </div>
             <div data-testid="no_weakref">
                 <a href={buildUrl({path: null})}>No weakref</a>

@@ -140,6 +140,12 @@ describe('Test on url helper', () => {
                 expectedURL: '/cms/render/default/en/sites/npmTestSite/home/linkedPage.myAction.do'
             },
             {
+                dataTestId: 'fragment_link',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
+            },
+            {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
@@ -221,6 +227,12 @@ describe('Test on url helper', () => {
                 tag: 'a',
                 attribute: 'href',
                 expectedURL: '/sites/npmTestSite/home/linkedPage.myAction.do'
+            },
+            {
+                dataTestId: 'fragment_link',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
             },
             {
                 dataTestId: 'path_not_exists',
@@ -311,6 +323,12 @@ describe('Test on url helper', () => {
                 expectedURL: '/cms/render/default/en/sites/npmTestSite/home/linkedPage.myAction.do'
             },
             {
+                dataTestId: 'fragment_link',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
+            },
+            {
                 dataTestId: 'path_not_exists',
                 tag: 'a',
                 attribute: 'href',
@@ -382,6 +400,12 @@ describe('Test on url helper', () => {
                 tag: 'a',
                 attribute: 'href',
                 expectedURL: '/sites/npmTestSite/home/linkedPage.myAction.do'
+            },
+            {
+                dataTestId: 'fragment_link',
+                tag: 'a',
+                attribute: 'href',
+                expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
             },
             {
                 dataTestId: 'path_not_exists',
