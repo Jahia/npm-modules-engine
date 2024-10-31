@@ -1,9 +1,9 @@
 import React from 'react';
-import {buildUrl, defineJahiaComponent, server, useServerContext} from '@jahia/js-server-core';
+import {buildUrl, defineJahiaComponent, server, useServerContext, useUrlBuilder} from '@jahia/js-server-core';
 
 export const TestUrl = () => {
     const {currentResource, renderContext} = useServerContext();
-    const currentModule = renderContext.getURLGenerator().getCurrentModule();
+    const {buildStaticUrl} = useUrlBuilder();
 
     const imageNodeRef = currentResource.getNode().hasProperty('image') ?
         currentResource.getNode().getProperty('image').getValue().getNode() :
@@ -29,7 +29,7 @@ export const TestUrl = () => {
                 </div>}
 
             <div data-testid="image_static_resource">
-                <img height="150" src={buildUrl({value: currentModule + '/images/goat.jpg'}, renderContext, currentResource)} alt="goat"/>
+                <img height="150" src={buildStaticUrl({assetPath: 'images/goat.jpg'})} alt="goat"/>
             </div>
 
             {linkNodeRef &&
