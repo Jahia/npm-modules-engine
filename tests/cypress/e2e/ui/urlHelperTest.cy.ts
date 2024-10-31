@@ -405,7 +405,7 @@ describe('Test on url helper', () => {
                 dataTestId: 'fragment_link',
                 tag: 'a',
                 attribute: 'href',
-                expectedURL: '/cms/render/default/en/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
+                expectedURL: '/sites/npmTestSite/home/testUrl/pagecontent/test.html.ajax'
             },
             {
                 dataTestId: 'path_not_exists',
