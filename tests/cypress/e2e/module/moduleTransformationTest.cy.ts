@@ -6,7 +6,7 @@ describe('Check that the NPM module has been transformed properly and has the pr
                     console.log(result);
                     expect(result).to.contain('Bundle-Category: jahia-npm-module');
                     expect(result).to.contain('Bundle-Description: Jahia NPM Test module');
-                    expect(result).to.contain('Jahia-GroupId: org.jahia.npm');
+                    expect(result).to.contain('Jahia-GroupId: org.example.modules.npm');
                     expect(result).to.contain('Bundle-License: MIT');
                     expect(result).to.contain('Bundle-Name: @jahia/npm-module-example (npm module)');
                     expect(result).to.contain('Bundle-SymbolicName: jahia-npm-module-example');

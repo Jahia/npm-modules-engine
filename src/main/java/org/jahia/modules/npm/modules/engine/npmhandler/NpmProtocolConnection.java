@@ -202,7 +202,8 @@ public class NpmProtocolConnection extends URLConnection {
         // Next lets setup Jahia headers
         instructions.put("Jahia-Depends", jahiaProps.getOrDefault("module-dependencies", "default"));
         setIfPresent(jahiaProps, "deploy-on-site", instructions, "Jahia-Deploy-On-Site");
-        instructions.put("Jahia-GroupId", jahiaProps.getOrDefault("group-id", "org.jahia.npm"));
+        Map<String, Object> mavenProps = getMavenProps(jahiaProps);
+        instructions.put("Jahia-GroupId", mavenProps.getOrDefault("groupId", "org.jahia.npm"));
         setIfPresent(jahiaProps, "module-signature", instructions, "Jahia-Module-Signature");
         setIfPresent(jahiaProps, "module-priority", instructions, "Jahia-Module-Priority");
         instructions.put("Jahia-Module-Type", jahiaProps.getOrDefault("module-type", "module"));
@@ -213,6 +214,15 @@ public class NpmProtocolConnection extends URLConnection {
         instructions.put("Jahia-Static-Resources", StringUtils.defaultIfEmpty((String) jahiaProps.get("static-resources"), "/css,/icons,/images,/img,/javascript") + ",/static");
         instructions.put("-removeheaders", "Private-Package, Export-Package");
         return instructions;
+    }
+
+    private Map<String, Object> getMavenProps(Map<String, Object> jahiaProps) {
+        try {
+            return (Map<String, Object>) jahiaProps.getOrDefault("maven",Collections.emptyMap());
+        } catch (ClassCastException e) {
+            logger.warn("The 'maven' section is expected to be a map! The whole section will be ignored.");
+            return Collections.emptyMap();
+        }
     }
 
     static String getBundleVersion(Map<String, Object> properties, Map<String, Object> jahiaProps) {
