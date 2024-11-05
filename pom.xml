@@ -46,6 +46,8 @@
             org.jahia.modules.graphql.provider.dxm.osgi.annotations;version="[2.7,4)",
             org.jahia.modules.graphql.provider.dxm.util;version="[2.7,4)",
         </import-package>
+        <frontend-maven-plugin.nodeVersion>v18.12.0</frontend-maven-plugin.nodeVersion>
+        <frontend-maven-plugin.yarnVersion>v1.22.19</frontend-maven-plugin.yarnVersion>
     </properties>
 
     <repositories>
@@ -191,14 +193,42 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>npm install node and yarn pre-clean</id>
+                        <phase>pre-clean</phase>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${frontend-maven-plugin.nodeVersion}</nodeVersion>
+                            <yarnVersion>${frontend-maven-plugin.yarnVersion}</yarnVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>yarn install pre-clean</id>
+                        <phase>pre-clean</phase>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>yarn clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>clean</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>npm install node and yarn</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v18.12.0</nodeVersion>
-                            <yarnVersion>v1.22.19</yarnVersion>
+                            <nodeVersion>${frontend-maven-plugin.nodeVersion}</nodeVersion>
+                            <yarnVersion>${frontend-maven-plugin.yarnVersion}</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>

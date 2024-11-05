@@ -5,7 +5,17 @@
   "repository": "git@github.com:Jahia/npm-modules-engine.git",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --mode=development && webpack --config webpack.client.js --mode=development",
+    "clean-server": "rm -rf src/main/resources/META-INF/js/",
+    "clean-client": "rm -rf src/main/resources/javascript/",
+    "clean": "run clean-server && run clean-client",
+    "build-server:development": "webpack --mode=development",
+    "build-server:production": "webpack --mode=production",
+    "build-server": "run build-server:production",
+    "build-client:development": "webpack --config webpack.client.js --mode=development",
+    "build-client:production": "webpack --config webpack.client.js --mode=production",
+    "build-client": "run build-client:production",
+    "build": "run build-server && run build-client",
+    "build:development": "run build-server:development && run build-client:development",
     "lint": "eslint --ext js,jsx,json .",
     "lint:fix": "eslint --ext js,jsx,json --fix ."
   },

@@ -11,7 +11,9 @@ const cycloneDxWebpackPluginOptions = {
 };
 
 module.exports = (env, argv) => {
-    let config = {
+    const isDevelopment = argv.mode === 'development';
+    const mode = isDevelopment ? 'development' : 'production';
+    return {
         entry: {
             reactAppShell: path.resolve(__dirname, 'src/client-javascript/main')
         },
@@ -61,9 +63,7 @@ module.exports = (env, argv) => {
             }),
             new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
         ],
-        devtool: 'inline-source-map',
-        mode: 'development'
+        devtool: isDevelopment ? 'inline-source-map' : 'source-map',
+        mode: mode
     };
-
-    return config;
 };
