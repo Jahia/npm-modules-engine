@@ -9,7 +9,9 @@ const cycloneDxWebpackPluginOptions = {
 };
 
 module.exports = (env, argv) => {
-    let config = {
+    const isDevelopment = argv.mode === 'development';
+    const mode = isDevelopment ? 'development' : 'production';
+    return {
         entry: {
             main: path.resolve(__dirname, 'src/javascript/index')
         },
@@ -33,7 +35,7 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.js$/,
-                    include:[
+                    include: [
                         path.resolve(__dirname, "node_modules/create-frame"),
                         path.resolve(__dirname, "node_modules/handlebars-helpers")
                     ],
@@ -60,9 +62,7 @@ module.exports = (env, argv) => {
         plugins: [
             new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
         ],
-        devtool: "inline-source-map",
-        mode: "development"
+        devtool: isDevelopment ? 'inline-source-map' : 'source-map',
+        mode: mode
     };
-
-    return config;
 };
