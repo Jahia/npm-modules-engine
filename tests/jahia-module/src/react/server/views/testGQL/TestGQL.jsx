@@ -1,9 +1,9 @@
 import React from 'react';
-import {defineJahiaComponent, useQuery, useServerContext} from "@jahia/js-server-core";
+import {defineJahiaComponent, useGQLQuery, useServerContext} from "@jahia/js-server-core";
 
 export const TestGQL = () => {
     const {currentNode} = useServerContext();
-    const result = useQuery({
+    const result = useGQLQuery({
         query: "query ($path:String!) { jcr { nodeByPath(path:$path) { name, properties { name, value } } } }",
         variables: {path: currentNode.getPath()}
     });
