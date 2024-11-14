@@ -1,12 +1,13 @@
 import React from 'react';
 import {defineJahiaComponent, HydrateInBrowser, server, useServerContext} from '@jahia/js-server-core';
 import SampleHydratedMenu from "../../../../client/SampleHydratedMenu";
-import {buildNode, getBaseNode} from "../../../../helpers/menu";
+import {buildNode} from "../../../../helpers/menu";
+import {useBaseNode} from "../../../../hooks/useBaseNode";
 
 export const HydratedNavMenu = () => {
     const {renderContext, currentResource} = useServerContext();
     const base = currentResource.getNode().getPropertyAsString('j:baselineNode');
-    const baseNode = getBaseNode(base, renderContext, renderContext.isLiveMode() ? 'LIVE' : 'EDIT');
+    const baseNode = useBaseNode(base, renderContext, renderContext.isLiveMode() ? 'LIVE' : 'EDIT');
     const staticMenu = server.jcr.doExecuteAsGuest(session => buildNode(baseNode, session, renderContext, currentResource));
 
     return (
