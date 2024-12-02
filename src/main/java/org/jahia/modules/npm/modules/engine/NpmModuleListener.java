@@ -17,10 +17,7 @@ package org.jahia.modules.npm.modules.engine;
 
 import org.jahia.modules.npm.modules.engine.jsengine.GraalVMEngine;
 import org.jahia.modules.npm.modules.engine.registrars.Registrar;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
+import org.osgi.framework.*;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +108,7 @@ public class NpmModuleListener implements BundleListener {
     }
 
     public boolean isNPMModule(Bundle bundle) {
-        return bundle.getBundleId() != engine.getBundleContext().getBundle().getBundleId() &&
+        return bundle.getBundleId() != FrameworkUtil.getBundle(engine.getClass()).getBundleId() &&
                 bundle.getHeaders().get(BUNDLE_HEADER_NPM_INIT_SCRIPT) != null;
     }
 }
